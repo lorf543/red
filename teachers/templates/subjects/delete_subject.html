@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 shadow-md rounded-lg">
+    <h2 class="text-2xl font-bold text-red-600 mb-4">¿Eliminar materia?</h2>
+
+    <p class="mb-2"><strong>Nombre:</strong> {{ subject.name }}</p>
+    <p class="mb-2"><strong>Descripción:</strong> {{ subject.description }}</p>
+    <p class="mb-2"><strong>Créditos:</strong> {{ subject.credits }}</p>
+    <p class="mb-2"><strong>Día y hora:</strong> {{ subject.subject_schedule }}</p>
+    <p class="mb-4"><strong>Profesor:</strong> {{ subject.teacher }}</p>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Sí, eliminar
+            </button>
+            <a href="{{request.META.HTTP_REFERER}}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

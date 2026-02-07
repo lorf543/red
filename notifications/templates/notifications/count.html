@@ -1,0 +1,2 @@
+{% load poll_extras %}
+<span hx-get="{% url 'notification_count' %}" hx-swap="innerHTML settle:500ms" class="notification-count">{{ request.user|unread_count }}</span>

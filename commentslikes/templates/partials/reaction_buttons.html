@@ -1,0 +1,232 @@
+<style>
+    /* Añade esto a tu archivo CSS principal */
+
+/* Estilos para botones de reacción */
+.like-btn, .dislike-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.like-btn:hover:not(:disabled):not(.active) {
+    transform: translateY(-1px);
+    color: var(--color-primary) !important;
+}
+
+.dislike-btn:hover:not(:disabled):not(.active) {
+    transform: translateY(-1px);
+    color: var(--color-danger) !important;
+}
+
+/* Efecto de pulso al hacer clic */
+@keyframes pulse-reaction {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.like-btn:active:not(:disabled),
+.dislike-btn:active:not(:disabled) {
+    animation: pulse-reaction 0.3s ease;
+}
+
+/* Estados activos mejorados */
+.like-btn.active {
+    color: var(--color-primary) !important;
+    text-shadow: 0 0 8px rgba(var(--color-primary-rgb, 79, 70, 229), 0.3);
+}
+
+.dislike-btn.active {
+    color: var(--color-danger) !important;
+    text-shadow: 0 0 8px rgba(var(--color-danger-rgb, 220, 38, 38), 0.3);
+}
+
+/* Contador animado */
+.like-count, .dislike-count {
+    transition: all 0.3s ease;
+    min-width: 1.25rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.like-btn:hover .like-count:not(:disabled) {
+    transform: scale(1.1);
+}
+
+.dislike-btn:hover .dislike-count:not(:disabled) {
+    transform: scale(1.1);
+}
+
+/* Separador con tema */
+.text-border {
+    color: var(--color-border);
+    opacity: 0.5;
+}
+
+/* Estados deshabilitados */
+button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Focus states para accesibilidad */
+.like-btn:focus:not(:disabled),
+.dislike-btn:focus:not(:disabled) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .like-btn, .dislike-btn {
+        padding: 0.25rem;
+    }
+    
+    .like-count, .dislike-count {
+        font-size: 0.7rem;
+        min-width: 1rem;
+    }
+}
+
+/* Tooltips para botones */
+.like-btn:hover:not(:disabled)::after,
+.dislike-btn:hover:not(:disabled)::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    border: 1px solid var(--color-border);
+    z-index: 10;
+}
+
+.like-btn:hover:not(:disabled)::after,
+.dislike-btn:hover:not(:disabled)::after {
+    opacity: 1;
+}
+</style>
+
+<div class="flex items-center space-x-2"
+     hx-target="this"
+     hx-swap="outerHTML">
+
+    {% if user.is_authenticated %}
+        <!-- Botón Like -->
+        <button hx-post="{% url 'react_to_comment' comment.id %}"
+                hx-vals='{"reaction_type": 1}'
+                data-tooltip="{% if comment.has_like %}Quitar like{% else %}Me gusta{% endif %}"
+                class="like-btn relative flex items-center space-x-1 cursor-pointer focus:outline-none transition-all duration-200
+                       {% if comment.has_like %}text-primary active{% elif comment.any_reaction %}text-muted{% else %}text-text hover:text-primary{% endif %}">
+            <i class="{% if comment.has_like %}fas{% else %}far{% endif %} fa-thumbs-up transition-transform duration-200"></i>
+            <span class="text-xs like-count font-medium">{{ comment.likes_count|default:0 }}</span>
+        </button>
+
+        <span class="text-border text-sm mx-1">·</span>
+
+        <!-- Botón Dislike -->
+        <button hx-post="{% url 'react_to_comment' comment.id %}"
+                hx-vals='{"reaction_type": -1}'
+                data-tooltip="{% if comment.has_dislike %}Quitar dislike{% else %}No me gusta{% endif %}"
+                class="dislike-btn relative flex items-center space-x-1 cursor-pointer focus:outline-none transition-all duration-200
+                       {% if comment.has_dislike %}text-danger active{% elif comment.any_reaction %}text-muted{% else %}text-text hover:text-danger{% endif %}">
+            <i class="{% if comment.has_dislike %}fas{% else %}far{% endif %} fa-thumbs-down transition-transform duration-200"></i>
+            <span class="text-xs dislike-count font-medium">{{ comment.dislikes_count|default:0 }}</span>
+        </button>
+    {% else %}
+        <!-- Botón Like (deshabilitado) -->
+        <button disabled
+                data-tooltip="Inicia sesión para reaccionar"
+                class="like-btn relative flex items-center space-x-1 opacity-50 cursor-not-allowed focus:outline-none text-muted">
+            <i class="far fa-thumbs-up"></i>
+            <span class="text-xs like-count">{{ comment.likes_count|default:0 }}</span>
+        </button>
+
+        <span class="text-border text-sm mx-1">·</span>
+
+        <!-- Botón Dislike (deshabilitado) -->
+        <button disabled
+                data-tooltip="Inicia sesión para reaccionar"
+                class="dislike-btn relative flex items-center space-x-1 opacity-50 cursor-not-allowed focus:outline-none text-muted">
+            <i class="far fa-thumbs-down"></i>
+            <span class="text-xs dislike-count">{{ comment.dislikes_count|default:0 }}</span>
+        </button>
+    {% endif %}
+</div>
+
+<!-- JavaScript para mejoras interactivas -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Añadir efectos a los botones de reacción
+    const reactionButtons = document.querySelectorAll('.like-btn:not(:disabled), .dislike-btn:not(:disabled)');
+    
+    reactionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Animación de clic
+            const icon = this.querySelector('i');
+            icon.style.transform = 'scale(1.3)';
+            
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Actualizar tooltip después de la respuesta HTMX
+            this.addEventListener('htmx:afterSwap', function() {
+                const isLike = this.classList.contains('like-btn');
+                const hasReaction = this.classList.contains('text-primary') || this.classList.contains('text-danger');
+                
+                this.setAttribute('data-tooltip', 
+                    isLike ? 
+                    (hasReaction ? 'Quitar like' : 'Me gusta') :
+                    (hasReaction ? 'Quitar dislike' : 'No me gusta')
+                );
+            });
+        });
+        
+        // Efecto hover persistente
+        button.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('active')) {
+                const icon = this.querySelector('i');
+                icon.style.transform = 'translateY(-2px)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('i');
+            icon.style.transform = '';
+        });
+    });
+    
+    // Inicializar tooltips para usuarios no autenticados
+    const disabledButtons = document.querySelectorAll('button:disabled[data-tooltip]');
+    disabledButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            // Mostrar tooltip especial para usuarios no autenticados
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fixed bg-surface text-text px-3 py-2 rounded-lg shadow-lg border border-border text-sm z-50';
+            tooltip.textContent = this.getAttribute('data-tooltip');
+            tooltip.id = 'auth-tooltip';
+            
+            const rect = this.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + window.scrollX}px`;
+            tooltip.style.top = `${rect.top + window.scrollY - 40}px`;
+            
+            document.body.appendChild(tooltip);
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            const tooltip = document.getElementById('auth-tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        });
+    });
+});
+</script>

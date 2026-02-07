@@ -1,0 +1,66 @@
+<!-- components/comment_content_fragment.html -->
+{% load poll_extras %}
+<div
+    x-data="{ expanded: false }"
+    class="{% if not comment.is_active %}opacity-60{% endif %} transition-colors duration-300"
+
+    {% if enable_polling|default:False and comment.image_status == "pending" %}
+        hx-get="{% url 'get_comment_status' comment.id %}"
+        hx-trigger="load delay:3s"
+        hx-target="this"
+        hx-swap="outerHTML"
+    {% endif %}
+>
+    
+    <div class="text-text break-words whitespace-pre-wrap">
+        <div x-show="!expanded" x-transition>
+            {{ comment.content|truncatewords:30|censurar|highlight_mentions|linebreaksbr|safe }}
+            
+            <div class="mt-2">
+                {% if comment.image_status == "safe" and comment.image %}
+                    <img src="{{comment.image.url}}" 
+                        alt="Imagen del comentario"
+                        class="comment-image-thumbnail cursor-pointer rounded-lg border border-muted"
+                        onclick="openImageModal('modal-{{ comment.id }}', '{{comment.image.url}}')">
+
+                {% elif comment.image_status == "pending" %}
+                    <div class="flex items-center space-x-2 p-3 bg-surface-dark rounded-lg border border-dashed border-muted/50">
+                        <svg class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-xs text-muted">Validando imagen...</span>
+                    </div>
+
+                {% elif comment.image_status == "nsfw" %}
+                    <div class="flex items-center space-x-2 p-2 bg-red-50 text-red-600 rounded border border-red-100 text-sm">
+                        <i class="fas fa-eye-slash"></i>
+                        <span>Imagen eliminada por contenido inapropiado</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if comment.content|wordcount > 30 %}
+            <button @click="expanded = true" 
+                    class="cursor-pointer text-primary text-sm hover:underline focus:outline-none ml-1 transition-all duration-200">
+                Mostrar más...
+            </button>
+            {% endif %}
+        </div>
+        
+        <div x-show="expanded" x-transition x-cloak>
+            {{ comment.content|censurar|highlight_mentions|linebreaksbr|safe }}
+            
+            {% if comment.image and comment.image_status == "safe" %}
+                <img src="{{comment.image.url}}" 
+                    class="comment-image-thumbnail mt-2"
+                    onclick="openImageModal('modal-{{ comment.id }}', '{{comment.image.url}}')">
+            {% endif %}
+            
+            <button @click="expanded = false" 
+                    class="text-primary text-sm hover:underline focus:outline-none ml-1 transition-all duration-200">
+                Mostrar menos
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+{% comment %} components/comments/comments_list.html {% endcomment %}
+
+{% for comment in comments %}
+    {% include "components/comment_item.html" with comment=comment enable_polling=False %}
+{% endfor %}
+
+{% include "components/comments/load_more_button.html" with is_htmx=True %}

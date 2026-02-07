@@ -1,0 +1,56 @@
+{% extends "base_auth.html" %}
+{% load i18n %}
+
+{% block title %}Confirmar Email{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center">
+    <!-- Icono de email -->
+    <div class="mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+    </div>
+
+    <!-- Título principal -->
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">
+        {% trans "Confirma tu dirección de email" %}
+    </h1>
+
+    <!-- Mensaje dinámico -->
+    <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-6">
+        {% if confirmation %}
+           
+            <p>
+                {% blocktrans with confirmation.email_address.email as email %}
+                Por favor confirma que <span class="font-semibold">{{ email }}</span> es una dirección válida para el usuario <span class="font-semibold">{{ user_display }}</span>.
+                {% endblocktrans %}
+            </p>
+        {% else %}
+            <p>
+                {% trans "Este enlace de confirmación ha expirado o es inválido." %}
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Botón de confirmación -->
+    {% if confirmation %}
+    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+        {% csrf_token %}
+        <button type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+            {% trans "Confirmar Email" %}
+        </button>
+    </form>
+    {% endif %}
+
+    <!-- Enlace alternativo -->
+    <div class="mt-6 text-sm text-gray-600">
+        <p>{% trans "¿Problemas con la confirmación?" %}</p>
+        <a href="{% url 'account_email' %}" 
+           class="text-blue-600 hover:underline">
+            {% trans "Solicitar nuevo enlace" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

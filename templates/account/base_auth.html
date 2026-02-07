@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Autenticación{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/stars.css' %}">
+    <style>
+        /* Estilos adicionales para asegurar que el contenido sea legible sobre las estrellas */
+        .auth-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Para hacer que el formulario sea semi-transparente si lo prefieres */
+        .auth-container.transparent {
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+    <!-- Canvas para las estrellas -->
+    <canvas id="starsCanvas" class="fixed top-0 left-0 w-full h-full"></canvas>
+    
+    <!-- Contenedor principal de autenticación -->
+    <div class="auth-container p-8 rounded-lg shadow-md w-full max-w-md mx-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/stars.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('id_password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (togglePassword && passwordInput && eyeIcon) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    // Cambiar entre icono de ojo abierto y cerrado
+                    if (type === 'password') {
+                        eyeIcon.innerHTML = `
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M13.875 18.825A10.001 10.001 0 0112 21c-5.523 0-10-4.477-10-10s4.477-10 10-10c1.5 0 2.925.314 4.25.875M15.75 9.75l-3.75 3.75m0 0l-3.75 3.75m3.75-3.75l3.75-3.75" />
+                        `;
+                    } else {
+                        eyeIcon.innerHTML = `
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        `;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

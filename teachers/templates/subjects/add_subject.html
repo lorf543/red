@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-background shadow-lg rounded-xl overflow-hidden border border-surface-100">
+        <!-- Encabezado -->
+        <div class="bg-background px-8 py-6 text-text">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Agregar Nueva Materia</h1>
+                    <p class="opacity-90 mt-1">Profesor: {{ teacher.full_name }}</p>
+                </div>
+                <div class="bg-white/10 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulario -->
+        <form method="POST" class="p-8 space-y-6">
+            {% csrf_token %}
+            
+            <!-- Mostrar mensajes -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="px-4 py-3 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Columna 1 -->
+                <div class="space-y-6">
+                    <!-- Nombre -->
+                    <div class="space-y-2">
+                        <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-muted-700">
+                            {{ form.name.label }} *
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="text-sm text-text-600">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    
+                    <!-- Créditos -->
+                    <div class="space-y-2">
+                        <label for="{{ form.credits.id_for_label }}" class="block text-sm font-medium text-muted-700">
+                            {{ form.credits.label }}
+                        </label>
+                        {{ form.credits }}
+                    </div>
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="space-y-6">
+                    <!-- Modalidad -->
+                    <div class="space-y-2">
+                        <label for="{{ form.modalidad.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.modalidad.label }}
+                        </label>
+                        {{ form.modalidad }}
+                    </div>
+                    
+                    <!-- Día -->
+                    <div class="space-y-2">
+                        <label for="{{ form.day.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.day.label }}
+                        </label>
+                        {{ form.day }}
+                    </div>
+                    
+                    <!-- Hora -->
+                    <div class="space-y-2">
+                        <label for="{{ form.hour.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.hour.label }}
+                        </label>
+                        {{ form.hour }}
+                        {% if form.hour.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.hour.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Descripción -->
+            <div class="space-y-2">
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.description.label }}
+                </label>
+                {{ form.description }}
+            </div>
+            
+            <!-- Profesor (oculto ya que viene de la URL) -->
+            <input type="hidden" name="teacher" value="{{ teacher.id }}">
+            
+            <!-- Botones -->
+            <div class="pt-6 border-t border-gray-200 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">
+                        Los campos marcados con * son obligatorios
+                    </p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{{request.META.HTTP_REFERER}}" 
+                       class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-colors shadow-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Guardar Materia
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para mejorar selects -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mejorar la apariencia de los selects
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.classList.add('form-select', 'block', 'w-full', 'rounded-md', 'border-gray-300', 'shadow-sm');
+    });
+    
+    // Mejorar la apariencia de los textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.classList.add('form-textarea', 'block', 'w-full', 'rounded-md', 'border-gray-300', 'shadow-sm');
+    });
+    
+    // Mejorar la apariencia de los inputs
+    const inputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+    inputs.forEach(input => {
+        input.classList.add('form-input', 'block', 'w-full', 'rounded-md', 'border-gray-300', 'shadow-sm');
+    });
+});
+</script>
+{% endblock %}

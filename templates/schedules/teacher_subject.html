@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Horario de {{ teacher.full_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Encabezado Mejorado -->
+    {% include "schedules/includes/header.html" %}
+
+    <!-- Tabla con Efectos Mejorados -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 border border-gray-100">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-blue-600 to-blue-700">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">Materia</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">Horario</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">Modalidad</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">Créditos</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    {% for subject in subjects %}
+                    <tr class="hover:bg-blue-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div>
+                                    <div class="text-1xl font-semibold text-black-500">{{ subject.name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ subject.subject_schedule }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ subject.modalidad }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                {{ subject.credits }} crédito{{ subject.credits|pluralize }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                            <div class="flex flex-col items-center justify-center py-6">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="mt-2 text-gray-600">No hay materias registradas</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sección de Comentarios Mejorada -->
+    {% include "schedules/includes/seccion_comentarios.html" %}
+
+
+    <!-- Botón de Volver Mejorado -->
+    <div  class="mt-6 flex justify-center">
+        <a  href="{% url 'schedule_list' %}" 
+           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-150 transform hover:-translate-y-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Volver a la lista de maestros
+        </a>
+    </div>
+</div>
+
+<script>
+// Script para exportar a Excel
+
+// Función para mostrar/ocultar formularios de respuesta
+function toggleReplyForm(formId) {
+    const form = document.getElementById(formId);
+    form.classList.toggle('hidden');
+    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+{% endblock %}

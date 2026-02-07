@@ -1,0 +1,191 @@
+<form 
+    id="commentForm"
+    method="post"
+    enctype="multipart/form-data" 
+    hx-post="{% url 'create_comment' %}"
+    hx-target="#commentsContainer"
+    hx-swap="afterbegin"
+    hx-encoding="multipart/form-data"
+    hx-on::after-request="
+        if(event.detail.xhr.status === 200 && event.detail.requestConfig.verb === 'post') {
+            this.reset();
+            resetCommentForm(); // Limpia la vista previa y altura
+        }
+    "
+    class="bg-surfacetive rounded-lg transition-shadow duration-200"
+>
+
+    {% csrf_token %}
+    
+    <div class="p-3">
+        <textarea 
+            name="content" 
+            id="commentTextarea"
+            enctype="multipart/form-data"
+            hx-encoding="multipart/form-data"
+            rows="5"
+            class="w-full bg-transparent  rounded p-2 text-text placeholder:text-muted resize-none focus:outline-none text-lg overflow-hidden" 
+            placeholder="¿Qué estás pensando?"
+            hx-trigger="mention-trigger from:body"
+            hx-get="{% url 'look_users' %}"
+            hx-target="#mentionsContainer"
+            hx-swap="innerHTML"
+            oninput="autoResize(this); checkMentionMode(event)"
+            onkeydown="handleTextareaKeydown(event)"
+            required
+        ></textarea>
+                <div id="mentionsContainer" class=""></div>
+        <div id="imagePreviewContainer" class="hidden mt-3 relative group w-fit">
+            <img id="imagePreview" src="" alt="Preview" class="max-h-48 rounded-lg border border-muted object-cover">
+            <button type="button" onclick="removeImage()" class="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center transition-colors">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-between px-3 py-2 border-t border-muted/20">
+        
+        <div class="flex items-center space-x-2 text-primary">
+            <input type="file" name="image" id="imageInput" accept="image/*" class="hidden" onchange="handleFileSelect(this)">
+            
+            <button type="button" onclick="document.getElementById('imageInput').click()" 
+                    class="p-2 rounded-full hover:bg-primary/10 transition-colors" title="Añadir imagen">
+                <i class="far fa-image text-lg"></i>
+            </button>
+            
+            <button type="button" id="emojiBtn" class="p-2 rounded-full hover:bg-primary/10 transition-colors relative" title="Emojis">
+                <i class="far fa-smile text-lg"></i>
+            </button>
+            <p class="text-sm text-text">@ Mencionar usuario</p>
+        </div>
+
+        <button type="submit" 
+                class="cursor-pointer bg-primary text-background px-4 py-1.5 rounded-full font-medium hover:bg-primary/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            Publicar
+        </button>
+    </div>
+
+    <div id="commentErrorContainer" class="px-4 pb-2 text-danger text-sm"></div>
+
+</form>
+
+<script type="module">
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+</script>
+
+<style>
+    /* Estilo para el popup de emojis */
+    .emoji-picker-popover {
+        position: absolute;
+        z-index: 50;
+        display: none;
+    }
+    .emoji-picker-popover.active {
+        display: block;
+    }
+</style>
+
+<div id="emojiPickerPopover" class="emoji-picker-popover">
+    <emoji-picker></emoji-picker>
+</div>
+
+
+<script>
+
+
+        
+    // 1. Auto-resize del Textarea
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+        if(textarea.value === '') textarea.style.height = 'auto';
+    }
+
+    // 2. Manejo de Imágenes (Selección por botón)
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) {
+            showPreview(input.files[0]);
+        }
+    }
+
+    // 3. Manejo de Pegar (Paste) Imágenes
+    document.getElementById('commentTextarea').addEventListener('paste', function(e) {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let index in items) {
+            const item = items[index];
+            if (item.kind === 'file' && item.type.includes('image/')) {
+                const blob = item.getAsFile();
+                
+                // Asignar el archivo al input hidden manualmente
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(blob);
+                document.getElementById('imageInput').files = dataTransfer.files;
+                
+                showPreview(blob);
+            }
+        }
+    });
+
+    // Mostrar Previsualización
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Quitar Imagen
+    function removeImage() {
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imagePreview').src = '';
+        document.getElementById('imagePreviewContainer').classList.add('hidden');
+    }
+
+    // Resetear formulario completo (llamado por HTMX)
+    function resetCommentForm() {
+        const textarea = document.getElementById('commentTextarea');
+        textarea.style.height = 'auto';
+        removeImage();
+    }
+
+    // 4. Lógica de Emojis
+    const emojiBtn = document.getElementById('emojiBtn');
+    const pickerPopover = document.getElementById('emojiPickerPopover');
+    const picker = document.querySelector('emoji-picker');
+    const textarea = document.getElementById('commentTextarea');
+
+    // Posicionar y mostrar picker (usando Popper.js si lo tienes, o manual)
+    if(emojiBtn && picker) {
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar cierre inmediato
+            
+            const rect = emojiBtn.getBoundingClientRect();
+            pickerPopover.style.top = (window.scrollY + rect.top + 40) + 'px';
+            pickerPopover.style.left = (window.scrollX + rect.left) + 'px';
+            
+            pickerPopover.classList.toggle('active');
+        });
+
+        // Insertar emoji
+        picker.addEventListener('emoji-click', event => {
+            const emoji = event.detail.unicode;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            
+            textarea.value = text.slice(0, start) + emoji + text.slice(end);
+            textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+            textarea.focus();
+            pickerPopover.classList.remove('active');
+        });
+
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (!pickerPopover.contains(e.target) && e.target !== emojiBtn) {
+                pickerPopover.classList.remove('active');
+            }
+        });
+    }
+</script>

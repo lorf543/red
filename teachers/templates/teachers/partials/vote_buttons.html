@@ -1,0 +1,92 @@
+<div id="vote-buttons-{{ teacher.id }}" class="flex flex-wrap gap-2 my-4">
+  {% for code, label in teacher.votes.model.VOTE_CHOICES %}
+    <form hx-post="{% url 'vote_teacher_2' teacher.id %}" 
+          hx-target="#vote-buttons-{{ teacher.id }}" 
+          hx-swap="outerHTML" 
+          hx-indicator="#loading-{{ teacher.id }}-{{ code }}"
+          class="inline">
+      
+      <input type="hidden" name="vote_type" value="{{ code }}">
+
+      <button type="submit" 
+        class="group relative px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center space-x-2 min-w-[100px] justify-center
+               {% if current_vote == code %}
+                 bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg ring-2 ring-blue-300 ring-opacity-50
+               {% else %}
+                 bg-background border-2 border-surface text-muted hover:border-gray-300 hover:shadow-md
+               {% endif %}"
+        title="{{ label }}">
+
+        <div class="flex flex-col items-center">
+          <span class="text-xs font-medium opacity-75">{{ label|capfirst }}</span>
+
+          <div class="relative">
+            <span id="count-{{ teacher.id }}-{{ code }}" 
+                  class="inline-flex items-center justify-center min-w-[24px] h-6 text-sm font-bold rounded-full transition-all duration-500">
+              {% if code == 1 %}{{ votes_count.guagua }}
+              {% elif code == 2 %}{{ votes_count.te_va_a_quemar }}
+              {% elif code == 3 %}{{ votes_count.se_aprende }}
+              {% elif code == 4 %}{{ votes_count.vago }}
+              {% else %}0{% endif %}
+            </span>
+
+            
+            <!-- Loader -->
+            <div id="loading-{{ teacher.id }}-{{ code }}" 
+                 class="htmx-indicator absolute inset-0 flex items-center justify-center">
+              <div class="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute inset-0 rounded-lg bg-blue-400 opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
+      </button>
+    </form>
+  {% endfor %}
+</div>
+
+<style>
+/* Animaciones UX */
+@keyframes vote-success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes counter-update {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); background-color: #10b981; color: white; }
+  100% { transform: scale(1); }
+}
+
+.counter-updated {
+  animation: counter-update 0.6s ease-in-out;
+}
+
+.vote-selected {
+  animation: vote-success 0.5s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  #vote-buttons-{{ teacher.id }} {
+    justify-content: center;
+  }
+  #vote-buttons-{{ teacher.id }} button {
+    min-width: 80px;
+    padding: 0.5rem;
+  }
+}
+</style>
+
+<script>
+/* Efecto rebote cuando cambian los votos */
+document.body.addEventListener("htmx:afterSwap", function(evt) {
+    if (evt.detail.target && evt.detail.target.id.startsWith("vote-buttons-")) {
+        const counters = evt.detail.target.querySelectorAll("span[id^='count-']");
+        counters.forEach(c => {
+            c.classList.add("counter-updated");
+            setTimeout(() => c.classList.remove("counter-updated"), 600);
+        });
+    }
+});
+</script>

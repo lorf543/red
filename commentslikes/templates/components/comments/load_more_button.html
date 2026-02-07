@@ -1,0 +1,16 @@
+<div id="load-more-comments-container" 
+     class="text-center pt-4"
+     {% if is_htmx %}hx-swap-oob="true"{% endif %}> {% if page_obj.has_next %}
+        <button hx-get="{% url 'load_more_comments' %}?page={{ page_obj.next_page_number }}"
+                hx-target="#commentsContainer"
+                hx-swap="beforeend"
+                class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content px-6">
+            Cargar más comentarios
+            <span class="htmx-comments-indicator hidden ml-2">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+        </button>
+    {% else %}
+        <p class="text-text text-sm italic">No hay más comentarios.</p>
+    {% endif %}
+</div>

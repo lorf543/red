@@ -1,0 +1,17 @@
+<!-- components/replies/replies_list.html -->
+{% for reply in replies %}
+    {% include "components/reply_item.html" with comment=reply %}
+{% endfor %}
+
+{% if has_next %}
+    <div id="more-replies-{{ replies.0.parent.id }}" class="pt-2">
+        <button hx-get="{% url 'load_more_replies' replies.0.parent.id %}?page={{ replies.next_page_number }}"
+                hx-target="#more-replies-{{ replies.0.parent.id }}"
+                hx-swap="outerHTML"
+                class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            Mostrar más
+        </button>
+    </div>
+{% else %}
+    <div id="more-replies-{{ replies.0.parent.id }}"></div> <!-- botón removido -->
+{% endif %}

@@ -1,0 +1,567 @@
+{% load static %}
+{% load poll_extras %}
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if request.user %}
+        <title>ITLAsocial | {{ request.user }}</title>
+    {% else %}
+        <title>ITLAsocial</title>
+    {% endif %}
+
+    <!-- CSS y favicon -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="stylesheet" href="{% static 'css/themes.css' %}">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- SEO Básico -->
+    <meta name="description" content="ITLAsocial es una red social para estudiantes del ITLA donde puedes compartir, comentar y conectar con otros.">
+    <meta name="language" content="es-DO">
+    <meta name="geo.placename" content="República Dominicana">
+    <meta name="geo.region" content="DO">
+    <meta name="author" content="lorf543">
+    <meta name="date" content="2025-08-05">
+    <meta name="lastmod" content="2025-08-22">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://itlasocial.org/">
+
+    <!-- Open Graph (Facebook, WhatsApp) -->
+    <meta property="og:site_name" content="ITLAsocial">
+    <meta property="og:title" content="ITLAsocial - Red Social para estudiantes del ITLA">
+    <meta property="og:description" content="Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://itlasocial.org/">
+    <meta property="og:image" content="https://itlasocial.org/static/img/preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ITLAsocial - Red Social para estudiantes del ITLA">
+    <meta name="twitter:description" content="Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.">
+    <meta name="twitter:image" content="https://itlasocial.org/static/img/preview.png">
+    <meta name="twitter:site" content="@itlasocial">
+
+    <!-- Datos estructurados JSON-LD -->
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "ITLAsocial",
+        "url": "https://itlasocial.org/",
+        "description": "Red social para estudiantes del ITLA.",
+        "publisher": {
+            "@type": "Organization",
+            "name": "ITLAsocial"
+        }
+        }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMM8QWLH0R"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-CMM8QWLH0R');
+    </script>
+</head>
+
+
+<script>
+    // Inicializar tema desde localStorage al cargar
+    (function () {
+        const savedTheme = localStorage.getItem("theme") || "default";
+        if (savedTheme && savedTheme !== "default") {
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        }
+    })();
+
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: 'var(--color-primary)',
+                    secondary: 'var(--color-secondary)',
+                    accent: 'var(--color-accent)',
+                    background: 'var(--color-background)',
+                    text: 'var(--color-text)',
+                    surface: 'var(--color-surface)',  // Agregado
+                    muted: 'var(--color-muted)',      // Agregado
+                    success: 'var(--color-success)',  // Agregado
+                    warning: 'var(--color-warning)',  // Agregado
+                    danger: 'var(--color-danger)',    // Agregado
+                    info: 'var(--color-info)',        // Agregado
+                }
+            }
+        }
+    }
+</script>
+
+
+
+<body  class="font-sans min-h-screen transition-colors duration-300"
+   >
+
+    <!-- Navbar -->
+        {% include "includes/navbar.html" %}
+
+
+    <!-- Main Content -->
+    <main class="" id="main-content">
+
+            {% if messages %}
+                <div class="space-y-2 mb-4">
+                    {% for message in messages %}
+                        <div id="message" role="alert" class="alert p-4 rounded text-white {% if message.tags == 'success' %}alert alert-success{% elif message.tags == 'error' %}alert-error{% else %}bg-gray-600{% endif %}">
+                        <span> {{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        {% block content %}{% endblock %}
+
+        
+    </main>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+    <!-- Hyperscript -->
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+
+    <!-- jQuery (debe ir antes que DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--Alpine Js-->
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+
+    
+
+<script>
+
+
+
+document.body.addEventListener("htmx:targetError", function (e) {
+  console.error("HTMX targetError:", e.detail);
+});
+    
+// ---------------------- CSRF para HTMX ----------------------
+
+
+document.body.addEventListener('htmx:configRequest', (event) => {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    event.detail.headers['X-CSRFToken'] = csrfToken;
+});
+
+
+
+
+
+// Escuchar clicks en opciones de tema
+function attachThemeListeners() {
+    document.querySelectorAll(".theme-option").forEach(btn => {
+        btn.removeEventListener("click", btn._themeClickHandler); // limpiar si existe
+        btn._themeClickHandler = () => {
+            const theme = btn.dataset.theme;
+            if (theme === "default") {
+                document.documentElement.removeAttribute("data-theme");
+                localStorage.removeItem("theme");
+            } else {
+                document.documentElement.setAttribute("data-theme", theme);
+                localStorage.setItem("theme", theme);
+            }
+        };
+        btn.addEventListener("click", btn._themeClickHandler);
+    });
+}
+
+
+attachThemeListeners();
+
+
+document.body.addEventListener("htmx:afterSwap", attachThemeListeners);
+// ---------------------- Tabla de Maestros ----------------------
+
+{% comment %} function initTeachersTable() {
+    $('#maestrosTable').DataTable({
+        searchDelay: 500,
+        serverSide: true,
+        processing: true,
+        ordering: false,
+        searching: true, // Asegurar que está habilitado
+        destroy: true,
+        language: {
+            search: "Buscar:",
+            searchPlaceholder: "Nombre o área...",
+            zeroRecords: "No se encontraron resultados",
+            processing: "Procesando...",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0 a 0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            lengthMenu: "Mostrar _MENU_ registros",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            }
+        },
+        ajax: {
+            url: "{% url 'teachers_data' %}",
+            type: 'GET',
+            data: function (d) {
+                // Asegurar que los parámetros se envíen correctamente
+                d.search = d.search || {};
+                d.search.value = d.search.value || '';
+            }
+        },
+        columns: [
+            { 
+                data: 'full_name',
+                className: 'font-medium text-gray-900'
+            },
+            { 
+                data: 'guagua_votes',
+                className: 'text-center'
+            },
+            { 
+                data: 'te_va_a_quemar_votes',
+                className: 'text-center'
+            },
+            { 
+                data: 'se_aprende_votes',
+                className: 'text-center'
+            },
+            { 
+                data: 'vago_votes',
+                className: 'text-center'
+            },
+            { 
+                data: 'acciones', 
+                orderable: false, 
+                searchable: false,
+                className: 'text-right'
+            }
+        ],
+        createdRow: function(row, data, dataIndex) {
+            $(row).addClass('hover:bg-gray-50 transition-colors');
+            $('td', row).addClass('px-6 py-2 whitespace-nowrap');
+        },
+        responsive: true,
+        initComplete: function() {
+            // Agregar evento personalizado para el input de búsqueda
+            var api = this.api();
+            $('input[type="search"]', api.table().container())
+                .off('keyup change') // Remover eventos previos
+                .on('keyup change', function(e) {
+                    if (e.keyCode === 27) { // Tecla ESC
+                        $(this).val('');
+                    }
+                    api.search(this.value).draw();
+                });
+        }
+    });
+}
+ {% endcomment %}
+
+function initTeachersTable() {
+    $('#maestrosTable').DataTable({
+
+    })
+
+}
+
+document.addEventListener("DOMContentLoaded", initTeachersTable);
+function initTeachersTable() {
+    $('#maestrosTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ profesores",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ profesores",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            }
+        },
+        columns: [
+            { width: "30%" },  // Nombre
+            { width: "10%" },  // Guagua
+            { width: "10%" },  // Te va a quemar
+            { width: "10%" },  // Se aprende
+            { width: "10%" },  // Vago
+
+        ]
+    });
+}
+
+// ---------------------- Tabla de Materias ----------------------
+
+$(document).ready(function() {
+    $('#subjectsTable').DataTable({
+        searchDelay: 500,
+        serverSide: true,
+        processing: true,
+        ordering: false,
+        ajax: {
+            url: "{% url 'subjects_data' %}",
+            type: "GET",
+        },
+        columns: [
+            { data: 'name' },
+            { data: 'teacher' },
+            { data: 'modalidad' },
+            { data: 'schedule' },
+            { data: 'guagua_votes' },
+            { data: 'te_va_a_quemar_votes' },
+            { data: 'se_aprende_votes' },
+            { data: 'vago_votes' },
+            { data: 'total_votes' },
+        ],
+        responsive: true
+    });
+});
+
+
+// ---------------------- Menciones ----------------------
+
+// Mejoras al JS existente
+let mentionMode = false;
+let selectedMentionIndex = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.mention-user')) {
+            e.preventDefault();
+            const username = e.target.closest('.mention-user').getAttribute('data-username');
+            insertMention(username);
+        }
+    });
+});
+
+function insertMention(username) {
+    const textarea = document.getElementById('commentTextarea');
+    const mentionsContainer = document.getElementById('mentionsContainer');
+    if (!textarea || !mentionsContainer) return;
+
+    // Reemplazar @ parcial con mención completa
+    textarea.value = textarea.value.replace(/@\w*$/, '@' + username + ' ');
+    mentionsContainer.innerHTML = '';
+    mentionMode = false;
+    selectedMentionIndex = 0;
+    
+    // Focus y mover cursor al final
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    
+    // Auto-resize si existe la función
+    if (typeof autoResize === 'function') {
+        autoResize(textarea);
+    }
+}
+
+function handleTextareaKeydown(event) {
+    const textarea = event.target;
+    const mentionsContainer = document.getElementById('mentionsContainer');
+    const mentions = mentionsContainer.querySelectorAll('.mention-user');
+
+    // Si hay menciones visibles
+    if (mentionMode && mentions.length > 0) {
+        // Navegación con flechas
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            selectedMentionIndex = (selectedMentionIndex + 1) % mentions.length;
+            updateMentionSelection(mentions);
+            return;
+        }
+        
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            selectedMentionIndex = (selectedMentionIndex - 1 + mentions.length) % mentions.length;
+            updateMentionSelection(mentions);
+            return;
+        }
+        
+        // Seleccionar con Enter
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const selectedUser = mentions[selectedMentionIndex];
+            if (selectedUser) {
+                insertMention(selectedUser.getAttribute('data-username'));
+            }
+            return;
+        }
+    }
+
+    // Cerrar con Escape o Backspace
+    if ((event.key === 'Backspace' || event.key === 'Delete') && !textarea.value.match(/@\w*$/)) {
+        mentionsContainer.innerHTML = '';
+        mentionMode = false;
+        selectedMentionIndex = 0;
+    }
+
+    if (event.key === 'Escape') {
+        mentionsContainer.innerHTML = '';
+        mentionMode = false;
+        selectedMentionIndex = 0;
+    }
+}
+
+function updateMentionSelection(mentions) {
+    mentions.forEach((mention, index) => {
+        if (index === selectedMentionIndex) {
+            mention.classList.add('bg-primary/15');
+            mention.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else {
+            mention.classList.remove('bg-primary/15');
+        }
+    });
+}
+
+function checkMentionMode(event) {
+    const textarea = event.target;
+    const match = textarea.value.match(/@\w*$/);
+
+    if (match) {
+        if (!mentionMode) {
+            mentionMode = true;
+            selectedMentionIndex = 0;
+        }
+        textarea.dispatchEvent(new CustomEvent('mention-trigger', { bubbles: true }));
+    } else {
+        mentionMode = false;
+        selectedMentionIndex = 0;
+        document.getElementById('mentionsContainer').innerHTML = '';
+    }
+}
+// ---------------------- Mensajes (auto ocultar) ----------------------
+
+function autoHideMessages() {
+    const messages = document.querySelectorAll('#message');
+    if (messages.length > 0) {
+        setTimeout(function() {
+            messages.forEach(function(msg) {
+                msg.style.display = 'none';
+            });
+        }, 7000);
+    }
+}
+
+// Ejecutar al cargar
+document.addEventListener('DOMContentLoaded', autoHideMessages);
+
+// Ejecutar después de cada actualización HTMX
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    autoHideMessages();
+});
+
+// ---------------------- Comentarios: scroll al crear ----------------------
+
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    // Auto-scroll al nuevo comentario si fue creado exitosamente
+    if (evt.detail.successful && evt.detail.requestConfig.path === '/comments/create/') {
+        const response = JSON.parse(evt.detail.xhr.responseText);
+        if (response.status === 'success') {
+            const newComment = document.getElementById(`comment-${response.comment_id}`);
+            if (newComment) {
+                newComment.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }
+});
+
+
+// ---------------------- Responder comentarios ----------------------
+
+function toggleReplyForm(commentId) {
+    const form = document.getElementById(`reply-form-${commentId}`);
+    if (form) {
+        form.classList.toggle('hidden');
+        if (!form.classList.contains('hidden')) {
+            setTimeout(() => {
+                const textarea = form.querySelector('textarea');
+                if (textarea) textarea.focus();
+            }, 100);
+        }
+    }
+}
+
+
+// ---------------------- Reacciones a comentarios ----------------------
+
+async function reactToComment(commentId, reactionType) {
+    try {
+        const response = await fetch(`{% url 'react_to_comment' 0 %}`.replace('0', commentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({
+                reaction_type: reactionType
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+
+        const data = await response.json();  // ¡Faltaba esta línea crítica!
+        
+        // Actualizar la UI
+        const container = document.querySelector(`.reaction-container[data-comment-id="${commentId}"]`);
+        if (container) {
+            const likeCount = container.querySelector('.like-count');
+            const dislikeCount = container.querySelector('.dislike-count');
+            
+            if (likeCount) likeCount.textContent = data.likes_count;
+            if (dislikeCount) dislikeCount.textContent = data.dislikes_count;
+            
+            // Actualizar estilos de botones
+            const likeBtn = container.querySelector('.like-btn i');
+            const dislikeBtn = container.querySelector('.dislike-btn i');
+            
+            likeBtn.className = data.user_reaction === 1 
+                ? 'fas fa-thumbs-up text-blue-500' 
+                : 'far fa-thumbs-up';
+                
+            dislikeBtn.className = data.user_reaction === -1 
+                ? 'fas fa-thumbs-down text-blue-500' 
+                : 'far fa-thumbs-down';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('No se pudo registrar tu reacción. Intenta nuevamente.');
+    }
+}
+
+</script>
+
+
+</body>
+</html>

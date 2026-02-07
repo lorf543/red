@@ -1,0 +1,379 @@
+<!--components/comment_item.html-->
+{% load poll_extras %}
+
+<style>
+  .delete-btn:hover i {
+    color: var(--color-danger, #dc2626) !important;
+  }
+  
+  .btn {
+    cursor: pointer;
+  }
+  
+  /* Estilos específicos para el comentario */
+  .comment-content a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  
+  .comment-content a:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+  
+  /* Mobile-specific fixes */
+  @media (max-width: 640px) {
+    .comment-content {
+      max-width: calc(100vw - 3rem);
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    .replies-container {
+      margin-left: 0.5rem;
+      padding-left: 0.75rem;
+      border-left-width: 2px;
+    }
+    
+    .comment-actions {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .moderation-controls {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+  
+  /* Ensure content doesn't overflow */
+  .comment-wrapper {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Better mobile button sizing */
+  @media (max-width: 480px) {
+    .comment-button {
+      padding: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .comment-avatar {
+      width: 2rem;
+      height: 2rem;
+      flex-shrink: 0;
+    }
+    
+    .comment-meta {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* Modal Styles */
+  .image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .image-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content-wrapper {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    animation: zoomIn 0.3s ease;
+  }
+
+  .modal-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: #fff;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .modal-close:hover {
+    transform: scale(1.2);
+  }
+
+  .comment-image-thumbnail {
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    margin-top: 0.5rem;
+  }
+
+  .comment-image-thumbnail:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes zoomIn {
+    from { 
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to { 
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .modal-close {
+      top: -35px;
+      font-size: 28px;
+    }
+    
+    .modal-content-wrapper {
+      max-width: 95%;
+      max-height: 95%;
+    }
+  }
+</style>
+
+<div class="comment-wrapper bg-surface text-text rounded-lg p-3 sm:p-4 shadow-comment mt-3 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
+    id="comment-{{ comment.id }}">
+  
+  <div class="flex space-x-2 sm:space-x-3">
+    <!-- User Avatar -->
+    <div class="flex-shrink-0">
+      {% if comment.user.profile.profile_picture %}
+        <img src="{{ comment.user.profile.profile_picture.url }}" 
+            alt="Perfil de {{ comment.user.username }}" 
+            class="comment-avatar w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full border-2 border-surface">
+      {% else %}
+        <div class="comment-avatar w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-primary-content border-2 border-surface flex items-center justify-center font-medium text-sm">
+          {{ comment.user.profile.get_profile_initials }}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Comment Content -->
+    <div class="flex-1 min-w-0 comment-content">
+      <!-- Comment Header -->
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
+        <div class="flex-1 min-w-0">
+          {% if user.is_authenticated %}
+            <div class="comment-meta flex flex-wrap items-center gap-1 text-sm">
+              <a href="{% url 'profile' comment.user.profile.slug %}" 
+                class="text-primary hover:text-primary-dark hover:underline font-medium truncate transition-colors">
+                {{ comment.user.username }}
+              </a>
+              {% if comment.teacher %}
+                <span class="text-muted">•</span>
+                <a href="{% url 'teacher_detail' comment.teacher.slug %}" 
+                  class="font-bold text-accent hover:text-accent-dark hover:underline truncate transition-colors">
+                  {{ comment.teacher }}
+                </a>
+              {% endif %}
+              <span class="text-muted text-xs ml-2 sm:ml-2 whitespace-nowrap">
+                {{ comment.created_at|timesince }} atrás
+              </span>
+            </div>
+          {% else %}
+            <div class="comment-meta flex justify-between items-center">
+              <span class="text-primary font-medium">{{ comment.user.username }}</span>
+              <span class="text-muted text-xs">{{ comment.created_at|timesince }} atrás</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Actions: Delete/Update -->
+        <div class="flex-shrink-0">
+          {% include "partials/delete_update_buttons.html" %}
+        </div>
+      </div>
+
+      <!-- Moderation Controls -->
+      {% if user.is_staff %}
+        <div class="moderation-controls flex items-center gap-2 mt-2">
+          <button hx-post="{% url 'toggle_moderate' comment.id %}"
+                  hx-target="#moderation-status-{{ comment.id }}"
+                  class="comment-button flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors
+                        {% if comment.is_active %}bg-warning/20 text-warning hover:bg-warning/30
+                        {% else %}bg-success/20 text-success hover:bg-success/30{% endif %}">
+            {% if comment.is_active %}
+              <i class="fas fa-eye-slash"></i> 
+              <span class="hidden sm:inline">Ocultar</span>
+            {% else %}
+              <i class="fas fa-eye"></i> 
+              <span class="hidden sm:inline">Mostrar</span>
+            {% endif %}
+          </button>
+          <span id="moderation-status-{{ comment.id }}" class="text-muted italic text-xs">
+            {% if not comment.is_active %}(Moderado por {{ comment.moderated_by.username }})  {% endif %} 
+          </span>
+        </div>
+      {% endif %}
+
+      <!-- Comment Content -->
+      <div class="mt-2">
+        {% if not comment.is_active %}
+          <span class="inline-block bg-accent/20 text-accent text-xs px-2 py-1 rounded">
+            <i class="fas fa-ban"></i> Comentario moderado
+          </span>
+        {% else %}
+          <div class="mb-2">
+            <p class="text-xs text-accent">
+              <a href="{% url 'politicas' %}" class="hover:underline hover:text-accent-dark transition-colors">
+                Políticas sobre comentarios
+              </a>
+            </p>
+          </div>
+          <div class="prose prose-sm max-w-none" id="comment-content-{{ comment.id }}">
+              {% include "components/comment_content_fragment.html" %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Reaction Buttons -->
+      <div class="comment-actions flex items-center gap-3 mt-3 text-sm">
+        {% include "partials/reaction_buttons.html" with comment=comment likes_count=comment.likes_count dislikes_count=comment.dislikes_count user_reaction=comment.user_reaction %} 
+        
+        <!-- Reply Button -->
+        {% if user.is_authenticated %}
+          <button onclick="toggleReplyForm({{ comment.id }})"
+                  class="comment-button cursor-pointer  flex items-center gap-1 text-primary hover:text-primary-dark transition-colors duration-300"
+                  aria-label="Responder al comentario {{ comment.id }}">
+            <i class="far fa-comment text-sm"></i>
+            <span class="text-xs ml-2">{{ comment.replies.count }}</span>
+            <span class="hidden sm:inline text-xs ml-1">Responder</span>
+          </button>
+        {% endif %}
+      </div>
+
+      <!-- Reply Form (Hidden by default) -->
+      <div id="reply-form-{{ comment.id }}" class="hidden mt-3">
+        <form hx-post="{% url 'create_reply' comment.id %}"
+              hx-target="#replies-{{ comment.id }}"
+              hx-swap="afterbegin"
+              _="on htmx:afterRequest reset() me"
+              class="space-y-3">
+          {% csrf_token %}
+          <textarea name="content"
+                    class="commentBox w-full border border-primary rounded-lg p-3 text-sm bg-surface text-text placeholder:text-muted transition-colors duration-300 resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Escribe tu respuesta..."
+                    rows="3"
+                    required></textarea>
+          <div class="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+            <button type="button"
+                    onclick="toggleReplyForm({{ comment.id }})"
+                    class="comment-button px-4 py-2 text-sm text-text hover:text-primary border border-border rounded transition-colors duration-300">
+              Cancelar
+            </button>
+            <button type="submit"
+                    class="comment-button px-4 py-2 bg-primary text-primary-content text-sm rounded hover:bg-primary-dark transition-colors duration-300">
+              Responder
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Replies Section -->
+      <div id="replies-{{ comment.id }}" class="replies-container mt-4 pl-2 sm:pl-4 border-l-2 border-primary/30 space-y-3 transition-colors duration-300">
+        {% for reply in comment.preview_replies %}
+          {% include "components/reply_item.html" with comment=reply %}
+        {% empty %}
+          <p class="text-muted text-sm italic">No hay respuestas aún.</p>
+        {% endfor %}
+
+        <!-- Load More Replies -->
+        <div id="more-replies-{{ comment.id }}">
+          {% if comment.has_more_replies %}
+            <button hx-get="{% url 'load_more_replies' comment.id %}?page=2"
+                    hx-target="#more-replies-{{ comment.id }}"
+                    hx-swap="outerHTML"
+                    class="comment-button text-primary hover:text-primary-dark text-sm font-medium mt-2 flex items-center gap-1 transition-colors"
+                    aria-label="Mostrar más respuestas">
+              <i class="fas fa-chevron-down text-xs"></i>
+              <span>Mostrar más respuestas</span>
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal -->
+  {% if comment.image %}
+  <div id="modal-{{ comment.id }}" class="image-modal" onclick="closeImageModal('modal-{{ comment.id }}')">
+    <div class="modal-content-wrapper" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeImageModal('modal-{{ comment.id }}')">&times;</button>
+      <img src="{{comment.image.url}}" alt="Imagen del comentario" class="modal-image">
+    </div>
+  </div>
+  {% endif %}
+
+<script>
+  function toggleReplyForm(commentId) {
+    const form = document.getElementById(`reply-form-${commentId}`);
+    form.classList.toggle('hidden');
+    
+    if (!form.classList.contains('hidden')) {
+      const textarea = form.querySelector('textarea');
+      textarea.focus();
+    }
+  }
+
+  function openImageModal(modalId, imageSrc) {
+    const modal = document.getElementById(modalId);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+  }
+
+  function closeImageModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+  }
+
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      const activeModal = document.querySelector('.image-modal.active');
+      if (activeModal) {
+        activeModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+  });
+</script>

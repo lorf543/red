@@ -1,0 +1,69 @@
+# ----------------------------
+# MINIO CONFIGURATION (Producción)
+# ----------------------------
+MINIO_STORAGE_ENDPOINT = 'bucket-production-266a.up.railway.app'
+MINIO_STORAGE_USE_HTTPS = True
+MINIO_STORAGE_ACCESS_KEY = 'gBtQgZPpHsydReJpERGyBeKVENgl9AhI'
+MINIO_STORAGE_SECRET_KEY = 'EhBYnXGqsREgMyZ7jG3jSn5v1IEjvuq4kWeAKFoIBmK3KQcC'
+
+# Buckets existentes
+MINIO_STORAGE_MEDIA_BUCKET_NAME = 'media'
+MINIO_STORAGE_STATIC_BUCKET_NAME = 'static'
+
+# Auto-creación de buckets y políticas
+MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
+MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
+MINIO_STORAGE_AUTO_CREATE_MEDIA_POLICY = True
+MINIO_STORAGE_AUTO_CREATE_STATIC_POLICY = True
+
+# 🚨 Importante: NO usar presigned si quieres URL públicas
+MINIO_STORAGE_MEDIA_USE_PRESIGNED = False
+MINIO_STORAGE_STATIC_USE_PRESIGNED = False
+
+# URL base de MinIO
+MINIO_STORAGE_MEDIA_URL = f"https://{MINIO_STORAGE_ENDPOINT}/{MINIO_STORAGE_MEDIA_BUCKET_NAME}/"
+MINIO_STORAGE_STATIC_URL = f"https://{MINIO_STORAGE_ENDPOINT}/{MINIO_STORAGE_STATIC_BUCKET_NAME}/"
+
+# ----------------------------
+# STATIC & MEDIA CONFIG
+# ----------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+if DEBUG:
+    # Desarrollo: usa local
+    MEDIA_URL = "/media/"
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    # 🚀 Producción: media en MinIO, static en WhiteNoise
+    DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+    # Media URL correcta en MinIO
+    MEDIA_URL = MINIO_STORAGE_MEDIA_URL
+
+# WhiteNoise config
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = False  # en prod mejor desactivar
+WHITENOISE_MANIFEST_STRICT = False
+
+
+
+
+profile_picture = models.ImageField(
+    upload_to=user_avatar_path,  # Path personalizado
+    storage=minio_storage,       # Storage explícito optimizado
+    blank=True,
+    null=True,  # Permitir null en DB
+    validators=[validate_image_size,],
+        
+    help_text="Imagen de perfil (máx. 2MB, 2000x2000px)",
+    verbose_name="Foto de perfil"
+)

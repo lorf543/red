@@ -1,0 +1,83 @@
+<!-- mention_dropdown.html -->
+<div class="absolute left-0 bottom-full mb-2 w-80 max-w-full bg-surface border border-muted/30 rounded-lg shadow-2xl overflow-hidden z-50 animate-slideUp">
+    <!-- Header -->
+    <div class="px-3 py-2 bg-surface-dark border-b border-muted/20">
+        <p class="text-xs text-muted flex items-center gap-1.5">
+            <i class="fas fa-at text-primary"></i>
+            <span>Mencionar usuario</span>
+        </p>
+    </div>
+    
+    <!-- Lista de usuarios -->
+    <ul class="max-h-64 overflow-y-auto">
+        {% for user in users %}
+            <li class="mention-user cursor-pointer px-3 py-2.5 hover:bg-primary/10 transition-colors duration-150 border-b border-muted/10 last:border-b-0"
+                data-username="{{ user.username }}">
+                <div class="flex items-center gap-3">
+                    <!-- Avatar -->
+                    {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" 
+                             alt="{{ user.username }}"
+                             class="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-primary/30">
+                    {% else %}
+                        <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-medium text-xs flex-shrink-0">
+                            {{ user.profile.get_profile_initials }}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Info del usuario -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-text truncate">
+                            @{{ user.username }}
+                        </p>
+                        {% if user.get_full_name %}
+                            <p class="text-xs text-muted truncate">
+                                {{ user.get_full_name }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Indicador de selección -->
+                    <i class="fas fa-chevron-right text-xs text-muted/50"></i>
+                </div>
+            </li>
+        {% empty %}
+            <li class="px-4 py-3 text-sm text-muted text-center">
+                <i class="fas fa-search mb-2 text-2xl opacity-50"></i>
+                <p>No se encontraron usuarios</p>
+            </li>
+        {% endfor %}
+    </ul>
+    
+</div>
+
+<style>
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-slideUp {
+        animation: slideUp 0.2s ease-out;
+    }
+    
+    /* Scroll personalizado */
+    .mention-user::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .mention-user::-webkit-scrollbar-track {
+        background: var(--color-surface-dark);
+    }
+    
+    .mention-user::-webkit-scrollbar-thumb {
+        background: var(--color-muted);
+        border-radius: 3px;
+    }
+</style>

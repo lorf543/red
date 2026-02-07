@@ -1,0 +1,135 @@
+<form hx-post="{% url 'update_comment' comment.id %}"
+      hx-target="#comment-{{ comment.id }}"
+      hx-swap="outerHTML"
+      hx-indicator="#edit-spinner-{{ comment.id }}"
+      class="bg-surface rounded-lg shadow-comment p-4 mt-3 border border-border transition-all duration-300 animate-slideIn">
+
+    {% csrf_token %}
+    <div class="relative">
+        <textarea name="content"
+                  class="edit-comment-box w-full px-3 py-3 text-text border border-primary/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none bg-surface placeholder:text-muted"
+                  rows="4"
+                  placeholder="Edita tu comentario..."
+                  required>{{ comment.content }}</textarea>
+
+    </div>
+    
+    <!-- Información de edición -->
+    <div class="flex items-center justify-between mt-2 mb-3">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-edit text-xs text-muted"></i>
+            <span class="text-xs text-muted">Editando comentario</span>
+        </div>
+
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-4">
+        <button type="button"
+                hx-get="{% url 'comment_detail_partial' comment.id %}"
+                hx-target="#comment-{{ comment.id }}"
+                hx-swap="outerHTML"
+                class="cursor-pointer px-4 py-2.5 text-sm font-medium text-text hover:text-primary bg-surface hover:bg-surface-hover border border-border hover:border-primary/30 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1">
+            <i class="fas fa-times mr-1.5"></i>
+            Cancelar
+        </button>
+
+        <button type="submit"
+                class="cursor-pointer gap-2 px-4 py-2.5 text-sm font-medium text-primary-content bg-primary hover:bg-primary-dark rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 flex items-center justify-center min-w-[140px]">
+            <span id="edit-spinner-{{ comment.id }}" class="htmx-indicator hidden mr-2">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            <i class="fas fa-save ml-2"></i>
+            Guardar cambios
+        </button>
+    </div>
+    
+    <!-- Políticas de edición -->
+    <div class="mt-4 pt-3 border-t border-border">
+        <div class="flex mt-4 items-start gap-2">
+            <i class="fas fa-info-circle text-xs text-accent mt-0.5"></i>
+            <p class="text-xs text-muted">
+                Recuerda que las ediciones deben respetar las 
+                <a href="{% url 'politicas' %}" class="text-primary hover:text-primary-dark hover:underline">políticas de comentarios</a>. 
+            </p>
+        </div>
+    </div>
+</form>
+
+
+<style>
+    /* Estilos específicos para el formulario de edición */
+    .edit-comment-box {
+        min-height: 120px;
+        line-height: 1.5;
+    }
+
+    .edit-comment-box:focus {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    }
+
+    /* Animación de entrada */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+            max-height: 0;
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 500px;
+        }
+    }
+
+    .animate-slideIn {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    /* Scrollbar personalizado para el textarea */
+    .edit-comment-box::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .edit-comment-box::-webkit-scrollbar-track {
+        background: var(--color-surface);
+        border-radius: 4px;
+    }
+
+    .edit-comment-box::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 4px;
+    }
+
+    .edit-comment-box::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary);
+    }
+
+    /* Efecto de elevación en hover para botones */
+    button:hover {
+        transform: translateY(-1px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    /* Estilos para el contador de caracteres */
+    #edit-char-count-{{ comment.id }} {
+        font-variant-numeric: tabular-nums;
+        transition: color 0.2s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .edit-comment-box {
+            min-height: 100px;
+            font-size: 0.9375rem;
+        }
+        
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    }
+</style>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  ul.pagination {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      padding: 0;
+      list-style: none;
+  }
+  ul.pagination li {
+      display: inline;
+  }
+
+  /* Hover con resplandor blanco */
+  #subjectsTable tbody tr {
+      transition: all 0.2s ease;
+  }
+  #subjectsTable tbody tr:hover {
+      box-shadow: 0 0 10px rgba(255,255,255,0.3);
+      background-color: rgba(255,255,255,0.05);
+  }
+</style>
+
+<div class="max-w-7xl mx-auto px-4 py-8 bg-background text-text transition-colors duration-300">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold">Lista de Materias</h1>
+            <p class="text-sm text-gray-500">Todas las materias disponibles</p>
+        </div>
+        <a href="{% url 'teachers_list' %}" class="text-text bg-primary text-center rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+            Ver lista de profesores
+        </a>
+    </div>
+    
+    <div class="bg-background text-text shadow-sm rounded-xl overflow-hidden border border-gray-200 transition-colors duration-300">
+        <div class="overflow-x-auto">
+            <table id="subjectsTable" class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-background text-text">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Materia</th>
+                        <th class="px-6 py-3 text-left">Profesor</th>
+                        <th class="px-6 py-3 text-left">Modalidad</th>
+                        <th class="px-6 py-3 text-left">Horario</th>
+                        <th>🚍</th>
+                        <th>🔥</th>
+                        <th>📚</th>
+                        <th>😴</th>
+                        <th class="px-6 py-3 text-left">Total</th>
+                        {% comment %} <th class="px-6 py-3 text-right">Acciones</th> {% endcomment %}
+                    </tr>
+                </thead>
+                <tbody class="bg-background divide-y divide-gray-200 transition-colors duration-300">
+                    <!-- Aquí se llenará con HTMX o Django -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "account/base_auth.html" %}
+
+{% block head_title %}Cerrar sesión{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto  my-12 p-6 mt-10 rounded-lg shadow-md " style="
+    margin: 10% auto;
+">
+    <h1 class="text-2xl font-bold text-center mb-6 text-white">Cerrar sesión</h1>
+    
+    <div class="text-center mb-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+    </div>
+
+    <p class="text-center mb-6 text-white">
+        ¿Estás seguro de que deseas cerrar tu sesión?
+    </p>
+
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        
+        <div class="flex flex-col space-y-4">
+            <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300">
+                Sí, cerrar sesión
+            </button>
+            
+            <a href="{% url 'home' %}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition duration-300">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

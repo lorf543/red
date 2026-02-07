@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    ul.pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        padding: 0;
+        list-style: none;
+    }
+    
+    ul.pagination li {
+        display: inline;
+    }
+
+    /* Improved hover effects */
+    #maestrosTable tbody tr {
+        transition: all 0.3s ease;
+        background-color: var(--color-surface);
+    }
+    
+    #maestrosTable tbody tr:hover {
+        background-color: var(--color-surface-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Vote badge styles */
+    .vote-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+    
+    .vote-badge:hover {
+        transform: scale(1.1);
+        border-color: var(--color-border);
+    }
+
+    /* Category-specific badge colors */
+    .badge-guagua {
+        background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
+        color: var(--color-info);
+        border-color: color-mix(in srgb, var(--color-info) 20%, transparent);
+    }
+    
+    .badge-quemar {
+        background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+        color: var(--color-danger);
+        border-color: color-mix(in srgb, var(--color-danger) 20%, transparent);
+    }
+    
+    .badge-aprende {
+        background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+        color: var(--color-success);
+        border-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+    }
+    
+    .badge-vago {
+        background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
+        color: var(--color-muted);
+        border-color: color-mix(in srgb, var(--color-muted) 20%, transparent);
+    }
+
+    /* Teacher name styling */
+    .teacher-link {
+        font-weight: 500;
+        color: var(--color-text);
+        text-decoration: none;
+        transition: color 0.2s ease, transform 0.2s ease;
+        display: block;
+    }
+    
+    .teacher-link:hover {
+        color: var(--color-primary);
+        transform: translateX(2px);
+    }
+
+    /* Header improvements */
+    .header-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .header-emoji {
+        font-size: 1.5rem;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+    }
+    
+    .header-text {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-muted);
+    }
+
+    /* Table container improvements */
+    .table-container {
+        background: var(--color-surface);
+        border-radius: 0.75rem;
+        box-shadow: var(--comment-shadow);
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+    }
+    
+    .table-container:hover {
+        box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 6px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Table styling */
+    #maestrosTable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    #maestrosTable thead {
+        background-color: var(--color-surface-hover);
+    }
+    
+    #maestrosTable th {
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--color-text);
+        border-bottom: 2px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        background-color: var(--color-surface-hover);
+        z-index: 10;
+    }
+    
+    #maestrosTable td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text);
+    }
+    
+    #maestrosTable tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        background-color: var(--color-surface-hover);
+        border: 2px dashed var(--color-border);
+        border-radius: 0.75rem;
+    }
+    
+    .empty-state-icon {
+        color: var(--color-muted);
+        opacity: 0.5;
+    }
+
+    /* Button styling */
+    .subject-btn {
+        background-color: var(--color-primary);
+        color: var(--color-primary-content);
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+    
+    .subject-btn:hover {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    /* Department styling */
+    .teacher-department {
+        background-color: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+        color: var(--color-secondary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+        border: 1px solid color-mix(in srgb, var(--color-secondary) 20%, transparent);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .table-container {
+            border-radius: 0.5rem;
+        }
+        
+        #maestrosTable th,
+        #maestrosTable td {
+            padding: 0.75rem 1rem;
+        }
+        
+        .header-text {
+            font-size: 0.625rem;
+        }
+        
+        .vote-badge {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.75rem;
+        }
+        
+        .teacher-department {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.5rem;
+        }
+    }
+
+    /* Scrollbar styling */
+    .overflow-x-auto {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-muted) var(--color-surface);
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: var(--color-surface);
+        border-radius: 4px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background: var(--color-muted);
+        border-radius: 4px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary);
+    }
+</style>
+
+<div class="max-w-7xl mx-auto px-4 py-8 bg-background text-text transition-colors duration-300">
+
+    <!-- Encabezado -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-text mb-2">Lista de Maestros</h1>
+            <p class="text-sm text-muted">Gestión completa del personal docente</p>
+        </div>
+
+        <div class="flex gap-3">
+            <a  href="{% url 'subjects_list' %}" 
+               class="subject-btn flex items-center gap-2">
+                <i class="fas fa-book-open"></i>
+                <span>Listado de materias</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Tarjeta contenedora mejorada -->
+    <div class="table-container">
+        <!-- Tabla responsive -->
+        <div class="overflow-x-auto">
+            <table id="maestrosTable" class="min-w-full">
+                <thead>
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-sm font-semibold">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-chalkboard-teacher text-primary"></i>
+                                <span>Profesor</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-center">
+                            <div class="header-column">
+                                <span class="header-emoji">🚍</span>
+                                <span class="header-text">Guagua</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-center">
+                            <div class="header-column">
+                                <span class="header-emoji">🔥</span>
+                                <span class="header-text">Te va a quemar</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-center">
+                            <div class="header-column">
+                                <span class="header-emoji">📚</span>
+                                <span class="header-text">Se aprende</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-center">
+                            <div class="header-column">
+                                <span class="header-emoji">😴</span>
+                                <span class="header-text">Vago</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    {% for teacher in teachers %}
+                        <tr class="hover:bg-surface-hover transition-colors duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{% url 'teacher_detail' teacher.slug %}" class="teacher-link">
+                                    <div class="font-medium text-base text-text">
+                                        {{ teacher.full_name }}
+                                    </div>
+                                    {% if teacher.department %}
+                                        <div class="teacher-department mt-2">
+                                            <i class="fas fa-building text-xs mr-1"></i>
+                                            {{ teacher.department }}
+                                        </div>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <div class="vote-badge badge-guagua mx-auto">
+                                    {{ teacher.guagua_votes }}
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <div class="vote-badge badge-quemar mx-auto">
+                                    {{ teacher.te_va_a_quemar_votes }}
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <div class="vote-badge badge-aprende mx-auto">
+                                    {{ teacher.se_aprende_votes }}
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <div class="vote-badge badge-vago mx-auto">
+                                    {{ teacher.vago_votes }}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="empty-state flex flex-col items-center justify-center p-8 space-y-4">
+                                    <div class="empty-state-icon">
+                                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="text-lg font-semibold text-text mb-1">No hay profesores registrados</h3>
+                                        <p class="text-sm text-muted">Los profesores aparecerán aquí una vez que sean agregados al sistema</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination (si es necesario) -->
+    {% if is_paginated %}
+    <div class="mt-8 flex justify-center">
+        <div class="bg-surface border border-border rounded-lg p-4">
+            <ul class="pagination flex gap-2">
+                {% if page_obj.has_previous %}
+                    <li>
+                        <a href="?page={{ page_obj.previous_page_number }}" 
+                           class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                            &laquo; Anterior
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li>
+                            <span class="px-3 py-2 bg-primary text-primary-content rounded font-medium">
+                                {{ num }}
+                            </span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li>
+                            <a href="?page={{ num }}" 
+                               class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li>
+                        <a href="?page={{ page_obj.next_page_number }}" 
+                           class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                            Siguiente &raquo;
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript para mejoras interactivas -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Añadir animación de entrada a las filas
+        const rows = document.querySelectorAll('#maestrosTable tbody tr');
+        rows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+
+        // Tooltips para los badges de votos
+        const voteBadges = document.querySelectorAll('.vote-badge');
+        voteBadges.forEach(badge => {
+            const count = badge.textContent.trim();
+            badge.title = `${count} votos`;
+            
+            // Añadir animación al pasar el mouse
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1) rotate(5deg)';
+            });
+            
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Mejorar la navegación con teclado
+        const teacherLinks = document.querySelectorAll('.teacher-link');
+        teacherLinks.forEach((link, index) => {
+            link.setAttribute('tabindex', index + 1);
+            
+            link.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}  

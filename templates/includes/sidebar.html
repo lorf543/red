@@ -1,0 +1,96 @@
+<div class="md:col-span-1 space-y-4">
+    <!-- Últimos votos -->
+    <div class="bg-surface text-text rounded-lg p-4 shadow-comment transition-all duration-200 hover:shadow-lg hover:shadow-primary/10">
+        
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold text-text">Últimas valoraciones</h3>
+            <a href="{% url 'votes_analysis' %}" 
+               class="text-xs text-primary hover:text-primary-dark hover:underline transition-colors">
+                Ver todas
+            </a>
+        </div>
+        
+        <div class="space-y-4">
+            {% for vote in votes|slice:":5" %}
+            <div class="flex items-start gap-3 p-3 rounded-lg border border-border transition-all duration-200 hover:bg-surface-hover hover:border-primary/30 hover:shadow-sm">
+                <div class="avatar">
+                    <div class="w-10 rounded-full flex items-center justify-center">
+                        {% if vote.user.profile.profile_picture %}
+                            <img src="{{ vote.user.profile.profile_picture.url }}" 
+                                 alt="Perfil de {{ vote.user.username }}"
+                                 class="w-10 h-10 rounded-full object-cover border-2 border-surface">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium border-2 border-surface">
+                                {{ vote.user.profile.get_profile_initials }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                    <div class="mb-2">
+                        <h4 class="font-medium text-sm text-text truncate">
+                            <a href="{% url 'profile' vote.user.id %}" 
+                               class="hover:text-primary transition-colors">
+                                {{ vote.user.username }}
+                            </a>
+                        </h4>
+                        {% if vote.teacher %}
+                            <a href="{% url 'teacher_detail' vote.teacher.slug %}" 
+                               class="text-xs text-muted hover:text-primary transition-colors block truncate">
+                                {{ vote.teacher.full_name }}
+                            </a>
+                        {% elif vote.subject %}
+                            <span class="text-xs text-muted block truncate">
+                                {{ vote.subject.full_name }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex items-center gap-2 mb-2">
+                        <!-- Ícono del tipo de voto -->
+                        {% if vote.vote_type == 1 %}
+                            <span class="flex items-center gap-1 text-success text-sm">
+                                <i class="fas fa-thumbs-up text-xs"></i>
+                                <span>{{ vote.get_vote_type_display }}</span>
+                            </span>
+                        {% elif vote.vote_type == 2 %}
+                            <span class="flex items-center gap-1 text-danger text-sm">
+                                <i class="fas fa-thumbs-down text-xs"></i>
+                                <span>{{ vote.get_vote_type_display }}</span>
+                            </span>
+                        {% else %}
+                            <span class="flex items-center gap-1 text-warning text-sm">
+                                <i class="fas fa-minus text-xs"></i>
+                                <span>{{ vote.get_vote_type_display }}</span>
+                            </span>
+                        {% endif %}
+                        
+                        <!-- Badge para indicar si es profesor o materia -->
+                        {% if vote.teacher %}
+                            <span class="badge badge-xs bg-primary/10 text-primary border-primary/20">
+                                Profesor
+                            </span>
+                        {% elif vote.subject %}
+                            <span class="badge badge-xs bg-secondary/10 text-secondary border-secondary/20">
+                                Materia
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="text-xs text-muted flex items-center gap-1">
+                        <i class="far fa-clock text-xs"></i>
+                        <span>{{ vote.created_at|timesince }}</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-6 border border-dashed border-border rounded-lg">
+                <i class="fas fa-star text-3xl text-muted mb-3 opacity-50"></i>
+                <p class="text-muted">No hay valoraciones recientes</p>
+                <p class="text-xs text-muted mt-1">Sé el primero en votar</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

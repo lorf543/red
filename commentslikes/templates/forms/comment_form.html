@@ -1,0 +1,30 @@
+
+<div class="bg-background rounded-lg shadow p-4 mb-6">
+    <form id="commentForm"
+        method="post"
+        hx-post="{% url 'create_comment' %}"
+        hx-target="#commentsContainer"
+        hx-swap="afterbegin"
+          _="on htmx:afterRequest reset() me">
+        {% csrf_token %}
+        <textarea name="content" 
+                  class="commentBox w-full border border-surface-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-background-500" 
+                  placeholder="¿Qué estás pensando?"
+                  required></textarea>
+        <div class="flex justify-end mt-3">
+            <button type="submit" 
+                    class="cursor-pointer bg-background-600 text-text px-4 py-2 rounded-lg hover:bg-background-700">
+                Publicar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Contenedor para los comentarios -->
+<div id="commentsContainer" class="space-y-4">
+    {% for comment in comments with comment=comment enable_polling=False %}
+        {% include "components/comment_item.html" %}
+    {% endfor %}
+</div>
+
+

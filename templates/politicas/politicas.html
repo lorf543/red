@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+
+{% block content  %}
+
+<div class="bg-background rounded-lg shadow p-6 max-w-3xl mx-auto">
+  <div class="text-center mb-6">
+    <h1 class="text-2xl font-bold text-text mb-2">Políticas de Comentarios</h1>
+    <p class="text-text">Mantengamos esta plataforma como un espacio de diálogo respetuoso</p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Sección 1 -->
+    <div class="border-l-4 border-indigo-500 pl-4">
+      <h2 class="text-xl font-semibold mb-3">💬 El poder de tus palabras</h2>
+      <p class="text-text">
+        Esta plataforma te da voz para compartir tus experiencias académicas, pero con ese derecho viene la responsabilidad de usar tus palabras con cuidado. Los comentarios constructivos ayudan a mejorar, mientras que los ataques personales solo generan división.
+      </p>
+    </div>
+
+    <!-- Sección 2 - Importante -->
+    <div class="bg-background p-4 rounded-lg border border-yellow-200">
+      <h2 class="text-xl font-semibold mb-3 text-yellow-800">⚠️ Sobre los comentarios negativos</h2>
+      <p class="text-text mb-3">
+        Entendemos que a veces hay frustraciones, pero los maestros son personas como tú y como nosotros. Criticar métodos de enseñanza es válido, pero atacar a la persona no es aceptable.
+      </p>
+      <ul class="list-disc pl-5 space-y-2 text-text">
+        <li>Evita lenguaje ofensivo o grosero</li>
+        <li>No compartas información personal de nadie</li>
+        <li>Las quejas específicas son más útiles que los ataques generales</li>
+      </ul>
+    </div>
+
+    <!-- Sección 3 - Ejemplo visual -->
+    <div class="bg-background p-4 rounded-lg">
+      <h2 class="text-xl font-semibold mb-3">👍 Ejemplo de comentario constructivo</h2>
+      <div class="bg-background p-3 rounded border border-gray-200">
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-full bg-green-100 border border-green-300 flex items-center justify-center text-xs font-medium">JD</div>
+          <div>
+            <div class="flex items-center space-x-2 text-sm">
+              <span class="font-medium text-text">JuanD</span>
+              <span class="text-gray-500">· 2 días atrás</span>
+            </div>
+            <p class="text-sm mt-1">
+              "El profesor de matemáticas explica rápido los conceptos. Sería útil si pudiera dedicar más tiempo a resolver ejemplos prácticos en clase. He notado que varios compañeros tienen dificultades para seguir el ritmo."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 4 -->
+    <div class="bg-background p-4 rounded-lg">
+      <h2 class="text-xl font-semibold mb-3 text-indigo-800">✨ Mantengamos viva esta comunidad</h2>
+      <p class="text-text">
+        Esta plataforma es valiosa cuando la usamos para mejorar la experiencia educativa de todos. Tus comentarios pueden:
+      </p>
+      <div class="grid md:grid-cols-3 gap-4 mt-4">
+        <div class="bg-background p-3 rounded-lg text-center shadow-sm">
+          <div class="text-indigo-600 text-2xl mb-2">🔍</div>
+          <p class="text-sm font-medium">Identificar áreas de mejora</p>
+        </div>
+        <div class="bg-background  p-3 rounded-lg text-center shadow-sm">
+          <div class="text-indigo-600 text-2xl mb-2">🤝</div>
+          <p class="text-sm font-medium">Crear diálogo constructivo</p>
+        </div>
+        <div class="bg-background p-3 rounded-lg text-center shadow-sm">
+          <div class="text-indigo-600 text-2xl mb-2">🚀</div>
+          <p class="text-sm font-medium">Mejorar la educación para todos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Llamado a la acción -->
+    <div class="text-center mt-6">
+      <p class="font-medium text-gray-700 mb-4">¿Listo para contribuir respetuosamente?</p>
+      <a href="{% url 'home' %}" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+        Ver comentarios recientes
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock  %}

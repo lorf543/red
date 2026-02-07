@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white py-10 shadow">
+    <div class="container mx-auto text-center px-4">
+      <h1 class="text-4xl font-bold mb-2">Despliegue Django en Railway</h1>
+      <p class="text-lg">Tutorial interactivo con TailwindCSS y bloques de código estilo editor</p>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class=" flex flex-col gap-2 mt-2 container mx-auto py-12 px-4 space-y-12">
+
+    {% for step in steps %}
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition space-y-4">
+      <h3 class="text-xl font-bold">{{ step.title }}</h3>
+      <p>{{ step.description }}</p>
+
+      <button onclick="toggleCode('code{{ forloop.counter }}')"
+        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+        Mostrar código
+      </button>
+
+      <pre id="code{{ forloop.counter }}" class="hidden mt-4 rounded-lg overflow-x-auto shadow-inner">
+        <code class="language-python">{{ step.code }}</code>
+      </pre>
+    </div>
+    {% endfor %}
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 py-6 mt-12 text-center">
+    © 2025 Eduard Sánchez - Tutorial interactivo Django + Railway
+  </footer>
+
+</div>
+
+<!-- Prism.js para resaltado de sintaxis -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
+
+<!-- Toggle de código -->
+<script>
+function toggleCode(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle("hidden");
+}
+</script>
+
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load socialaccount %}
+
+<div class="socialaccount-providers space-y-3">
+    {% for provider in socialaccount_providers %}
+        {% if provider.id == "google" %}
+        <a title="{{provider.name}}" 
+           class="socialaccount-provider {{provider.id}} w-full flex items-center justify-center px-4 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+           href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+            {% if provider.id == "google" %}
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="h-5 w-5 mr-3">
+            {% endif %}
+            {% trans "Continuar con" %} {{provider.name}}
+        </a>
+        {% endif %}
+    {% endfor %}
+</div>

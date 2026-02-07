@@ -1,0 +1,34 @@
+<!-- partials/delete_update_buttons.html -->
+{% if comment.user == request.user %}
+<div class="flex items-center space-x-3">
+    <!-- Botón Editar -->
+    <button hx-get="{% url 'update_comment' comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-indicator="#edit-spinner-{{ comment.id }}"
+            class="text-muted hover:text-primary transition-colors duration-200 p-1.5 rounded hover:bg-surface-hover cursor-pointer"
+            title="Editar comentario">
+        <i class="fa-solid fa-pen-to-square text-sm"></i>
+        <span id="edit-spinner-{{ comment.id }}" class="htmx-indicator hidden ml-1">
+            <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+        </span>
+    </button>
+    
+    <!-- Separador -->
+    <span class="text-border">|</span>
+    
+    <!-- Botón Eliminar -->
+    <button hx-post="{% url 'delete_comment' comment.id %}"
+            hx-target="#comment-{{ comment.id }}"
+            hx-swap="outerHTML"
+            hx-confirm="¿Estás seguro de que quieres eliminar este comentario?"
+            hx-indicator="#delete-spinner-{{ comment.id }}"
+            _="on htmx:afterRequest if event.detail.successful remove #comment-{{ comment.id }} end"
+            class="text-muted hover:text-danger transition-colors duration-200 p-1.5 rounded hover:bg-danger/10 cursor-pointer"
+            title="Eliminar comentario">
+        <i class="fa-solid fa-trash text-sm"></i>
+        <span id="delete-spinner-{{ comment.id }}" class="htmx-indicator hidden ml-1">
+            <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+        </span>
+    </button>
+</div>
+{% endif %}

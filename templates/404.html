@@ -1,0 +1,142 @@
+
+
+<style>
+    /* Estilos para la página 404 */
+
+    body{
+        
+    margin: 0;
+
+    }
+
+    
+#notfound {
+    position: relative;
+    height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding:0;
+    margin:0;
+}
+
+.notfound {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 20px;
+}
+
+.notfound-404 {
+    position: relative;
+    height: 200px;
+    margin: 0 auto 20px;
+}
+
+.notfound-404 h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 148px;
+    font-weight: 900;
+    margin: 0;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.notfound-404 h1 span {
+    font-size: 120px;
+    margin: 0 15px;
+}
+
+.notfound h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #2c3e50;
+    margin: 0 0 15px;
+    letter-spacing: 1.5px;
+}
+
+.notfound p {
+    font-family: 'Roboto', sans-serif;
+    color: #7f8c8d;
+    font-weight: 400;
+    margin-bottom: 25px;
+}
+
+.notfound a {
+    font-family: 'Montserrat', sans-serif;
+    display: inline-block;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 30px;
+    background: #3498db;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px -5px rgba(52, 152, 219, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.notfound a:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px -5px rgba(52, 152, 219, 0.6);
+}
+
+.notfound a:active {
+    transform: translateY(0);
+}
+
+/* Efecto de ola en el botón */
+.notfound a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: 0.5s;
+}
+
+.notfound a:hover::before {
+    left: 100%;
+}
+
+/* Responsive */
+@media only screen and (max-width: 480px) {
+    .notfound-404 h1 {
+        font-size: 100px;
+    }
+    .notfound-404 h1 span {
+        font-size: 80px;
+    }
+    .notfound h2 {
+        font-size: 18px;
+    }
+}
+</style>
+
+<body>
+    <div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>4<span>😭</span>4</h1>
+			</div>
+			<h2>Oops! Pagina no encontrada</h2>
+            <p>Lo sentimos la pagina que estas buscando no existe, ha sido removida o removido temporalmente</p>
+			<a href="{% url 'home' %}">Back to homepage</a>
+		</div>
+	</div>
+</body>
+

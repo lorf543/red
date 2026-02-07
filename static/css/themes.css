@@ -1,0 +1,359 @@
+    :root {
+        --color-primary: #4f46e5;
+        --color-secondary: #10b981;
+        --color-accent: #f97316;
+        --color-background: #ffffff;
+        --comment-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --color-surface: #f8fafc;
+        --color-text: #1f2937;
+        --color-muted: #6b7280;
+        --color-success: #16a34a;
+        --color-warning: #f59e0b;
+        --color-danger: #dc2626;
+        --color-info: #2563eb;
+        --color-border: #e5e7eb;
+        /* Agregado para consistencia */
+        --background-image-dark: url("https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg");
+        /* --background-image-light: url("{% static 'images/bg-light.jpg' %}");
+        --background-image-blue: url("{% static 'images/bg-blue.jpg' %}");
+        --background-image-sunset: url("{% static 'images/bg-sunset.jpg' %}");*/
+        --background-image-forest: url("https://wallpaperaccess.com/full/8406757.gif"); 
+
+
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        /* Para que quede fijo al hacer scroll */
+
+    }
+
+
+
+    [data-theme="dark"] {
+        --color-primary: #6366f1;
+        --color-secondary: #059669;
+        --color-accent: #ea580c;
+        --color-background: #0b1220;
+        --comment-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+        --color-surface: #111827;
+        --color-text: #f3f4f6;
+        --color-muted: #9ca3af;
+        --color-success: #22c55e;
+        --color-warning: #fbbf24;
+        --color-danger: #ef4444;
+        --color-info: #3b82f6;
+        --color-border: #374151;
+        /* Agregado para consistencia */
+        background-image: var(--background-image-dark);
+    }
+
+    [data-theme="blue"] {
+        --color-primary: #0096C7;
+        --color-secondary: #00B4D8;
+        --color-accent: #48CAE4;
+        --color-background: #F8FDFF;
+        --color-surface: #CAF0F8;
+        --comment-shadow: 0 3px 10px rgba(0, 150, 199, 0.2),
+            0 1px 4px rgba(0, 150, 199, 0.1);
+        --color-text: #012A30;
+        --color-muted: #025E73;
+        --color-success: #06D6A0;
+        --color-warning: #FFB700;
+        --color-danger: #FF006E;
+        --color-info: #00B4D8;
+        --color-border: #90E0EF;
+        /* Agregado para consistencia */
+
+        /* Gradientes - Opcionales */
+        --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #48CAE4 50%, #90E0EF 100%);
+        --gradient-surface: linear-gradient(135deg, #CAF0F8 0%, #ADE8F4 100%);
+        background-image: var(--background-image-blue);
+    }
+
+    [data-theme="sunset"] {
+        --color-primary: #FF6B35;
+        --color-secondary: #F7931E;
+        --color-accent: #FFD23F;
+        --color-background: #FFF8E7;
+        --color-surface: #FFE5B4;
+        --comment-shadow: 0 4px 16px rgba(255, 107, 53, 0.15),
+            0 2px 8px rgba(247, 147, 30, 0.1);
+        --color-text: #5D4037;
+        --color-muted: #8D6E63;
+        --color-success: #4CAF50;
+        --color-warning: #FFC107;
+        --color-danger: #E53935;
+        --color-info: #FF9800;
+        --color-border: #FFAB91;
+
+        /* Variables adicionales - Opcionales */
+        --color-primary-light: #FFB74D;
+        --color-primary-dark: #E65100;
+        --color-surface-hover: #FFCC80;
+        --color-border-light: #FFE0B2;
+        background-image: var(--background-image-sunset);
+    }
+
+    [data-theme="forest"] {
+        --color-primary: #06d6a0;
+        --color-secondary: #20c997;
+        --color-accent: #ffd60a;
+        --color-background: #f8fefc;
+        --comment-shadow: 0 2px 6px rgba(6, 214, 160, 0.2);
+        --color-surface: #d1fae5;
+        --color-text: #065f46;
+        --color-muted: #6b7280;
+        --color-success: #059669;
+        --color-warning: #f59e0b;
+        --color-danger: #dc2626;
+        --color-info: #0ea5e9;
+        --color-border: #a7f3d0;
+        /* Agregado para consistencia */
+        background-image: var(--background-image-forest);
+    }
+
+    /* Utilidades CSS para usar las variables */
+    .bg-surface {
+        background-color: var(--color-surface);
+    }
+
+    .text-muted {
+        color: var(--color-muted);
+    }
+
+    .border-muted {
+        border-color: var(--color-muted);
+    }
+
+    .bg-success {
+        background-color: var(--color-success);
+    }
+
+    .text-success {
+        color: var(--color-success);
+    }
+
+    .bg-warning {
+        background-color: var(--color-warning);
+    }
+
+    .bg-danger {
+        background-color: var(--color-danger);
+    }
+
+    .bg-info {
+        background-color: var(--color-info);
+    }
+
+
+    /* Transiciones suaves para cambio de tema */
+    * {
+        transition: background-color 0.3s ease,
+            border-color 0.3s ease,
+            color 0.3s ease;
+    }
+
+    /* Excluir ciertos elementos de la transición */
+    .no-transition,
+    .no-transition *,
+    .dropdown-content,
+    .dropdown-content * {
+        transition: none !important;
+    }
+
+    .dropdown-content {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        /* Asegurar que el dropdown se vea bien en todos los temas */
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+    }
+
+    #notifications-panel {
+        transform-origin: top right;
+    }
+
+    #notifications-panel:not(.hidden) {
+        animation: fadeIn 0.2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .theme-option {
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+
+    .theme-option:hover {
+        transform: scale(1.05);
+        border-color: var(--color-primary);
+    }
+
+    .theme-option.active {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary);
+    }
+
+    /* Estilo base para selects - Mejorado */
+    select {
+        color: var(--color-text);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    select:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    /* Clases utilitarias adicionales */
+    .shadow-comment {
+        box-shadow: var(--comment-shadow);
+    }
+
+    .border-theme {
+        border-color: var(--color-border);
+    }
+
+    .bg-gradient-primary {
+        background: var(--gradient-primary, linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%));
+    }
+
+    /* Scrollbar personalizada para cada tema */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-muted);
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary);
+    }
+
+    /* Mejoras para accesibilidad */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* Asegurar contraste mínimo para accesibilidad */
+    .text-contrast {
+        color: color-contrast(var(--color-background) vs #000, #fff);
+    }
+
+    /* Clases para modo oscuro automático */
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+            --color-primary: #6366f1;
+            --color-secondary: #059669;
+            --color-accent: #ea580c;
+            --color-background: #0b1220;
+            --color-surface: #111827;
+            --color-text: #f3f4f6;
+            --color-muted: #9ca3af;
+        }
+    }
+
+    /* Añade estas utilidades a tu CSS */
+
+    /* Badge styles */
+    .badge {
+        @apply inline-flex items-center rounded-full px-2 py-1 text-xs font-medium;
+    }
+
+    .badge-xs {
+        @apply px-1.5 py-0.5 text-[10px];
+    }
+
+    /* Status colors using CSS variables */
+    .text-success {
+        color: var(--color-success);
+    }
+
+    .text-warning {
+        color: var(--color-warning);
+    }
+
+    .text-danger {
+        color: var(--color-danger);
+    }
+
+    .text-info {
+        color: var(--color-info);
+    }
+
+    /* Badge variants */
+    .badge-primary {
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        color: var(--color-primary);
+        border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    .badge-secondary {
+        background-color: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+        color: var(--color-secondary);
+        border: 1px solid color-mix(in srgb, var(--color-secondary) 20%, transparent);
+    }
+
+    /* Empty state styling */
+    .border-dashed {
+        border-style: dashed;
+    }
+
+    /* Truncate utilities */
+    .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Smooth shadows */
+    .shadow-primary\/10 {
+        box-shadow: 0 4px 20px -2px color-mix(in srgb, var(--color-primary) 10%, transparent);
+    }
+
+    /* Hover effects */
+    .hover\:border-primary\/30:hover {
+        border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    }
+
+    /* Background opacity utilities */
+    .bg-primary\/10 {
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    }
+
+    .bg-secondary\/10 {
+        background-color: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+    }
+
+    /* Border opacity utilities */
+    .border-primary\/20 {
+        border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    .border-secondary\/20 {
+        border-color: color-mix(in srgb, var(--color-secondary) 20%, transparent);
+    }

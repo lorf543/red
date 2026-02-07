@@ -1,0 +1,14 @@
+/* Estilos para los inputs */
+input, textarea, select {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Estilos para errores */
+.errorlist {
+    @apply text-red-600 text-sm mt-1;
+}
+
+/* Estilo para la imagen de perfil */
+input[type="file"] {
+    @apply border-0 p-0;
+}

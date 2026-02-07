@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static i18n %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto px-4 py-8">
+
+    <!-- Tarjeta formulario -->
+    <div class="bg-surface text-text rounded-2xl shadow-lg border border-border overflow-hidden">
+        <!-- Header -->
+        <div class="rounded-2xl px-8 py-6 bg-surface">
+            <h1 class="text-2xl font-bold">{% trans "Editar Perfil" %}</h1>
+            <p class="text-sm opacity-80 text-muted">{% trans "Administra tu información personal y preferencias" %}</p>
+        </div>
+
+        <!-- Formulario -->
+        <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8 bg-background">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
+
+                <!-- Campos básicos -->
+                <div class="space-y-5">
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-sm font-medium mb-1 text-text">
+                            {{ field.label }}{% if field.field.required %}<span class="text-danger ml-1">*</span>{% endif %}
+                        </label>
+                        {{ field|add_class:"w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-surface text-text placeholder-muted/50" }}
+                        {% if field.help_text %}
+                        <p class="mt-1 text-xs text-muted">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                        <p class="mt-1 text-sm text-danger">{{ field.errors }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Avatar + profile_form -->
+                <div class="space-y-6">
+                    <!-- Avatar -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3 text-text">Foto de perfil</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative cursor-pointer group"
+                                 onclick="document.getElementById('id_profile_picture').click()">
+                                {% if user_profile.profile_picture %}
+                                <img id="avatar-preview"
+                                     src="{{ user_profile.profile_picture.url }}"
+                                     class="h-20 w-20 rounded-full object-cover border-4 border-surface shadow-lg ring-2 ring-primary group-hover:ring-primary/50 transition-all duration-200">
+                                {% else %}
+                                <img id="avatar-preview"
+                                     src=""
+                                     class="h-20 w-20 rounded-full object-cover border-4 border-surface shadow-lg ring-2 ring-primary group-hover:ring-primary/50 transition-all duration-200 hidden">
+                                <div id="avatar-placeholder"
+                                     class="h-20 w-20 rounded-full bg-surface flex items-center justify-center text-muted text-xl font-medium border-4 border-surface shadow-lg ring-1 ring-border group-hover:ring-primary/30 transition-all duration-200">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                <div class="absolute inset-0 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                                    <span class="text-xs font-medium bg-surface px-2 py-1 rounded-full text-primary">Cambiar</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm text-muted mb-1">Haz clic en tu avatar para cambiarlo</p>
+                                <p class="text-xs text-muted/80">Formatos: JPG, PNG, GIF, WEBP (máx. 5MB)</p>
+                                <p id="avatar-error" class="text-sm text-danger hidden mt-2"></p>
+                            </div>
+                        </div>
+                        <input type="file" name="profile_picture" accept="image/*" class="hidden" id="id_profile_picture">
+                    </div>
+
+                    <!-- Otros campos del perfil -->
+                    <div class="space-y-5">
+                        {% for field in profile_form %}
+                            {% if field.name != 'profile_picture' %}
+                            <div>
+                                <label class="block text-sm font-medium mb-1 text-text">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger ml-1">*</span>{% endif %}
+                                </label>
+                                {{ field|add_class:"w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none bg-surface text-text placeholder-muted/50" }}
+                                {% if field.errors %}
+                                <p class="mt-1 text-sm text-danger">{{ field.errors }}</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-between items-center border-t border-border pt-6">
+                <p class="text-sm text-muted">
+                    Los campos marcados con <span class="text-danger">*</span> son obligatorios
+                </p>
+                <div class="flex space-x-3">
+                    <a href="{% url 'profile' request.user.id %}" 
+                       class="px-5 py-2 border border-border rounded-lg bg-surface text-text hover:bg-surface/50 hover:border-primary/30 transition-all duration-200">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="px-5 py-2 bg-primary text-white rounded-lg shadow hover:bg-primary/90 hover:shadow-md transition-all duration-200 cursor-pointer focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface">
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Función para inicializar la funcionalidad
+function initializeProfileForm() {
+    const inputFile = document.getElementById('id_profile_picture');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+    const errorMsg = document.getElementById('avatar-error');
+
+    if(inputFile && !inputFile.hasAttribute('data-initialized')){
+        inputFile.setAttribute('data-initialized', 'true');
+        
+        inputFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const validTypes = ['image/jpeg','image/png','image/gif','image/webp'];
+            if(!validTypes.includes(file.type)){
+                errorMsg.textContent = "Formato inválido. Usa JPG, PNG, GIF o WEBP";
+                errorMsg.classList.remove('hidden');
+                inputFile.value = "";
+                return;
+            }
+
+            if(file.size > 5*1024*1024){
+                errorMsg.textContent = "La imagen no puede superar 5 MB";
+                errorMsg.classList.remove('hidden');
+                inputFile.value = "";
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                avatarPreview.src = ev.target.result;
+                avatarPreview.classList.remove('hidden');
+                if(avatarPlaceholder){
+                    avatarPlaceholder.classList.add('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Username ≠ first_name
+    const username = document.querySelector('[name="username"]');
+    const firstName = document.querySelector('[name="first_name"]');
+    if(username && firstName && !username.hasAttribute('data-validation-initialized')){
+        username.setAttribute('data-validation-initialized', 'true');
+        firstName.setAttribute('data-validation-initialized', 'true');
+        
+        const validate = () => {
+            if(username.value && firstName.value && username.value.toLowerCase() === firstName.value.toLowerCase()){
+                username.classList.add('border-danger');
+                firstName.classList.add('border-danger');
+            } else {
+                username.classList.remove('border-danger');
+                firstName.classList.remove('border-danger');
+            }
+        };
+        username.addEventListener('input', validate);
+        firstName.addEventListener('input', validate);
+    }
+
+    // Contador bio
+    const bio = document.getElementById('id_bio');
+    if(bio && !bio.hasAttribute('data-counter-initialized')){
+        bio.setAttribute('data-counter-initialized', 'true');
+        
+        const counter = document.createElement('p');
+        counter.className = "text-xs mt-1 text-muted";
+        bio.parentNode.appendChild(counter);
+        const maxLength = 250;
+        const update = () => {
+            counter.textContent = `${bio.value.length}/${maxLength}`;
+            counter.style.color = bio.value.length > maxLength * 0.9 ? "var(--color-danger)" : "var(--color-muted)";
+        };
+        bio.addEventListener('input', update);
+        update();
+    }
+}
+
+// Ejecutar en carga inicial
+document.addEventListener('DOMContentLoaded', initializeProfileForm);
+
+// Ejecutar después de que HTMX actualice el contenido
+document.addEventListener('htmx:afterSwap', initializeProfileForm);
+document.addEventListener('htmx:afterSettle', initializeProfileForm);
+</script>
+
+{% endblock %}

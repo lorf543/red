@@ -1,0 +1,304 @@
+{% load poll_extras %}
+
+<!-- Agrega DaisyUI si no lo tienes -->
+
+<nav class="navbar bg-surface shadow-sm flex" style="box-shadow: var(--comment-shadow);">
+  <div class="flex-1">
+    <a href="{% url 'home' %}" class="text-xl font-semibold text-primary">ITLAsocial</a>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="flex gap-2 items-center">
+
+    <!-- 🔔 Notifications Dropdown - FIXED -->
+    <div class="dropdown dropdown-right dropdown-center">
+      <button type="button"
+              tabindex="0"
+              role="button"
+              class="btn btn-circle relative bg-red-500"
+              aria-label="Notificaciones"
+              aria-expanded="false">
+
+          {% if not missing_fields %}
+          <span class="absolute -top-1 -right-1 flex h-5 w-5">
+            <span class="relative inline-flex items-center justify-center bg0
+                        h-5 w-5 rounded-full text-white text-xs font-bold">
+              <span id="counter-value"
+                    hx-get="{% url 'notification_count' %}" 
+                    hx-trigger="load, every 240s" 
+                    hx-swap="innerHTML"
+                    hx-target="this">
+                {{ request.user|unread_count }}
+              </span>
+            </span>
+          </span>
+          {% endif %}
+      </button>
+
+      <!-- Panel - FIXED: Usar la clase correcta de DaisyUI -->
+      <div tabindex="0" 
+           class="dropdown-content z-[1] mt-3 card card-compact w-96 bg-base-100 shadow-lg rounded-box">
+        <div class="card-body">
+          <div class="flex gap-2 items-center justify-between px-4 py-3 border-b">
+            <h3 class="card-title text-lg">Notificaciones</h3>
+            <button class="btn btn-xs btn-primary text-xs"
+                    hx-post="" 
+                    hx-target="#notifications-panel">
+              Marcar todas
+            </button>
+          </div>
+
+          <div id="notifications-container" class="max-h-96 overflow-y-auto divide-y">
+            <!-- Loading Indicator -->
+            <div class="htmx-indicator flex justify-center py-4">
+              <span class="loading loading-spinner loading-md"></span>
+            </div>
+
+            <!-- Empty State -->
+            <div id="no-notifications" class="hidden p-6 text-center">
+              <i class="fas fa-bell-slash text-2xl mb-2 opacity-50"></i>
+              <p class="opacity-70">No tienes notificaciones</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📚 Dashboard Shortcut -->
+    <a href="{% url 'teachers_list' %}" 
+       class="btn btn-ghost" 
+       aria-label="Dashboard">
+        <i class="fas fa-chalkboard-teacher"></i>
+        Profesores
+    </a>
+    
+
+    <!-- 👤 Profile Dropdown - FIXED -->
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar w-7xl">
+        <div class="w-10 rounded-full">
+          {% if user.profile.profile_picture.url %} 
+            <img src="{{ user.profile.profile_picture.url}}" alt="Foto de perfil" 
+                 class="w-10 h-10 object-cover rounded-full">
+          {% else %} 
+            <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">
+              {{ user.profile.get_profile_initials }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Menu - FIXED: Usar la estructura correcta de DaisyUI -->
+      <ul tabindex="0" 
+          class="dropdown-content menu bg-base-100 rounded-box z-[1000] shadow-xl w-96 p-2 mt-3">
+      
+        <!-- Header -->
+        <li class="p-4 border-b flex gap-3 items-center">
+          <div class="avatar">
+            <div class="w-12 rounded-full">
+              {% if user.profile.profile_picture.url %} 
+                <img src="{{ user.profile.profile_picture.url}}" 
+                     class="w-12 h-12 rounded-full object-cover">
+              {% else %}
+                <div class="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">
+                  {{ user.profile.get_profile_initials }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <p class="font-semibold">{{ user.username }}</p>
+            <p class="text-xs opacity-70">{{ user.email }}</p>
+          </div>
+        </li>
+
+        <!-- Links -->
+        <li class="mt-15">
+          <a  href="{% url 'profile' user.profile.slug %}">
+          Mi perfil <span class="badge badge-primary">Ver</span></a>
+        </li>
+        
+        <li><a href="{% url 'configurations' %}" class="opacity-50 pointer-events-none">
+          <i class="fas fa-cog"></i> Configuración
+        </a></li>
+        
+        <li><a  href="{% url 'account_logout' %}" class="text-error">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a></li>
+
+        <!-- Theme Selector - Mejorado -->
+        <li class="menu-title mt-4 pt-4 border-t">
+          <span class="flex items-center gap-2">
+            <i class="fas fa-palette"></i> Temas
+          </span>
+        </li>
+        
+        <li>
+          <div class="p-2">
+            <div class="grid grid-cols-1 gap-2">
+              <button class="theme-option btn btn-sm btn-primary justify-start gap-2" data-theme="default">
+                <i class="fas fa-star"></i>
+                <span>Default</span>
+                <span class="theme-check hidden ml-auto"><i class="fas fa-check"></i></span>
+              </button>
+              
+              <button class="theme-option btn btn-sm justify-start gap-2" data-theme="dark">
+                <i class="fas fa-moon"></i>
+                <span>Oscuro</span>
+                <span class="theme-check hidden ml-auto"><i class="fas fa-check"></i></span>
+              </button>
+              
+              <button class="theme-option btn btn-sm justify-start gap-2" data-theme="blue">
+                <i class="fas fa-droplet"></i>
+                <span>Azul</span>
+                <span class="theme-check hidden ml-auto"><i class="fas fa-check"></i></span>
+              </button>
+              
+              <button class="theme-option btn btn-sm justify-start gap-2" data-theme="sunset">
+                <i class="fas fa-sun"></i>
+                <span>Atardecer</span>
+                <span class="theme-check hidden ml-auto"><i class="fas fa-check"></i></span>
+              </button>
+              
+              <button class="theme-option btn btn-sm justify-start gap-2" data-theme="forest">
+                <i class="fas fa-tree"></i>
+                <span>Bosque</span>
+                <span class="theme-check hidden ml-auto"><i class="fas fa-check"></i></span>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  {% else %}
+  <div class="flex gap-2">
+    <a  href="{% url 'login' %}" class="btn btn-ghost">Iniciar sesión</a>
+    <a  href="{% url 'account_signup' %}" class="btn btn-primary">Registrarse</a>
+  </div>
+  {% endif %}
+</nav>
+
+<!-- JavaScript para los dropdowns y temas -->
+<script>
+  // Inicializar DaisyUI dropdowns
+  document.addEventListener('DOMContentLoaded', function() {
+    // Los dropdowns de DaisyUI funcionan automáticamente
+    // Solo necesitamos manejar los temas
+    
+    // Función para aplicar tema
+    function applyTheme(theme) {
+      // Cambiar el data-theme del documento
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      
+      // Actualizar indicadores visuales
+      document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        const check = btn.querySelector('.theme-check');
+        if (check) check.classList.add('hidden');
+      });
+      
+      // Marcar el botón activo
+      const activeBtn = document.querySelector(`.theme-option[data-theme="${theme}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('btn-primary');
+        const check = activeBtn.querySelector('.theme-check');
+        if (check) check.classList.remove('hidden');
+      }
+    }
+    
+    // Cargar tema guardado
+    const savedTheme = localStorage.getItem('theme') || 'default';
+    applyTheme(savedTheme);
+    
+    // Manejar clics en botones de tema
+    document.querySelectorAll('.theme-option').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const theme = this.getAttribute('data-theme');
+        applyTheme(theme);
+        
+        // Cerrar el dropdown después de seleccionar
+        const dropdown = this.closest('.dropdown');
+        if (dropdown) {
+          dropdown.removeAttribute('open');
+        }
+      });
+    });
+    
+    // HTMX: Actualizar notificaciones
+    if (typeof htmx !== 'undefined') {
+      // Configurar HTMX para notificaciones
+      document.body.addEventListener('htmx:afterSwap', function(event) {
+        if (event.detail.target.id === 'counter-value') {
+          // Actualizar contador
+          const count = parseInt(event.detail.target.textContent);
+          const badge = document.querySelector('.badge');
+          if (badge && count > 0) {
+            badge.textContent = count;
+            badge.classList.remove('hidden');
+          } else if (badge) {
+            badge.classList.add('hidden');
+          }
+        }
+      });
+    }
+    
+    // Mejorar comportamiento de dropdowns en móviles
+    document.querySelectorAll('[tabindex="0"]').forEach(element => {
+      element.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          this.blur();
+        }
+      });
+    });
+  });
+</script>
+
+<!-- Estilos adicionales -->
+<style>
+  /* Animación para dropdowns */
+  .dropdown-content {
+    animation: dropdownFadeIn 0.2s ease-out;
+  }
+  
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Mejorar visibilidad del contador de notificaciones */
+  .btn-ghost.btn-circle .badge {
+    box-shadow: 0 0 0 2px white;
+  }
+  
+  /* Asegurar que los botones de tema sean consistentes */
+  .theme-option {
+    transition: all 0.2s ease;
+  }
+  
+  .theme-option:hover {
+    transform: translateY(-1px);
+  }
+  
+  /* Para el avatar circular */
+  .avatar img {
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  /* Asegurar que los dropdowns estén por encima de otros elementos */
+  .dropdown .dropdown-content {
+    z-index: 1000;
+  }
+</style>

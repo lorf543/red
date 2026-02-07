@@ -1,0 +1,103 @@
+{% extends "account/base_auth.html" %}
+{% load socialaccount %}
+
+{% block content %}
+<div class="space-y-6">
+    <h2 class="text-2xl font-bold text-center text-white">Crear Cuenta</h2>
+    
+    <!-- Botón de Google -->
+    <div class="text-center">
+        <a href="{% provider_login_url 'google' %}" 
+           class="btn-google inline-flex items-center justify-center w-full border text-white py-3 px-4 rounded-lg font-medium shadow-sm">
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5 mr-3">
+            Registrarse con Google
+        </a>
+        
+        <div class="my-6 relative">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white ">O</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulario de registro tradicional -->
+    <form method="POST" action="{% url 'account_signup' %}" class="space-y-4">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div>
+            <label for="id_username" class="block text-sm font-medium text-white mb-1">
+                Nombre de usuario *
+            </label>
+            <input type="text" name="username" id="id_username" 
+                   class="w-full px-3 py-2 border text-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required>
+            {% if form.username.help_text %}
+                <p class="mt-1 text-xs text-white">{{ form.username.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="id_email" class="block text-sm font-medium text-white mb-1">
+                Correo electrónico (opcional)
+            </label>
+            <input type="email" name="email" id="id_email" 
+                   class="w-full px-3 py-2 border text-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {% if form.email.help_text %}
+                <p class="mt-1 text-xs text-white">{{ form.email.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="id_password1" class="block text-sm font-medium text-white mb-1">
+                Contraseña *
+            </label>
+            <input type="password" name="password1" id="id_password1" 
+                   class="w-full px-3 py-2 border text-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required>
+        </div>
+        
+        <div>
+            <label for="id_password2" class="block text-sm font-medium text-white mb-1">
+                Confirmar contraseña *
+            </label>
+            <input type="password" name="password2" id="id_password2" 
+                   class="w-full px-3 py-2 border text-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required>
+        </div>
+        
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+        {% endif %}
+        
+        <button type="submit" 
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Registrarse
+        </button>
+    </form>
+    
+    <div class="text-center pt-4 border-t border-gray-200">
+        <p class="text-sm text-white">
+            ¿Ya tienes una cuenta? 
+            <a href="{% url 'account_login' %}" class="font-medium text-blue-600 hover:text-blue-800">
+                Inicia Sesión
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

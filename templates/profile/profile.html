@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- Sidebar izquierdo -->
+    <div class="md:col-span-1">
+        <div class="bg-surface text-text rounded-xl shadow-comment p-6 sticky top-20 border border-border">
+            <div class="flex flex-col items-center text-center">
+                {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" 
+                         alt="Foto de perfil de {{ user_profile.full_name }}" 
+                         class="w-32 h-32 rounded-full border-4 border-primary object-cover mb-4">
+                {% else %}
+                    <div class="w-32 h-32 rounded-full bg-primary text-primary-content border-4 border-primary mb-4 flex items-center justify-center">
+                        <span class="text-4xl font-bold">
+                            {{ user_profile.get_profile_initials }}
+                        </span>
+                    </div>
+                {% endif %}
+
+                <h2 class="text-xl font-bold text-text mb-1">{{ user_profile.full_name }}</h2>
+                <p class="text-muted mb-4">@{{ profile_user.username }}</p>
+
+                {% if user_profile.bio %}
+                    <div class="w-full mb-4 p-3 bg-surface-hover rounded-lg border border-border">
+                        <p class="text-text text-sm leading-relaxed text-left">{{ user_profile.bio }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="w-full border-t border-border pt-4 space-y-3">
+                    {% if user_profile.location %}
+                        <div class="flex items-center text-text text-sm">
+                            <i class="fas fa-map-marker-alt text-muted mr-2"></i>
+                            <span>{{ user_profile.location }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if user_profile.birth_date %}
+                        <div class="flex items-center text-text text-sm">
+                            <i class="fas fa-birthday-cake text-muted mr-2"></i>
+                            <span>{{ user_profile.birth_date|date:"d/m/Y" }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex items-center text-text text-sm">
+                        <i class="fas fa-calendar-alt text-muted mr-2"></i>
+                        <span>Se unió el {{ user_profile.created_at|date:"d/m/Y" }}</span>
+                    </div>
+                </div>
+
+                {% if profile_user == request.user %}
+                    <a
+                       href="{% url 'profile_edit' %}" 
+                       class="mt-6 inline-block w-full bg-primary text-primary-content px-4 py-2.5 rounded-lg hover:bg-primary-dark transition-colors duration-200 text-center font-medium">
+                        Editar Perfil
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="md:col-span-3 space-y-6">
+        {% if profile_user == request.user %}
+            <div class="bg-surface text-text rounded-xl shadow-comment p-4 border border-border">
+                <div class="flex space-x-3">
+                    {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" 
+                             alt="Tu perfil" 
+                             class="w-10 h-10 rounded-full object-cover border-2 border-surface">
+                    {% else %}
+                        <div class="w-10 h-10 rounded-full bg-primary text-primary-content border-2 border-surface flex items-center justify-center font-medium">
+                            {{ user.profile.get_profile_initials }}
+                        </div>
+                    {% endif %}
+                    <div class="flex-1">
+                        {% include "forms/form_comment.html" %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Lista de publicaciones -->
+        <div id="commentsContainer" class="space-y-4">
+            {% for comment in comments %}
+                {% include "components/comment_item.html" %}
+            {% empty %}
+                <div class="bg-surface text-text rounded-xl shadow-comment p-8 text-center border border-border">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-hover text-muted mb-4">
+                        <i class="fas fa-comments text-2xl"></i>
+                    </div>
+                    <p class="text-muted">No hay comentarios para mostrar.</p>
+                    {% if profile_user != request.user %}
+                        <p class="text-sm text-muted mt-1">Este usuario aún no ha comentado.</p>
+                    {% else %}
+                        <p class="text-sm text-muted mt-1">¡Comienza una conversación!</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_next %}
+            <div id="load-more-comments-container" class="text-center">
+                <button hx-get="{% url 'load_more_comments' %}?page={{ page_obj.next_page_number }}"
+                        hx-target="#load-more-comments-container"
+                        hx-swap="outerHTML"
+                        hx-indicator="#load-more-indicator"
+                        class="px-5 py-2.5 bg-surface text-primary border border-primary/30 rounded-lg hover:bg-primary hover:text-primary-content transition-colors duration-200">
+                    Cargar más comentarios
+                    <span id="load-more-indicator" class="htmx-indicator hidden ml-2">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
