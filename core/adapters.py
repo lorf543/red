@@ -47,7 +47,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
 
         # 3. Actualizar el perfil (esto disparará el save del modelo UserProfile)
         picture_url = extra_data.get("picture")
-        profile = user.profile  # Asumiendo que usas señales para crear el perfil
+        profile = user.profile 
         
         if picture_url and not profile.profile_picture:
             profile.profile_picture = picture_url

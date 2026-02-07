@@ -53,17 +53,17 @@ class ProfileCompletionMiddleware:
                 if request.path in exempt_urls:
                     return self.get_response(request)
                 
-                # --- VERIFICACIÓN DE CAMPOS ---
-                # Si falta información requerida
-                if not profile.bio or not profile.bio.strip() or \
-                   not profile.location or not profile.location.strip():
+                # # --- VERIFICACIÓN DE CAMPOS ---
+                # # Si falta información requerida
+                # if not profile.bio or not profile.bio.strip() or \
+                #    not profile.location or not profile.location.strip():
                     
-                    logger.debug(f"Perfil incompleto para {request.user.username}")
+                #     logger.debug(f"Perfil incompleto para {request.user.username}")
                     
-                    # Redirigir si no estamos ya en la página de edición
-                    # (aunque ya estaba en exempt_urls, doble seguridad)
-                    if request.path != reverse('profile_edit'):
-                        return HttpResponseRedirect(reverse('profile_edit') + '?required_fields=true')
+                #     # Redirigir si no estamos ya en la página de edición
+                #     # (aunque ya estaba en exempt_urls, doble seguridad)
+                #     if request.path != reverse('profile_edit'):
+                #         return HttpResponseRedirect(reverse('profile_edit') + '?required_fields=true')
 
             except ObjectDoesNotExist:
                 # El usuario existe pero no tiene perfil (caso raro, pero posible)
