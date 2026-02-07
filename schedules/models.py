@@ -35,7 +35,7 @@ class Subject(models.Model):
     description = models.TextField(blank=True)
     credits = models.PositiveIntegerField(default=3)
     
-    modalidad = models.CharField(choices=MODALIDAD, blank=True, null=True)
+    modalidad = models.CharField(max_length=50, choices=MODALIDAD, blank=True, null=True)
 
     day = models.CharField(max_length=10, choices=DAYS_OF_WEEK, verbose_name="Dia", blank=True, null=True)
     hour = models.CharField(max_length=5, choices=HOURS_CHOICES, verbose_name="Hora", blank=True, null=True)
