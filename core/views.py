@@ -100,7 +100,7 @@ def profile_edit_view(request):
                 return redirect('home')
             else:
                 messages.success(request, 'Perfil actualizado correctamente')
-                return redirect('profile_edit')
+                return redirect('home')
         else:
             all_errors = user_form.errors.as_ul() + profile_form.errors.as_ul()
             all_errors_text = strip_tags(all_errors)

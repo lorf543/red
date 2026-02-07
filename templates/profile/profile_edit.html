@@ -97,7 +97,7 @@
                     Los campos marcados con <span class="text-danger">*</span> son obligatorios
                 </p>
                 <div class="flex space-x-3">
-                    <a href="{% url 'profile' request.user.id %}" 
+                    <a href="{% url 'profile' user.profile.slug %}" 
                        class="px-5 py-2 border border-border rounded-lg bg-surface text-text hover:bg-surface/50 hover:border-primary/30 transition-all duration-200">
                         Cancelar
                     </a>

@@ -4,15 +4,13 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.utils.text import slugify
+import uuid
 
 User = get_user_model()
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):
-        """
-        Invocado justo después de que el usuario se autentica exitosamente
-        con un proveedor social pero antes de que se procese el login.
-        """
         # Si el usuario ya está autenticado, conectar la cuenta social
         if request.user.is_authenticated:
             sociallogin.connect(request, request.user)
@@ -30,36 +28,39 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     
     def save_user(self, request, sociallogin, form=None):
         user = super().save_user(request, sociallogin, form)
-
         extra_data = sociallogin.account.extra_data
 
-        # Nombre
-        user.first_name = extra_data.get("given_name", user.first_name)
-        user.last_name = extra_data.get("family_name", user.last_name)
+        # 1. Asegurar que el usuario tenga un username si está vacío
+        if not user.username:
+            # Intentar usar el 'name' de Google, si no el email, si no un UUID
+            full_name = extra_data.get("name") or extra_data.get("email").split('@')[0]
+            user.username = slugify(full_name)
+            
+            # Verificar si el username ya existe para evitar duplicados
+            if User.objects.filter(username=user.username).exists():
+                user.username = f"{user.username}-{uuid.uuid4().hex[:4]}"
 
-        # Foto de perfil (URL de Google)
-        picture_url = extra_data.get("picture")
-        if picture_url:
-            profile = user.profile
-            if not profile.profile_picture:
-                profile.profile_picture = picture_url
-                profile.save()
-
-        # Username (si viene del form)
-        if form and hasattr(form, "cleaned_data"):
-            username = form.cleaned_data.get("username")
-            if username:
-                user.username = username
-
+        # 2. Guardar nombres
+        user.first_name = extra_data.get("given_name", "")
+        user.last_name = extra_data.get("family_name", "")
         user.save()
+
+        # 3. Actualizar el perfil (esto disparará el save del modelo UserProfile)
+        picture_url = extra_data.get("picture")
+        profile = user.profile  # Asumiendo que usas señales para crear el perfil
+        
+        if picture_url and not profile.profile_picture:
+            profile.profile_picture = picture_url
+        
+        # Forzar que el slug se genere basándose en el nuevo username
+        profile.slug = slugify(user.username)
+        profile.save()
+
         return user
     
     def is_auto_signup_allowed(self, request, sociallogin):
-        """
-        Determina si se permite el registro automático.
-        """
         # No permitir registro automático, usar nuestro formulario personalizado
-        return False
+        return True
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):

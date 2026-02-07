@@ -14,6 +14,8 @@ from cloudinary.models import CloudinaryField
 from cloudinary import uploader as cloudinary_uploader
 from cloudinary import api as cloudinary_api
 
+import uuid
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -36,15 +38,16 @@ class UserProfile(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
+            if self.user.username:
+                self.slug = slugify(self.user.username) 
+            else:
+                self.slug = slugify(self.user.email.split('@')[0]) or str(uuid.uuid4())[:8]
 
-                    self.slug = slugify(self.user.username) 
-        # Obtener instancia anterior si existe
         try:
             old = UserProfile.objects.get(pk=self.pk) if self.pk else None
         except UserProfile.DoesNotExist:
             old = None
 
-        # Guardar primero (Cloudinary manejará la subida automáticamente)
         super().save(*args, **kwargs)
 
         # Si había imagen anterior y es diferente, borrarla
