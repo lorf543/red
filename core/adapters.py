@@ -27,52 +27,66 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 pass
     
     def save_user(self, request, sociallogin, form=None):
-        user = super().save_user(request, sociallogin, form)
+        """
+        Guardar usuario desde login social (Google)
+        """
         extra_data = sociallogin.account.extra_data
-
-        # 1. Asegurar que el usuario tenga un username si está vacío
-        if not user.username:
-            # Intentar usar el 'name' de Google, si no el email, si no un UUID
-            full_name = extra_data.get("name") or extra_data.get("email").split('@')[0]
-            user.username = slugify(full_name)
-            
-            # Verificar si el username ya existe para evitar duplicados
-            if User.objects.filter(username=user.username).exists():
-                user.username = f"{user.username}-{uuid.uuid4().hex[:4]}"
-
-        # 2. Guardar nombres
-        user.first_name = extra_data.get("given_name", "")
-        user.last_name = extra_data.get("family_name", "")
-        user.save()
-
-        # 3. Actualizar el perfil (esto disparará el save del modelo UserProfile)
-        picture_url = extra_data.get("picture")
-        profile = user.profile 
         
+        # Obtener datos de Google
+        email = extra_data.get('email', '')
+        given_name = extra_data.get('given_name', '')
+        family_name = extra_data.get('family_name', '')
+        picture_url = extra_data.get('picture', '')
+        
+        # Crear username único ANTES de llamar super()
+        if extra_data.get('name'):
+            base_username = slugify(extra_data.get('name'))
+        else:
+            base_username = slugify(email.split('@')[0])
+        
+        # Asegurar que el username sea único
+        username = base_username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}-{uuid.uuid4().hex[:4]}"
+            counter += 1
+            if counter > 10:  # Evitar loop infinito
+                username = f"{base_username}-{uuid.uuid4().hex[:8]}"
+                break
+        
+        # Ahora llamar super() que creará el usuario
+        user = super().save_user(request, sociallogin, form)
+        
+        # Actualizar el usuario con los datos correctos
+        user.username = username
+        user.first_name = given_name
+        user.last_name = family_name
+        user.save()
+        
+        # Actualizar el perfil (ya existe por el signal)
+        profile = user.profile
+        
+        # Actualizar slug basado en el username final
+        profile.slug = slugify(username)
+        
+        # Guardar la foto de Google solo si no tiene una ya
         if picture_url and not profile.profile_picture:
             profile.profile_picture = picture_url
         
-        # Forzar que el slug se genere basándose en el nuevo username
-        profile.slug = slugify(user.username)
         profile.save()
-
+        
         return user
     
     def is_auto_signup_allowed(self, request, sociallogin):
-        # No permitir registro automático, usar nuestro formulario personalizado
         return True
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def save_user(self, request, user, form, commit=True):
-        """
-        Guarda el usuario durante el registro tradicional.
-        """
         user = super().save_user(request, user, form, commit=False)
         
-        # Manejar emails temporales
+        # Manejar emails temporales si es necesario
         if user.email and user.email.endswith('@temp.noemail'):
-            # No hacer nada especial con emails temporales
             pass
         
         if commit:

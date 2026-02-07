@@ -1,117 +1,121 @@
 <style>
     /* Añade esto a tu archivo CSS principal */
-
-/* Estilos para botones de reacción */
-.like-btn, .dislike-btn {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.like-btn:hover:not(:disabled):not(.active) {
-    transform: translateY(-1px);
-    color: var(--color-primary) !important;
-}
-
-.dislike-btn:hover:not(:disabled):not(.active) {
-    transform: translateY(-1px);
-    color: var(--color-danger) !important;
-}
-
-/* Efecto de pulso al hacer clic */
-@keyframes pulse-reaction {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-.like-btn:active:not(:disabled),
-.dislike-btn:active:not(:disabled) {
-    animation: pulse-reaction 0.3s ease;
-}
-
-/* Estados activos mejorados */
-.like-btn.active {
-    color: var(--color-primary) !important;
-    text-shadow: 0 0 8px rgba(var(--color-primary-rgb, 79, 70, 229), 0.3);
-}
-
-.dislike-btn.active {
-    color: var(--color-danger) !important;
-    text-shadow: 0 0 8px rgba(var(--color-danger-rgb, 220, 38, 38), 0.3);
-}
-
-/* Contador animado */
-.like-count, .dislike-count {
-    transition: all 0.3s ease;
-    min-width: 1.25rem;
-    text-align: center;
-    font-weight: 500;
-}
-
-.like-btn:hover .like-count:not(:disabled) {
-    transform: scale(1.1);
-}
-
-.dislike-btn:hover .dislike-count:not(:disabled) {
-    transform: scale(1.1);
-}
-
-/* Separador con tema */
-.text-border {
-    color: var(--color-border);
-    opacity: 0.5;
-}
-
-/* Estados deshabilitados */
-button:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-/* Focus states para accesibilidad */
-.like-btn:focus:not(:disabled),
-.dislike-btn:focus:not(:disabled) {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
+        .reaction-portal {
+        position: fixed;
+        z-index: 99999;
+        pointer-events: auto;
+    }
+    /* Estilos para botones de reacción */
     .like-btn, .dislike-btn {
-        padding: 0.25rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
+    .like-btn:hover:not(:disabled):not(.active) {
+        transform: translateY(-1px);
+        color: var(--color-primary) !important;
+    }
+
+    .dislike-btn:hover:not(:disabled):not(.active) {
+        transform: translateY(-1px);
+        color: var(--color-danger) !important;
+    }
+
+    /* Efecto de pulso al hacer clic */
+    @keyframes pulse-reaction {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .like-btn:active:not(:disabled),
+    .dislike-btn:active:not(:disabled) {
+        animation: pulse-reaction 0.3s ease;
+    }
+
+    /* Estados activos mejorados */
+    .like-btn.active {
+        color: var(--color-primary) !important;
+        text-shadow: 0 0 8px rgba(var(--color-primary-rgb, 79, 70, 229), 0.3);
+    }
+
+    .dislike-btn.active {
+        color: var(--color-danger) !important;
+        text-shadow: 0 0 8px rgba(var(--color-danger-rgb, 220, 38, 38), 0.3);
+    }
+
+    /* Contador animado */
     .like-count, .dislike-count {
-        font-size: 0.7rem;
-        min-width: 1rem;
+        transition: all 0.3s ease;
+        min-width: 1.25rem;
+        text-align: center;
+        font-weight: 500;
     }
-}
 
-/* Tooltips para botones */
-.like-btn:hover:not(:disabled)::after,
-.dislike-btn:hover:not(:disabled)::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-surface);
-    color: var(--color-text);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-    border: 1px solid var(--color-border);
-    z-index: 10;
-}
+    .like-btn:hover .like-count:not(:disabled) {
+        transform: scale(1.1);
+    }
 
-.like-btn:hover:not(:disabled)::after,
-.dislike-btn:hover:not(:disabled)::after {
-    opacity: 1;
-}
+    .dislike-btn:hover .dislike-count:not(:disabled) {
+        transform: scale(1.1);
+    }
+
+    /* Separador con tema */
+    .text-border {
+        color: var(--color-border);
+        opacity: 0.5;
+    }
+
+    /* Estados deshabilitados */
+    button:disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    /* Focus states para accesibilidad */
+    .like-btn:focus:not(:disabled),
+    .dislike-btn:focus:not(:disabled) {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .like-btn, .dislike-btn {
+            padding: 0.25rem;
+        }
+        
+        .like-count, .dislike-count {
+            font-size: 0.7rem;
+            min-width: 1rem;
+        }
+    }
+
+    /* Tooltips para botones */
+    .like-btn:hover:not(:disabled)::after,
+    .dislike-btn:hover:not(:disabled)::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--color-surface);
+        color: var(--color-text);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        border: 1px solid var(--color-border);
+        z-index: 10;
+    }
+
+    .like-btn:hover:not(:disabled)::after,
+    .dislike-btn:hover:not(:disabled)::after {
+        opacity: 1;
+    }
 </style>
 
 <div class="flex items-center space-x-2"
@@ -120,25 +124,111 @@ button:disabled {
 
     {% if user.is_authenticated %}
         <!-- Botón Like -->
-        <button hx-post="{% url 'react_to_comment' comment.id %}"
-                hx-vals='{"reaction_type": 1}'
-                data-tooltip="{% if comment.has_like %}Quitar like{% else %}Me gusta{% endif %}"
-                class="like-btn relative flex items-center space-x-1 cursor-pointer focus:outline-none transition-all duration-200
-                       {% if comment.has_like %}text-primary active{% elif comment.any_reaction %}text-muted{% else %}text-text hover:text-primary{% endif %}">
-            <i class="{% if comment.has_like %}fas{% else %}far{% endif %} fa-thumbs-up transition-transform duration-200"></i>
-            <span class="text-xs like-count font-medium">{{ comment.likes_count|default:0 }}</span>
-        </button>
+<div
+    x-data="{
+        show: false,
+        users: [],
+        loading: false,
+        pos: { top: 0, left: 0 },
+
+        async loadUsers() {
+            if (this.users.length === 0 && !this.loading) {
+                this.loading = true
+                const res = await fetch('{% url 'get_comment_likes' comment.id %}')
+                const data = await res.json()
+                this.users = data.users
+                this.loading = false
+            }
+        },
+
+        open(el) {
+            const rect = el.getBoundingClientRect()
+            this.pos.top = rect.top + rect.height / 2
+            this.pos.left = rect.right + 12
+            this.show = true
+            this.loadUsers()
+        },
+
+        close() {
+            this.show = false
+        }
+    }"
+    class="inline-block"
+>
+    <button
+        x-ref="btn"
+        hx-post="{% url 'react_to_comment' comment.id %}"
+        hx-vals='{"reaction_type": 1}'
+        @mouseenter="open($refs.btn)"
+        @mouseleave="close()"
+        class="like-btn relative flex items-center space-x-1
+            {% if comment.has_like %}text-primary active{% elif comment.any_reaction %}text-muted{% else %}text-text hover:text-primary{% endif %}"
+    >
+        <i class="{% if comment.has_like %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+        <span class="text-xs like-count">{{ comment.likes_count|default:0 }}</span>
+    </button>
+
+    <!-- 🚀 TELEPORT -->
+    <template x-teleport="body">
+        <div
+            x-show="show && {{ comment.likes_count }} > 0"
+            x-transition
+            @mouseenter="show = true"
+            @mouseleave="close"
+            class="reaction-portal bg-surface border border-border rounded-lg shadow-lg min-w-[160px]"
+            :style="{
+                top: pos.top + 'px',
+                left: pos.left + 'px',
+                transform: 'translateY(-50%)'
+            }"
+        >
+            <!-- Flecha -->
+            <div class="absolute -left-2 top-1/2 -translate-y-1/2
+                        border-8 border-transparent border-r-surface"></div>
+
+            <div class="px-3 py-2 text-sm">
+                <template x-if="loading">
+                    <div class="text-muted text-center">Cargando...</div>
+                </template>
+
+                <template x-if="!loading && users.length">
+                    <div>
+                        <template x-for="user in users.slice(0,5)" :key="user.id">
+                            <div class="py-0.5 text-text" x-text="user.name"></div>
+                        </template>
+
+                        <template x-if="users.length > 5">
+                            <div class="text-xs text-muted mt-1"
+                                 x-text="`y ${users.length - 5} más...`"></div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+</div>
+
 
         <span class="text-border text-sm mx-1">·</span>
 
         <!-- Botón Dislike -->
         <button hx-post="{% url 'react_to_comment' comment.id %}"
                 hx-vals='{"reaction_type": -1}'
+                hx-indicator="#spinner-{{ comment.id }}"
                 data-tooltip="{% if comment.has_dislike %}Quitar dislike{% else %}No me gusta{% endif %}"
                 class="dislike-btn relative flex items-center space-x-1 cursor-pointer focus:outline-none transition-all duration-200
                        {% if comment.has_dislike %}text-danger active{% elif comment.any_reaction %}text-muted{% else %}text-text hover:text-danger{% endif %}">
+            <!-- Icono normal -->
             <i class="{% if comment.has_dislike %}fas{% else %}far{% endif %} fa-thumbs-down transition-transform duration-200"></i>
+
             <span class="text-xs dislike-count font-medium">{{ comment.dislikes_count|default:0 }}</span>
+            
+            <span id="spinner-{{ comment.id }}" class="htmx-indicator absolute inset-0 flex items-center justify-center bg-background/80">
+                <svg class="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </span>
         </button>
     {% else %}
         <!-- Botón Like (deshabilitado) -->
@@ -179,12 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Actualizar tooltip después de la respuesta HTMX
             this.addEventListener('htmx:afterSwap', function() {
-                const isLike = this.classList.contains('like-btn');
+
                 const hasReaction = this.classList.contains('text-primary') || this.classList.contains('text-danger');
                 
                 this.setAttribute('data-tooltip', 
-                    isLike ? 
-                    (hasReaction ? 'Quitar like' : 'Me gusta') :
                     (hasReaction ? 'Quitar dislike' : 'No me gusta')
                 );
             });

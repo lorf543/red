@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.template.loader import render_to_string
 from django.db.models import Count, F, Q
 from django.utils import timezone
@@ -388,6 +388,22 @@ def toggle_moderate(request, comment_id):
     return HttpResponse(
         '✅ Comentario moderado            <p> los cambios si estan pero tendra que darle f5, por que soy vago para hacer que sea dinamico</p>' if not comment.is_active else '👁️ Comentario visible'
     )
+ 
+ 
+@require_GET
+def get_comment_likes(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Obtener usuarios que dieron like
+    likes = comment.reactions.filter(reaction_type=1).select_related('user')
+    
+    users = [{
+        'id': like.user.id,
+        'name': like.user.get_full_name() or like.user.username,
+        'username': like.user.username,
+    } for like in likes]
+    
+    return JsonResponse({'users': users}) 
      
 
 def top_comments_view(request):

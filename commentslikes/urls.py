@@ -26,8 +26,8 @@ urlpatterns = [
     path('comment/<int:comment_id>/reply/', views.create_reply, name='create_reply'),
 
     path('comment/create/teacher/<int:teacher_id>/', views.create_teacher_comment, name='create_teacher_comment'),
-    
-    
+    path('comments/<int:comment_id>/likes/', views.get_comment_likes, name='get_comment_likes')
+,    
     #mentions
     path('look-users',views.look_users,name="look_users"),
     
