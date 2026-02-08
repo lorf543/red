@@ -1,0 +1,27 @@
+{
+  "scripts": {
+    "css": "tailwindcss -i ./static/css/styles.css -o ./static/css/output.css --watch",
+    "minify": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "alpinejs": "^3.15.8",
+    "autoprefixer": "^10.4.24",
+    "cssnano": "^7.1.2",
+    "daisyui": "^5.5.18",
+    "esbuild": "^0.27.3",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.18"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18"
+  },
+  "name": "red",
+  "version": "1.0.0",
+  "description": "**Fecha:** 2025-08-18  \r **Autor:** [Eduardo Alberto Sanchez Lebron]",
+  "main": "postcss.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

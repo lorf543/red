@@ -12,42 +12,43 @@
       </a>
       
       <!-- SEARCH -->
-      {% if user.is_authenticated %}
-        <div class="relative w-96">
-          <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
-            <svg class="w-4 h-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
-            </svg>
+<!-- SEARCH -->
+{% if user.is_authenticated %}
+<div class="relative w-full sm:w-20 max-w-full">
+  <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
+    <svg class="w-4 h-4 opacity-50 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
+    </svg>
 
-            <input
-              id="search-input"
-              name="q"
-              type="search"
-              placeholder="Buscar personas..."
-              hx-get="{% url 'search-view' %}"
-              hx-trigger="keyup changed delay:400ms"
-              hx-target="#search-results"
-              hx-swap="innerHTML"
-              hx-indicator="#search-loader"
-              class="grow bg-transparent focus:outline-none"
-              autocomplete="off"
-            />
-          </label>
+    <input
+      id="search-input"
+      name="q"
+      type="search"
+      placeholder="Buscar personas..."
+      hx-get="{% url 'search-view' %}"
+      hx-trigger="keyup changed delay:400ms"
+      hx-target="#search-results"
+      hx-swap="innerHTML"
+      hx-indicator="#search-loader"
+      class="grow bg-transparent focus:outline-none min-w-0"
+      autocomplete="off"
+    />
+  </label>
 
-          <!-- LOADER (solo cuando HTMX está cargando) -->
-          <div id="search-loader" class="htmx-indicator absolute top-full left-0 w-full mt-1 z-50">
-            <div class="bg-base-100 border rounded-lg shadow-lg p-3 flex justify-center">
-              <span class="loading loading-spinner loading-sm text-primary"></span>
-            </div>
-          </div>
+  <!-- LOADER (solo cuando HTMX está cargando) -->
+  <div id="search-loader" class="htmx-indicator absolute top-full left-0 w-full mt-1 z-50">
+    <div class="bg-base-100 border rounded-lg shadow-lg p-3 flex justify-center">
+      <span class="loading loading-spinner loading-sm text-primary"></span>
+    </div>
+  </div>
 
-          <!-- RESULTS (sin hidden, se muestra cuando hay contenido) -->
-          <div id="search-results" class="absolute top-full left-0 w-full mt-1 z-50">
-            <!-- HTMX injecta aquí -->
-          </div>
-        </div>
-      {% endif %}
+  <!-- RESULTS (sin hidden, se muestra cuando hay contenido) -->
+  <div id="search-results" class="absolute top-full left-0 w-full mt-1 z-50">
+    <!-- HTMX injecta aquí -->
+  </div>
+</div>
+{% endif %}
     </div>
   </div>
 

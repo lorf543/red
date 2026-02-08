@@ -119,15 +119,16 @@ WSGI_APPLICATION = 'socialnetwork.wsgi.application'
 
 ASGI_APPLICATION = 'socialnetwork.asgi.application'
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
+# }
 
 # ----------------------------
 # DATABASE
 # ----------------------------
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
