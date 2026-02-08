@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render,HttpResponse
+from django.shortcuts import get_object_or_404, render, HttpResponse
 
 # Create your views here.
 from django.shortcuts import render
@@ -8,19 +8,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from .models import Notification
 from commentslikes.models import Comment, Reaction
-# Create your views here.
 
-
-def get_comments(user=None):
-    if user:
-        comments = Comment.objects.filter(Q(user=user) & Q(parent=None)).prefetch_related('replies').order_by('-created_at')
-    else:
-        comments = Comment.objects.filter(parent=None).prefetch_related('replies').order_by('-created_at')
-    
-    for comment in comments:
-        comment.preview_replies = comment.replies.all().order_by('created_at')[:3]  # Primeros 3 replies
-        comment.total_replies = comment.replies.count()
-        comment.has_more_replies = comment.total_replies > 3
 
 
 @login_required

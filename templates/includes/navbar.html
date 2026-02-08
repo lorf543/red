@@ -4,69 +4,126 @@
 
 <nav class="navbar bg-surface shadow-sm flex" style="box-shadow: var(--comment-shadow);">
   <div class="flex-1">
-    <a href="{% url 'home' %}" class="text-xl font-semibold text-primary">ITLAsocial</a>
-  </div>
+    <div class="flex items-center gap-3 relative max-w-lg">
 
-  {% if user.is_authenticated %}
-  <div class="flex gap-2 items-center">
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class=" text-xl font-semibold text-primary">
+        ITLAsocial
+      </a>
 
-    <!-- 🔔 Notifications Dropdown - FIXED -->
-    <div class="dropdown dropdown-right dropdown-center">
-      <button type="button"
-              tabindex="0"
-              role="button"
-              class="btn btn-circle relative bg-red-500"
-              aria-label="Notificaciones"
-              aria-expanded="false">
+      <!-- SEARCH -->
+      <div class="relative w-50">
+        <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
+          <svg class="w-4 h-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
+          </svg>
 
-          {% if not missing_fields %}
-          <span class="absolute -top-1 -right-1 flex h-5 w-5">
-            <span class="relative inline-flex items-center justify-center bg0
-                        h-5 w-5 rounded-full text-white text-xs font-bold">
-              <span id="counter-value"
-                    hx-get="{% url 'notification_count' %}" 
-                    hx-trigger="load, every 240s" 
-                    hx-swap="innerHTML"
-                    hx-target="this">
-                {{ request.user|unread_count }}
-              </span>
-            </span>
-          </span>
-          {% endif %}
-      </button>
+          <input
+            id="search-input"
+            name="q"
+            type="search"
+            placeholder="Buscar personas..."
+            hx-get="{% url 'search-view' %}"
+            hx-trigger="keyup changed delay:400ms"
+            hx-target="#search-results"
+            hx-swap="innerHTML"
+            hx-indicator="#search-loader"
+            class="grow bg-transparent focus:outline-none"
+            autocomplete="off"
+          />
+        </label>
 
-      <!-- Panel - FIXED: Usar la clase correcta de DaisyUI -->
-      <div tabindex="0" 
-           class="dropdown-content z-[1] mt-3 card card-compact w-96 bg-base-100 shadow-lg rounded-box">
-        <div class="card-body">
-          <div class="flex gap-2 items-center justify-between px-4 py-3 border-b">
-            <h3 class="card-title text-lg">Notificaciones</h3>
-            <button class="btn btn-xs btn-primary text-xs"
-                    hx-post="" 
-                    hx-target="#notifications-panel">
-              Marcar todas
-            </button>
+        <!-- LOADER -->
+        <div id="search-loader"
+             class="htmx-indicator absolute top-full left-0 w-full mt-1 z-50">
+          <div class="bg-base-100 border rounded-lg shadow p-3 flex justify-center">
+            <span class="loading loading-spinner loading-sm text-primary"></span>
           </div>
+        </div>
 
-          <div id="notifications-container" class="max-h-96 overflow-y-auto divide-y">
-            <!-- Loading Indicator -->
-            <div class="htmx-indicator flex justify-center py-4">
-              <span class="loading loading-spinner loading-md"></span>
-            </div>
-
-            <!-- Empty State -->
-            <div id="no-notifications" class="hidden p-6 text-center">
-              <i class="fas fa-bell-slash text-2xl mb-2 opacity-50"></i>
-              <p class="opacity-70">No tienes notificaciones</p>
-            </div>
-          </div>
+        <!-- RESULTS -->
+        <div id="search-results"
+             class="absolute top-full left-0 w-full mt-1 z-50 hidden">
+          <!-- HTMX injecta aquí -->
         </div>
       </div>
     </div>
+  </div>
+
+
+    {% if user.is_authenticated %}
+      <div class="flex gap-2 items-center">
+
+        <!-- 🔔 Notifications Dropdown with WebSocket -->
+        <div class="dropdown dropdown-left" hx-ext="ws" ws-connect="/ws/notifications/">
+          <button type="button"
+                  tabindex="0"
+                  role="button"
+                  class="btn btn-circle relative"
+                  aria-label="Notificaciones"
+                  aria-expanded="false">
+
+            {% if not missing_fields %}
+            <i class="fas fa-bell"></i>
+            <span class="absolute -bottom-0 -left-1 flex h-5 w-5">
+              <span id="notification-badge" 
+                    class="relative inline-flex items-center justify-center bg-error h-5 w-5 rounded-full text-white text-xs font-bold">
+                <span id="notification-count">{{ request.user|unread_count }}</span>
+              </span>
+            </span>
+            {% endif %}
+          </button>
+
+          <!-- Panel -->
+          <div tabindex="0"
+              class="dropdown-content z-[1] mt-3 card card-compact w-96 bg-base-100 shadow-lg rounded-box">
+            <div class="card-body">
+              <div class="flex gap-2 items-center justify-between px-4 py-3 border-b">
+                <h3 class="card-title text-lg">Notificaciones</h3>
+                <button
+                        class="btn btn-sm btn-ghost"
+                        id="mark-all-btn">
+                  <i class="fas fa-check-double"></i>
+                  Marcar todas
+                </button>
+              </div>
+
+              <div id="notifications-container" 
+                  class="max-h-96 overflow-y-auto divide-y">
+                
+                <!-- Loading inicial -->
+                <div id="notifications-loading" class="flex justify-center py-8">
+                  <span class="loading loading-spinner loading-md"></span>
+                </div>
+
+                <!-- Lista de notificaciones (se carga dinámicamente) -->
+                <div id="notifications-list"></div>
+
+                <!-- Empty state -->
+                <div id="no-notifications" 
+                    class="hidden p-6 text-center text-muted">
+                  <i class="fas fa-bell-slash text-3xl mb-2 opacity-50"></i>
+                  <p class="opacity-70">No tienes notificaciones</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- WebSocket Connection -->
+      <div id="ws-notifications" 
+          hx-ext="ws" 
+          ws-connect="/ws/notifications/"
+          style="display: none;">
+      </div>
+
 
     <!-- 📚 Dashboard Shortcut -->
     <a href="{% url 'teachers_list' %}" 
-       class="btn btn-ghost" 
+       class="hidden lg:block" 
        aria-label="Dashboard">
         <i class="fas fa-chalkboard-teacher"></i>
         Profesores
@@ -75,7 +132,7 @@
 
     <!-- 👤 Profile Dropdown - FIXED -->
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar w-7xl">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
           {% if user.profile.profile_picture.url %} 
             <img src="{{ user.profile.profile_picture.url}}" alt="Foto de perfil" 
@@ -169,6 +226,7 @@
           </div>
         </li>
       </ul>
+
     </div>
   </div>
   

@@ -143,6 +143,31 @@ def check_username(request):
     return HttpResponse(html)
 
 
+def search_view(request):
+    query = request.GET.get('q', '').strip()
+
+    # 👉 Si no hay texto, no mostrar nada
+    if not query:
+        if request.headers.get('HX-Request'):
+            return HttpResponse("")
+        
+
+    users = User.objects.filter(
+        Q(username__icontains=query) |
+        Q(first_name__icontains=query) |
+        Q(last_name__icontains=query) |
+        Q(email__icontains=query)
+    )
+
+    if request.user.is_authenticated:
+        users = users.exclude(id=request.user.id)
+
+    users = users[:20]
+
+    return render(request, 'partials/search_results.html', {
+        'users': users,
+        'query': query
+    })
 
 def tutoriales(request):
     steps = [

@@ -3,11 +3,13 @@ from django.http import JsonResponse
 from django.urls import reverse
 from schedules.models import Teacher
 from django.db.models import Count
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
 from collections import defaultdict
+import hashlib
 
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
@@ -59,20 +61,86 @@ def get_comments(user=None, teacher_id=None):
     
     return result
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def teachers_list(request):
-
-    teachers = Teacher.objects.annotate(
-        guagua_votes=Count('votes', filter=Q(votes__vote_type=1)),
-        te_va_a_quemar_votes=Count('votes', filter=Q(votes__vote_type=2)),
-        se_aprende_votes=Count('votes', filter=Q(votes__vote_type=3)),
-        vago_votes=Count('votes', filter=Q(votes__vote_type=4)),
-    ).values('id', 'full_name', 'guagua_votes', 'te_va_a_quemar_votes', 'se_aprende_votes', 'vago_votes','slug')
-
-    context = {
-        'teachers': teachers,
-    }
-    return render(request,'teachers/teachers_list.html',context)
+    """Vista principal con paginación y búsqueda optimizada"""
+    
+    # Parámetros de búsqueda y paginación
+    search_query = request.GET.get('search', '').strip()
+    page_number = request.GET.get('page', 1)
+    per_page = request.GET.get('per_page', 20)
+    sort_by = request.GET.get('sort', '-se_aprende_votes')  # Default: ordenar por "Se aprende"
+    
+    # Generar cache key única basada en parámetros
+    cache_key = f"teachers_list_{hashlib.md5(f'{search_query}_{page_number}_{per_page}_{sort_by}'.encode()).hexdigest()}"
+    
+    # Intentar obtener del caché
+    cached_data = cache.get(cache_key)
+    
+    if cached_data and not request.GET.get('no_cache'):
+        context = cached_data
+    else:
+        # Query base optimizado
+        teachers_qs = Teacher.objects.annotate(
+            guagua_votes=Count('votes', filter=Q(votes__vote_type=1)),
+            te_va_a_quemar_votes=Count('votes', filter=Q(votes__vote_type=2)),
+            se_aprende_votes=Count('votes', filter=Q(votes__vote_type=3)),
+            vago_votes=Count('votes', filter=Q(votes__vote_type=4)),
+            total_votes=Count('votes')
+        ).select_related()  # Si tienes ForeignKeys
+        
+        # Aplicar búsqueda si existe
+        if search_query:
+            teachers_qs = teachers_qs.filter(
+                Q(full_name__icontains=search_query) |
+                Q(area__icontains=search_query)
+            )
+        
+        # Aplicar ordenamiento
+        valid_sorts = {
+            'name': 'full_name',
+            '-name': '-full_name',
+            'guagua': '-guagua_votes',
+            'quemar': '-te_va_a_quemar_votes',
+            'aprende': '-se_aprende_votes',
+            'vago': '-vago_votes',
+            'total': '-total_votes'
+        }
+        teachers_qs = teachers_qs.order_by(valid_sorts.get(sort_by, '-se_aprende_votes'))
+        
+        # Paginación
+        paginator = Paginator(teachers_qs, per_page)
+        
+        try:
+            teachers_page = paginator.page(page_number)
+        except PageNotAnInteger:
+            teachers_page = paginator.page(1)
+        except EmptyPage:
+            teachers_page = paginator.page(paginator.num_pages)
+        
+        context = {
+            'teachers': teachers_page,
+            'search_query': search_query,
+            'sort_by': sort_by,
+            'total_teachers': paginator.count,
+            'is_paginated': paginator.num_pages > 1,
+            'page_obj': teachers_page,
+        }
+        
+        # Cachear por 5 minutos
+        cache.set(cache_key, context, 60 * 5)
+    
+    # Si es una petición AJAX/Fetch, devolver solo la tabla
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        html = render_to_string('teachers/partials/_teachers_table.html', context)
+        return JsonResponse({
+            'html': html,
+            'total': context['total_teachers'],
+            'page': context['page_obj'].number,
+            'num_pages': context['page_obj'].paginator.num_pages
+        })
+    
+    return render(request, 'teachers/teachers_list.html', context)
 
 
 def teacher_detail(request, teacher_slug):
@@ -116,6 +184,8 @@ def teacher_detail(request, teacher_slug):
     }
     return render(request, 'teachers/teacher_detail.html', context)
 
+def create_teacher(request):
+    return render(request, 'teachers/create_teacher.html')
 
 @login_required
 def assign_subject(request, teacher_slug):
@@ -225,71 +295,136 @@ def vote_teacher_2(request, teacher_id):
 
 
 def votes_analysis(request):
-    teachers = Teacher.objects.annotate(
-        total_votes=Count('votes'),
-        guagua_votes=Count(Case(When(votes__vote_type=1, then=1), output_field=IntegerField())),
-        burn_votes=Count(Case(When(votes__vote_type=2, then=1), output_field=IntegerField())),
-        learn_votes=Count(Case(When(votes__vote_type=3, then=1), output_field=IntegerField())),
-        lazy_votes=Count(Case(When(votes__vote_type=4, then=1), output_field=IntegerField()))
-    ).filter(total_votes__gt=0).order_by('-total_votes')
-
-    # Calculate totals
-    totals = teachers.aggregate(
-        total=Sum('total_votes'),
-        guagua=Sum('guagua_votes'),
-        burn=Sum('burn_votes'),
-        learn=Sum('learn_votes'),
-        lazy=Sum('lazy_votes')
-    )
-
-    # Get top teachers for each category
-    top_guagua = teachers.order_by('-guagua_votes').first()
-    top_burn = teachers.order_by('-burn_votes').first()
-    top_learn = teachers.order_by('-learn_votes').first()
-    top_lazy = teachers.order_by('-lazy_votes').first()
-
-    # Prepare category data
+    """
+    Vista de análisis de votos con paginación y estadísticas optimizadas.
+    Muestra rankings por categoría y feed de votos recientes.
+    """
+    
+    # Parámetros
+    page_number = request.GET.get('page', 1)
+    category_filter = request.GET.get('category', 'all')  # all, 1, 2, 3, 4
+    vote_type_filter = request.GET.get('type', 'all')  # all, teacher, subject
+    
+    # Cache key para estadísticas (no cambian tan seguido)
+    stats_cache_key = 'votes_stats_v1'
+    stats = cache.get(stats_cache_key)
+    
+    if not stats:
+        # Calcular estadísticas globales
+        teachers = Teacher.objects.annotate(
+            total_votes=Count('votes'),
+            guagua_votes=Count('votes', filter=Q(votes__vote_type=1)),
+            burn_votes=Count('votes', filter=Q(votes__vote_type=2)),
+            learn_votes=Count('votes', filter=Q(votes__vote_type=3)),
+            lazy_votes=Count('votes', filter=Q(votes__vote_type=4))
+        ).filter(total_votes__gt=0)
+        
+        # Totales generales
+        totals = teachers.aggregate(
+            total=Sum('total_votes'),
+            guagua=Sum('guagua_votes'),
+            burn=Sum('burn_votes'),
+            learn=Sum('learn_votes'),
+            lazy=Sum('lazy_votes')
+        )
+        
+        # Top teachers por categoría (top 3 de cada una)
+        top_guagua = list(teachers.order_by('-guagua_votes')[:3])
+        top_burn = list(teachers.order_by('-burn_votes')[:3])
+        top_learn = list(teachers.order_by('-learn_votes')[:3])
+        top_lazy = list(teachers.order_by('-lazy_votes')[:3])
+        
+        # Top overall (más votados en general)
+        top_overall = list(teachers.order_by('-total_votes')[:5])
+        
+        stats = {
+            'totals': totals,
+            'top_guagua': top_guagua,
+            'top_burn': top_burn,
+            'top_learn': top_learn,
+            'top_lazy': top_lazy,
+            'top_overall': top_overall,
+        }
+        
+        # Cachear por 10 minutos
+        cache.set(stats_cache_key, stats, 60 * 10)
+    
+    # Query de votos con filtros
+    votes_query = Vote.objects.select_related(
+        'teacher', 
+        'subject', 
+        'user',
+        'user__profile'
+    ).order_by('-created_at')
+    
+    # Aplicar filtros
+    if category_filter != 'all':
+        votes_query = votes_query.filter(vote_type=int(category_filter))
+    
+    if vote_type_filter == 'teacher':
+        votes_query = votes_query.filter(teacher__isnull=False)
+    elif vote_type_filter == 'subject':
+        votes_query = votes_query.filter(subject__isnull=False)
+    
+    # Paginación (20 votos por página)
+    paginator = Paginator(votes_query, 20)
+    votes_page = paginator.get_page(page_number)
+    
+    # Preparar datos de categorías para el template
     categories = [
         {
             'id': 1,
-            'name': 'Guagua 🚍',
-            'total': totals['guagua'] or 0,
-            'top_teacher': top_guagua,
-            'top_votes': top_guagua.guagua_votes if top_guagua else 0,
-            'color': 'success'
+            'name': 'Guagua',
+            'emoji': '🚍',
+            'total': stats['totals']['guagua'] or 0,
+            'top_teachers': stats['top_guagua'],
+            'color': 'info',
+            'bg_class': 'bg-info/10',
+            'text_class': 'text-info',
+            'border_class': 'border-info/30',
         },
         {
             'id': 2,
-            'name': 'Quemar 🔥',
-            'total': totals['burn'] or 0,
-            'top_teacher': top_burn,
-            'top_votes': top_burn.burn_votes if top_burn else 0,
-            'color': 'error'
+            'name': 'Te va a quemar',
+            'emoji': '🔥',
+            'total': stats['totals']['burn'] or 0,
+            'top_teachers': stats['top_burn'],
+            'color': 'danger',
+            'bg_class': 'bg-danger/10',
+            'text_class': 'text-danger',
+            'border_class': 'border-danger/30',
         },
         {
             'id': 3,
-            'name': 'Aprende 📚',
-            'total': totals['learn'] or 0,
-            'top_teacher': top_learn,
-            'top_votes': top_learn.learn_votes if top_learn else 0,
-            'color': 'info'
+            'name': 'Se aprende',
+            'emoji': '📚',
+            'total': stats['totals']['learn'] or 0,
+            'top_teachers': stats['top_learn'],
+            'color': 'success',
+            'bg_class': 'bg-success/10',
+            'text_class': 'text-success',
+            'border_class': 'border-success/30',
         },
         {
             'id': 4,
-            'name': 'Vago 😴',
-            'total': totals['lazy'] or 0,
-            'top_teacher': top_lazy,
-            'top_votes': top_lazy.lazy_votes if top_lazy else 0,
-            'color': 'warning'
+            'name': 'Vago',
+            'emoji': '😴',
+            'total': stats['totals']['lazy'] or 0,
+            'top_teachers': stats['top_lazy'],
+            'color': 'muted',
+            'bg_class': 'bg-muted/10',
+            'text_class': 'text-muted',
+            'border_class': 'border-muted/30',
         }
     ]
     
-    votes = Vote.objects.select_related('teacher', 'subject', 'user').order_by('-created_at')
-
     context = {
-        'teachers': teachers,
-        'total_votes': totals['total'] or 0,
+        'votes': votes_page,
+        'total_votes': stats['totals']['total'] or 0,
         'categories': categories,
-        'votes': votes  
+        'top_overall': stats['top_overall'],
+        'category_filter': category_filter,
+        'vote_type_filter': vote_type_filter,
     }
+    
     return render(request, 'votes/analysis.html', context)

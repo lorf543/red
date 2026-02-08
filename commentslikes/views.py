@@ -124,8 +124,8 @@ def create_comment(request):
             user=request.user,
             content=content,
             parent=parent_comment,
-            image=image,  # Django/Cloudinary lo subirá automáticamente
-            image_status='pending' if image else None  # ✅ None si no hay imagen
+            image=image,  
+            image_status='pending' if image else None 
         )
         comment.process_mentions()
 
@@ -160,31 +160,56 @@ def error_hx_response(message):
 @login_required
 @require_POST
 def create_teacher_comment(request, teacher_id):
-    content = request.POST.get('content', '').strip()
-    if not content:
-        return HttpResponseBadRequest("El comentario está vacío")
-
     teacher = get_object_or_404(Teacher, id=teacher_id)
-    
-    # Verificar palabras prohibidas
-    badwords_found = get_badwords_in_text(content)
-    if badwords_found:
-        unique_words = sorted(set(badwords_found))
-        badwords_list = ', '.join(unique_words)
-        message = f'Tu comentario contiene las siguientes palabras no permitidas: <strong class="text-red-600">{escape(badwords_list)}</strong>. Por favor, modifícalo.'
-        return HttpResponse(f'<p id="message">{message}</p>')
-    
+    content = request.POST.get('content', '').strip()
+    image = request.FILES.get('image')
+
+    # 1. Validación vacío
+    if not content and not image:
+        return error_hx_response("El comentario no puede estar vacío.")
+
+    # 2. Badwords
+    if content:
+        badwords_found = get_badwords_in_text(content)
+        if badwords_found:
+            unique_words = ', '.join(sorted(set(badwords_found)))
+            return error_hx_response(
+                f'Palabras no permitidas: <strong class="text-red-600">{escape(unique_words)}</strong>.'
+            )
+
+    parent_id = request.POST.get('parent')
+    parent_comment = Comment.objects.filter(pk=parent_id).first() if parent_id else None
+
     try:
+        # Crear comentario
         comment = Comment.objects.create(
             user=request.user,
+            teacher=teacher,  # ¡IMPORTANTE! Falta esta línea
             content=content,
-            teacher=teacher
+            parent=parent_comment,
+            image=image,
+            image_status='pending' if image else None
         )
+        comment.process_mentions()
 
-        return render(request, 'components/comment_item.html', {'comment': comment})
+        # Si hay imagen, validar en segundo plano
+        if image:
+            threading.Thread(
+                target=validate_comment_image,
+                args=(comment.id,),  # Solo necesitas el ID
+                daemon=True
+            ).start()
+
+        return render(request, 'components/comment_item.html', {'comment': comment,"enable_polling": True})
 
     except Exception as e:
-        return HttpResponseServerError(str(e))
+        print(f"Error creando comentario: {e}")
+        import traceback
+        traceback.print_exc()
+        return HttpResponseServerError(
+            f'<div class="text-red-600">Error: {str(e)}</div>'
+        )
+
  
      
 @login_required

@@ -1,315 +1,370 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
-
-<style>
-        /* Estilos para los selects y inputs */
-    select, input {
-        transition: all 0.2s;
-    }
-
-    select:focus, input:focus {
-        ring: 2px;
-        ring-color: #6366f1;
-        border-color: #6366f1;
-    }
-
-    /* Estilos para los errores */
-    .errorlist {
-        margin-top: 0.25rem;
-        font-size: 0.875rem;
-        color: #dc2626;
-    }
-
-    /* Animación para el modal */
-    .modal-box {
-        animation: modal-open 0.3s ease-out;
-    }
-
-    @keyframes modal-open {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-}
-</style>
-
-<div class="max-w-7xl mx-auto px-4 py-8">
-
-
-
-    <!-- Encabezado -->
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-            <div class="mb-4 md:mb-0">
-                <div class="flex items-center space-x-2">
-                    <h1 class="text-2xl font-bold text-text">Materias por Maestro :</h1>
-                    <p class="text-xl text-text">{{ teacher }}</p>
+<div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <!-- Header Section -->
+    <div class="bg-surface rounded-2xl shadow-lg p-6 border border-border">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <h1 class="text-2xl font-bold text-text-primary">Materias por Maestro:</h1>
+                    <span class="text-2xl text-primary">{{ teacher }}</span>
                 </div>
-                <div id="vote-buttons-{{ teacher.id }}">
+                <p class="text-text-secondary">Relación completa de materias impartidas por cada docente</p>
+                
+                <!-- Vote Buttons -->
+                <div id="vote-buttons-{{ teacher.id }}" class="mt-4">
                     {% include "teachers/partials/vote_buttons.html" with teacher=teacher positive_votes=positive_votes negative_votes=negative_votes current_vote=current_vote %}
                 </div>
-
-                <p class="text-text">Relación completa de materias impartidas por cada docente</p>
             </div>
-        <div class="flex flex-col md:flex-row space-x-0 md:space-x-3">
-            {% comment %} hx-boost="true" {% endcomment %}
-            <a  href="{% url 'teachers_list' %}" class="bg-primary hover:bg-secondary text-text px-4 py-2 rounded-lg flex items-center mb-2 md:mb-0">
-                <i class="fas fa-arrow-left mr-2 text-text"></i> Volver a Maestros
-            </a>
-            <a href="{% url 'assign_subject' teacher.slug %}" class="cursor-pointer bg-primary text-text hover:bg-secondary text-text px-4 py-2 rounded-lg flex items-center">
-                <i class="fas fa-plus mr-2 text-text"></i> Asignar Materia
-            </a>
-
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{% url 'teachers_list' %}" 
+                   class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-text-on-primary px-5 py-2.5 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver a Maestros
+                </a>
+                <a href="{% url 'assign_subject' teacher.slug %}"
+                   class="inline-flex items-center justify-center gap-2 bg-secondary hover:bg-secondary-dark text-text-on-secondary px-5 py-2.5 rounded-lg transition-colors">
+                    <i class="fas fa-plus"></i>
+                    Asignar Materia
+                </a>
+            </div>
         </div>
     </div>
-    <!-- Tarjeta contenedora -->
-    <div class="bg-background shadow-lg rounded-xl overflow-hidden border border-gray-100">
 
-        <!-- Tabla responsive -->
+    <!-- Subjects Table Section -->
+    <div class="bg-surface rounded-2xl shadow-lg overflow-hidden border border-border">
         <div class="overflow-x-auto">
-            <table id="materiasTable" class="min-w-full divide-y divide-gray-200">
+            <table id="materiasTable" class="min-w-full divide-y divide-border">
                 <thead class="bg-background">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text uppercase tracking-wider">Materia</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text uppercase tracking-wider">Modalidad</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text uppercase tracking-wider">Horario</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text uppercase tracking-wider">Estado</th>
-
+                        <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-text-primary uppercase tracking-wider">
+                            Materia
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-text-primary uppercase tracking-wider">
+                            Modalidad
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-text-primary uppercase tracking-wider">
+                            Horario
+                        </th>
+                        <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-text-primary uppercase tracking-wider">
+                            Estado
+                        </th>
                     </tr>
                 </thead>
-                <tbody id="subject-list" class="bg-background divide-y divide-gray-200">
-                    <!-- Ejemplo de fila (reemplazar con tus variables) -->
+                <tbody id="subject-list" class="divide-y divide-border">
                     {% for subject in subjects %}
-                        <tr class="hover:bg-background transition-colors">
+                    <tr class="hover:bg-background-hover transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div>
-                                    <div class="text-sm font-medium text-text">{{subject.name}}</div>
+                            <div class="text-sm font-medium text-text-primary">{{ subject.name }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <span class="text-sm font-medium text-primary">{{ subject.modalidad|slice:"1" }}</span>
                                 </div>
+                                <span class="text-sm text-text-primary">{{ subject.modalidad }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-background flex items-center justify-center text-text text-xs font-bold mr-2">
-                                    <div class="text-sm text-text">{{subject.modalidad|slice:"1"}}</div>
-                                </div>
-                                <div class="text-sm text-text">{{subject.modalidad}}</div>
-                            </div>
+                            <div class="text-sm text-text-primary">{{ subject.subject_schedule }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-text">{{subject.subject_schedule}}</div>
+                            <!-- Estado placeholder - puedes personalizar esto -->
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
+                                Activo
+                            </span>
                         </td>
-                        {% comment %} <td class="px-6 py-4 whitespace-nowrap">
-                                <a hx-boost="false" href="{% url 'delete_subject' subject.id %}">Delete</a>
-                        </td> {% endcomment %}
                     </tr>
-                    
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-text-secondary">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fas fa-book-open text-3xl text-text-disabled"></i>
+                                <p>No hay materias asignadas aún</p>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-
     </div>
-        <!-- Sección de Comentarios -->
-        <div class="mt-12 bg-background shadow-lg rounded-xl overflow-hidden border border-gray-100">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-text">Comentarios sobre {{ teacher.full_name }}</h2>
-                <p class="text-text">Opiniones y evaluaciones de la comunidad</p>
-            </div>
 
-
-            <!-- Formulario para crear comentarios -->
-            {% if request.user.is_authenticated %}
-            <div class="px-4 py-2">
-                <div class="bg-background rounded-lg shadow p-4 mb-6">
-                    <form id="commentForm"
-                        method="post"
-                        hx-post="{% url 'create_teacher_comment' teacher.id %}"
-                        hx-target="#commentsContainer"
-                        hx-swap="afterbegin"
-                        _="on htmx:afterRequest reset() me">
-                        {% csrf_token %}
-                        <textarea name="content" 
-                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                                placeholder="¿Qué estás pensando?"
-                                required></textarea>
-                        <div class="flex justify-end mt-3">
-                            <button type="submit" 
-                                    class="cursor-pointer bg-background text-text px-4 py-2 rounded-lg hover:bg-blue-700">
-                                Publicar
-                            </button>
-                        </div>
-                    </form>
+    <!-- Comments Section -->
+    <div class="bg-surface rounded-2xl shadow-lg overflow-hidden border border-border">
+        <!-- Comments Header -->
+        <div class="px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-text-primary">Comentarios sobre {{ teacher.full_name }}</h2>
+                    <p class="text-text-secondary mt-1">Opiniones y evaluaciones de la comunidad</p>
                 </div>
-            {% endif %}
-            <!-- Contenedor para los comentarios -->
-            <div id="commentsContainer" class="space-y-4">
-                {% for comment in comments %}
-                    {% include "components/comment_item.html" %}
-                {% endfor %}
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-text-secondary">
+                        {{ comments|length }} comentario{{ comments|length|pluralize }}
+                    </span>
+                </div>
             </div>
-            
-
-
         </div>
 
+        <!-- Comment Form (Authenticated Users) -->
+        {% if request.user.is_authenticated %}
+        <div class="p-6 border-b border-border">
+            <form id="commentForm"
+                  method="post"
+                  hx-post="{% url 'create_teacher_comment' teacher.id %}"
+                  hx-target="#commentsContainer"
+                  hx-swap="afterbegin"
+                  _="on htmx:afterRequest reset() me"
+                  class="space-y-4">
+                {% csrf_token %}
+                
+                <div class="relative">
+                    <textarea name="content"
+                            id="teacherCommentTextarea"
+                            rows="3"
+                            class="w-full px-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder:text-text-disabled focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-all"
+                            placeholder="¿Qué estás pensando sobre este maestro? ¡Comparte tu experiencia!"
+                            required
+                            oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+                    
 
-    
+                </div>
+
+                <!-- Image Upload Preview -->
+                <div id="teacherImagePreviewContainer" class="hidden">
+                    <div class="relative inline-block">
+                        <img id="teacherImagePreview" class="max-h-48 rounded-lg border border-border">
+                        <button type="button"
+                                onclick="removeTeacherImage()"
+                                class="absolute -top-2 -right-2 w-6 h-6 bg-error text-text-on-error rounded-full flex items-center justify-center hover:bg-error-dark transition-colors">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-between pt-2">
+                    <div class="flex items-center gap-2">
+                        <!-- File Upload -->
+                        <label class="cursor-pointer p-2 text-text-secondary hover:text-primary transition-colors">
+                            <i class="fas fa-image text-lg"></i>
+                            <input type="file"
+                                   id="teacherImageInput"
+                                   name="image"
+                                   accept="image/*"
+                                   class="hidden"
+                                   onchange="handleTeacherFileSelect(this)">
+                        </label>
+                        
+                        <!-- Emoji Picker -->
+                        <button type="button"
+                                onclick="toggleTeacherEmojiPicker(this)"
+                                class="p-2 text-text-secondary hover:text-primary transition-colors">
+                            <i class="fas fa-smile text-lg"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="submit"
+                            class="px-6 py-2.5 bg-primary hover:bg-primary-dark text-text-on-primary font-medium rounded-lg transition-colors">
+                        Publicar comentario
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Emoji Picker Popover -->
+            <div id="emojiPickerPopover" 
+                 class="absolute z-50 hidden bg-surface border border-border rounded-lg shadow-xl">
+                <emoji-picker></emoji-picker>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Comments Container -->
+        <div id="commentsContainer" class="divide-y divide-border">
+            {% for comment in comments %}
+                {% include "components/comment_item.html" with comment=comment %}
+            {% empty %}
+                <div class="p-8 text-center">
+                    <div class="flex flex-col items-center justify-center gap-3 text-text-disabled">
+                        <i class="fas fa-comments text-4xl"></i>
+                        <p class="text-lg font-medium">No hay comentarios aún</p>
+                        <p class="text-sm">Sé el primero en compartir tu experiencia</p>
+                        {% if not request.user.is_authenticated %}
+                        <a href="{% url 'login' %}"
+                           class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-text-on-primary rounded-lg transition-colors">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Inicia sesión para comentar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
-    
-
-
 
 <script>
-    
-// Funciones para mostrar/ocultar formularios de respuesta
-function showReplyForm(commentId) {
-    document.getElementById(`reply-form-${commentId}`).classList.remove('hidden');
-}
-
-function hideReplyForm(commentId) {
-    document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
-}
-
-// Scroll a un comentario si hay un hash en la URL
+// Auto-resize textarea
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.hash) {
-        const element = document.querySelector(window.location.hash);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
+    const textarea = document.getElementById('teacherCommentTextarea');
+    if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
     }
 });
 
+// Image handling functions
+function handleTeacherFileSelect(input) {
+    if (input.files && input.files[0]) {
+        showTeacherPreview(input.files[0]);
+    }
+}
 
+function showTeacherPreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('teacherImagePreview');
+        const container = document.getElementById('teacherImagePreviewContainer');
+        preview.src = e.target.result;
+        container.classList.remove('hidden');
+    }
+    reader.readAsDataURL(file);
+}
 
-    // Manejar el éxito del formulario
-    document.body.addEventListener('refreshSubjects', function() {
-        // Cierra el modal
-        document.getElementById('assign_subject_modal').close();
-        
-        // Recarga la lista de materias (implementa esto según tu estructura)
-        htmx.trigger('#subjects-container', 'refresh');
-        
-        // Muestra notificación de éxito
-        showNotification('Materia asignada correctamente', 'success');
-    });
+function removeTeacherImage() {
+    const input = document.getElementById('teacherImageInput');
+    const preview = document.getElementById('teacherImagePreview');
+    const container = document.getElementById('teacherImagePreviewContainer');
     
-    // Función para mostrar notificaciones (puedes usar tu sistema actual)
-    function showNotification(message, type) {
-        // Implementa tu sistema de notificaciones aquí
-        alert(message); // Ejemplo básico
-    }
+    if (input) input.value = '';
+    if (preview) preview.src = '';
+    if (container) container.classList.add('hidden');
+}
 
+// Emoji picker functions
+function toggleTeacherEmojiPicker(btn) {
+    const pickerPopover = document.getElementById('emojiPickerPopover');
+    const picker = document.querySelector('emoji-picker');
+    const textarea = document.getElementById('teacherCommentTextarea');
 
-    <
-    // 1. Manejo de Archivos (Selección manual)
-    function handleTeacherFileSelect(input) {
-        if (input.files && input.files[0]) {
-            showTeacherPreview(input.files[0]);
-        }
-    }
+    if (!pickerPopover || !picker) return;
 
-    // 2. Manejo de Copy-Paste
-    function handleTeacherPaste(e) {
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-        for (let index in items) {
-            const item = items[index];
-            if (item.kind === 'file' && item.type.includes('image/')) {
-                const blob = item.getAsFile();
-                
-                // Asignar al input hidden
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(blob);
-                document.getElementById('teacherImageInput').files = dataTransfer.files;
-                
-                showTeacherPreview(blob);
-            }
-        }
-    }
-
-    // Mostrar Preview
-    function showTeacherPreview(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('teacherImagePreview').src = e.target.result;
-            document.getElementById('teacherImagePreviewContainer').classList.remove('hidden');
-        }
-        reader.readAsDataURL(file);
-    }
-
-    // Quitar Imagen
-    function removeTeacherImage() {
-        document.getElementById('teacherImageInput').value = '';
-        document.getElementById('teacherImagePreview').src = '';
-        document.getElementById('teacherImagePreviewContainer').classList.add('hidden');
-    }
-
-    // Resetear formulario (HTMX callback)
-    function resetTeacherForm() {
-        const textarea = document.getElementById('teacherCommentTextarea');
-        textarea.style.height = 'auto';
-        removeTeacherImage();
-    }
-
-    // 3. Lógica de Emojis para este formulario
-    function toggleTeacherEmojiPicker(btn) {
-        const pickerPopover = document.getElementById('emojiPickerPopover');
-        const picker = document.querySelector('emoji-picker');
-        const textarea = document.getElementById('teacherCommentTextarea');
-
-        if (!pickerPopover || !picker) return;
-
-        // Posicionamiento
+    // Toggle visibility
+    const isVisible = pickerPopover.classList.contains('hidden');
+    pickerPopover.classList.toggle('hidden', !isVisible);
+    
+    if (isVisible) {
+        // Position the picker
         const rect = btn.getBoundingClientRect();
-        pickerPopover.style.top = (window.scrollY + rect.top + 40) + 'px';
-        pickerPopover.style.left = (window.scrollX + rect.left) + 'px';
+        pickerPopover.style.top = `${window.scrollY + rect.bottom + 5}px`;
+        pickerPopover.style.left = `${window.scrollX + rect.left}px`;
         
-        pickerPopover.classList.toggle('active');
-
-        // Listener único para este textarea
-        // Usamos una propiedad temporal para evitar listeners duplicados si ya existen
-        picker.onclick = function(event) {
-             // Esta función se sobrescribe cada vez que abres un picker diferente
-             // Asegurando que el emoji vaya al textarea correcto
-        }
-        
-        // Forma robusta de manejar el evento custom del web component
+        // Set up emoji insertion
         const insertEmoji = (event) => {
-            const emoji = event.detail.unicode;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            
-            textarea.value = text.slice(0, start) + emoji + text.slice(end);
-            textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-            textarea.focus();
-            textarea.dispatchEvent(new Event('input')); // Para el auto-resize
-            
-            pickerPopover.classList.remove('active');
-            
-            // Importante: remover el listener para no duplicar en otros formularios
-            picker.removeEventListener('emoji-click', insertEmoji);
-        };
-
-        picker.addEventListener('emoji-click', insertEmoji, { once: true });
-        
-        // Cerrar al hacer click fuera
-        const closeListener = (e) => {
-            if (!pickerPopover.contains(e.target) && e.target !== btn) {
-                pickerPopover.classList.remove('active');
-                picker.removeEventListener('emoji-click', insertEmoji); // Limpieza
-                document.removeEventListener('click', closeListener);
+            if (textarea) {
+                const emoji = event.detail.unicode;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                
+                textarea.value = text.slice(0, start) + emoji + text.slice(end);
+                textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+                textarea.focus();
+                textarea.dispatchEvent(new Event('input'));
+                
+                // Hide picker
+                pickerPopover.classList.add('hidden');
+                document.removeEventListener('click', outsideClickListener);
             }
         };
-        setTimeout(() => document.addEventListener('click', closeListener), 0);
+
+        picker.addEventListener('emoji-click', insertEmoji);
+        
+        // Close when clicking outside
+        const outsideClickListener = (e) => {
+            if (!pickerPopover.contains(e.target) && e.target !== btn) {
+                pickerPopover.classList.add('hidden');
+                picker.removeEventListener('emoji-click', insertEmoji);
+                document.removeEventListener('click', outsideClickListener);
+            }
+        };
+        
+        setTimeout(() => {
+            document.addEventListener('click', outsideClickListener);
+        }, 0);
+    }
+}
+
+// Handle paste for images
+document.addEventListener('paste', function(e) {
+    const textarea = document.getElementById('teacherCommentTextarea');
+    if (textarea && document.activeElement === textarea) {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let item of items) {
+            if (item.type.indexOf('image') !== -1) {
+                const blob = item.getAsFile();
+                if (blob) {
+                    // Assign to hidden input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(blob);
+                    const input = document.getElementById('teacherImageInput');
+                    if (input) {
+                        input.files = dataTransfer.files;
+                        showTeacherPreview(blob);
+                    }
+                    e.preventDefault();
+                    break;
+                }
+            }
+        }
+    }
+});
+</script>
+
+<style>
+    /* Custom scrollbar for comments */
+    #commentsContainer::-webkit-scrollbar {
+        width: 6px;
     }
 
-</script>
+    #commentsContainer::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #commentsContainer::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+    }
+
+    #commentsContainer::-webkit-scrollbar-thumb:hover {
+        background: var(--text-disabled);
+    }
+
+    /* Smooth transitions */
+    textarea, input, button, a {
+        transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 200ms;
+    }
+
+    /* Modal animations */
+    @keyframes modal-open {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .modal-box {
+        animation: modal-open 0.3s ease-out;
+    }
+</style>
 {% endblock %}

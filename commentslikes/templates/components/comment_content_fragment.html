@@ -12,7 +12,7 @@
     {% endif %}
 >
     
-    <div class="text-text whitespace-pre-wrap">
+    <div class="text-text">
         <div x-show="!expanded" class="overflow-hidden" x-transition>
             <p style="
                 word-break: break-word; padding: 1px 11px;"> {{ comment.content|truncatewords:50|censurar|highlight_mentions|linebreaksbr|safe }} </p>

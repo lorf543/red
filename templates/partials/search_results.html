@@ -1,0 +1,36 @@
+{% if users %}
+<div class="bg-base-100 border rounded-lg shadow-xl max-h-72 overflow-y-auto animate-dropdown">
+  <ul class="divide-y">
+    {% for user in users %}
+    <li>
+      <a href="{% url 'profile' user.profile.slug %}"
+         class="flex items-center gap-3 p-3 hover:bg-base-200 transition">
+        
+        <div class="avatar">
+          <div class="w-9 rounded-full">
+            {% if user.profile.profile_picture %}
+              <img src="{{ user.profile.profile_picture.url }}">
+            {% else %}
+              <div class="bg-primary text-primary-content flex items-center justify-center">
+                {{ user.username|first|upper }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div>
+          <p class="font-medium text-sm">
+            {{ user.get_full_name|default:user.username }}
+          </p>
+          <p class="text-xs opacity-60">@{{ user.username }}</p>
+        </div>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="bg-base-100 border rounded-lg shadow p-4 text-sm opacity-70">
+  No se encontraron resultados
+</div>
+{% endif %}

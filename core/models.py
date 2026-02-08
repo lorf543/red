@@ -24,10 +24,14 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     birth_date = models.DateField(null=True, blank=True)
 
-    profile_picture = models.URLField(
-        blank=True,
+    profile_picture = CloudinaryField(
+        folder="red/profile_picture",
         null=True,
-        help_text="URL de la foto de perfil (Google u otra)"
+        blank=True,
+        transformation={
+            'quality': 'auto:good',
+            'fetch_format': 'auto',
+        }
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

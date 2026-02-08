@@ -1,0 +1,24 @@
+<!-- notifications/partials/notification_badge.html -->
+{% load notification_tags %}
+
+<button type="button"
+        tabindex="0"
+        role="button"
+        class="btn btn-circle relative"
+        aria-label="Notificaciones"
+        aria-expanded="false"
+        hx-get="{% url 'notification_list' %}"
+        hx-target="#notification-dropdown"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+        @click="open = !open">
+
+  <i class="fas fa-bell"></i>
+  <span class="absolute -bottom-0 -left-1 flex h-5 w-5">
+    <span id="notification-badge" 
+          class="relative inline-flex items-center justify-center bg-error h-5 w-5 rounded-full text-white text-xs font-bold"
+          x-show="notificationCount > 0">
+      <span id="notification-count" x-text="notificationCount"></span>
+    </span>
+  </span>
+</button>

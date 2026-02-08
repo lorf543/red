@@ -39,6 +39,7 @@ CSRF_TRUSTED_ORIGINS = [
 # INSTALLED APPS
 # ----------------------------
 INSTALLED_APPS = [
+    # 'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,6 +117,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'socialnetwork.wsgi.application'
 
+ASGI_APPLICATION = 'socialnetwork.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
+
 # ----------------------------
 # DATABASE
 # ----------------------------
@@ -145,7 +154,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ----------------------------
 # INTERNATIONALIZATION
 # ----------------------------
-LANGUAGE_CODE = 'es-la'
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'America/Santo_Domingo'
 TIME_ZONE = 'UTC'
 USE_I18N = True

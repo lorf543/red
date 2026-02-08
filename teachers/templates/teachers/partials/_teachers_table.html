@@ -1,0 +1,164 @@
+<!-- templates/teachers/partials/_teachers_table.html -->
+<div class="overflow-x-auto">
+    <table id="maestrosTable" class="min-w-full">
+        <thead>
+            <tr>
+                <th scope="col" class="px-6 py-4 text-left text-sm font-semibold">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-chalkboard-teacher text-primary"></i>
+                        <span>Profesor</span>
+                    </div>
+                </th>
+                <th scope="col" class="px-4 py-4 text-center">
+                    <div class="header-column">
+                        <span class="header-emoji">🚍</span>
+                        <span class="header-text">Guagua</span>
+                    </div>
+                </th>
+                <th scope="col" class="px-4 py-4 text-center">
+                    <div class="header-column">
+                        <span class="header-emoji">🔥</span>
+                        <span class="header-text">Te va a quemar</span>
+                    </div>
+                </th>
+                <th scope="col" class="px-4 py-4 text-center">
+                    <div class="header-column">
+                        <span class="header-emoji">📚</span>
+                        <span class="header-text">Se aprende</span>
+                    </div>
+                </th>
+                <th scope="col" class="px-4 py-4 text-center">
+                    <div class="header-column">
+                        <span class="header-emoji">😴</span>
+                        <span class="header-text">Vago</span>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+            {% for teacher in teachers %}
+                <tr class="hover:bg-surface-hover transition-colors duration-200">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a  href="{% url 'teacher_detail' teacher.slug %}" class="teacher-link">
+                            <div class="font-medium text-base text-text">
+                                {{ teacher.full_name }}
+                            </div>
+                            {% if teacher.area %}
+                                <div class="teacher-department mt-2">
+                                    <i class="fas fa-building text-xs mr-1"></i>
+                                    {{ teacher.area }}
+                                </div>
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="vote-badge badge-guagua mx-auto">
+                            {{ teacher.guagua_votes }}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="vote-badge badge-quemar mx-auto">
+                            {{ teacher.te_va_a_quemar_votes }}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="vote-badge badge-aprende mx-auto">
+                            {{ teacher.se_aprende_votes }}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="vote-badge badge-vago mx-auto">
+                            {{ teacher.vago_votes }}
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center">
+                        <div class="empty-state flex flex-col items-center justify-center p-8 space-y-4">
+                            <div class="empty-state-icon">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                {% if search_query %}
+                                    <h3 class="text-lg font-semibold text-text mb-1">
+                                        No se encontraron resultados
+                                    </h3>
+                                    <p class="text-sm text-muted">
+                                        No hay profesores que coincidan con "{{ search_query }}"
+                                    </p>
+                                {% else %}
+                                    <h3 class="text-lg font-semibold text-text mb-1">
+                                        No hay profesores registrados
+                                    </h3>
+                                    <p class="text-sm text-muted">
+                                        Los profesores aparecerán aquí una vez que sean agregados al sistema
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 px-6 pb-4">
+    <!-- Info de página -->
+    <div class="text-sm text-muted">
+        Mostrando 
+        <span class="font-medium text-text">{{ page_obj.start_index }}</span>
+        a 
+        <span class="font-medium text-text">{{ page_obj.end_index }}</span>
+        de 
+        <span class="font-medium text-text">{{ page_obj.paginator.count }}</span>
+        resultados
+    </div>
+    
+    <!-- Controles de paginación -->
+    <div class="flex gap-2" >
+        <ul class="pagination flex gap-2">
+            {% if page_obj.has_previous %}
+                <li>
+                    <a hx-boost="true" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort={{ sort_by }}" 
+                       class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                        &laquo; Anterior
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li>
+                        <span class="px-3 py-2 bg-primary text-primary-content rounded font-medium">
+                            {{ num }}
+                        </span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li>
+                        <a hx-boost="true" href="?page={{ num }}&search={{ search_query }}&sort={{ sort_by }}" 
+                           class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li>
+                    <a hx-boost="true" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort={{ sort_by }}" 
+                       class="px-3 py-2 border border-border rounded text-text hover:bg-surface-hover hover:text-primary transition-colors">
+                        Siguiente &raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}

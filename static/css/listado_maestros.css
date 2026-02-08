@@ -1,0 +1,343 @@
+ul.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding: 0;
+    list-style: none;
+}
+
+ul.pagination li {
+    display: inline;
+}
+
+/* Improved hover effects */
+#maestrosTable tbody tr {
+    transition: all 0.3s ease;
+    background-color: var(--color-surface);
+}
+
+#maestrosTable tbody tr:hover {
+    background-color: var(--color-surface-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Vote badge styles */
+.vote-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.vote-badge:hover {
+    transform: scale(1.1);
+    border-color: var(--color-border);
+}
+
+/* Category-specific badge colors */
+.badge-guagua {
+    background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
+    color: var(--color-info);
+    border-color: color-mix(in srgb, var(--color-info) 20%, transparent);
+}
+
+.badge-quemar {
+    background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    color: var(--color-danger);
+    border-color: color-mix(in srgb, var(--color-danger) 20%, transparent);
+}
+
+.badge-aprende {
+    background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+    color: var(--color-success);
+    border-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+}
+
+.badge-vago {
+    background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
+    color: var(--color-muted);
+    border-color: color-mix(in srgb, var(--color-muted) 20%, transparent);
+}
+
+/* Teacher name styling */
+.teacher-link {
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: block;
+}
+
+.teacher-link:hover {
+    color: var(--color-primary);
+    transform: translateX(2px);
+}
+
+/* Header improvements */
+.header-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.header-emoji {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+.header-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+}
+
+/* Table container improvements */
+.table-container {
+    background: var(--color-surface);
+    border-radius: 0.75rem;
+    box-shadow: var(--comment-shadow);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.table-container:hover {
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 6px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Table styling */
+#maestrosTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#maestrosTable thead {
+    background-color: var(--color-surface-hover);
+}
+
+#maestrosTable th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    background-color: var(--color-surface-hover);
+    z-index: 10;
+}
+
+#maestrosTable td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+#maestrosTable tr:last-child td {
+    border-bottom: none;
+}
+
+/* Empty state styling */
+.empty-state {
+    background-color: var(--color-surface-hover);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+}
+
+.empty-state-icon {
+    color: var(--color-muted);
+    opacity: 0.5;
+}
+
+/* Button styling */
+.subject-btn {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.subject-btn:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+/* Department styling */
+.teacher-department {
+    background-color: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+    color: var(--color-secondary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-secondary) 20%, transparent);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-container {
+        border-radius: 0.5rem;
+    }
+
+    #maestrosTable th,
+    #maestrosTable td {
+        padding: 0.75rem 1rem;
+    }
+
+    .header-text {
+        font-size: 0.625rem;
+    }
+
+    .vote-badge {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.75rem;
+    }
+
+    .teacher-department {
+        font-size: 0.625rem;
+        padding: 0.125rem 0.5rem;
+    }
+}
+
+/* Scrollbar styling */
+.overflow-x-auto {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted) var(--color-surface);
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: var(--color-surface);
+    border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+.search-container {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--comment-shadow);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted);
+}
+
+.sort-select {
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.25rem;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.stats-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-surface-hover);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    border-radius: 0.75rem;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

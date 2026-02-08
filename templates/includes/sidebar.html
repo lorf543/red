@@ -3,8 +3,8 @@
     <div class="bg-surface text-text rounded-lg p-4 shadow-comment transition-all duration-200 hover:shadow-lg hover:shadow-primary/10">
         
         <div class="flex justify-between items-center mb-4">
-            <h3 class="font-semibold text-text">Últimas valoraciones</h3>
-            <a href="{% url 'votes_analysis' %}" 
+            <h3 class="font-semibold text-text">Ultimas valoraciones</h3>
+            <a hx-boost="true" href="{% url 'votes_analysis' %}" 
                class="text-xs text-primary hover:text-primary-dark hover:underline transition-colors">
                 Ver todas
             </a>
@@ -30,7 +30,7 @@
                 <div class="flex-1 min-w-0">
                     <div class="mb-2">
                         <h4 class="font-medium text-sm text-text truncate">
-                            <a href="{% url 'profile' vote.user.id %}" 
+                            <a href="{% url 'profile' vote.user.profile.slug %}" 
                                class="hover:text-primary transition-colors">
                                 {{ vote.user.username }}
                             </a>

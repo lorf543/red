@@ -1,134 +1,147 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="max-w-6xl mx-auto px-4 py-6 {% if request.user.is_authenticated %}grid grid-cols-1 md:grid-cols-4 gap-6{% else %}gap-6{% endif %}">
-        {% if request.user.is_authenticated %}
-            <!-- Sidebar izquierdo -->
-            <div class="md:col-span-1">
-                <div class="sticky top-[68px] space-y-6">
-                    <!-- Caja 1 - Perfil -->
-                    <div class="bg-surface text-text rounded-lg p-4 shadow-comment">
-                        <div class="flex items-center space-x-3 mb-6">
-                            {% if user.profile.profile_picture %}
-                                <img src="{{ user.profile.profile_picture.url }}" 
-                                     alt="Perfil" 
-                                     class="w-10 h-10 object-cover rounded-full border-2 border-surface">
+    <div class="min-h-screen ">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Contenedor principal con flex -->
+            <div class="flex flex-col lg:flex-row  gap-6">
+                
+                <!-- Sidebar izquierdo - Solo para usuarios autenticados -->
+                {% if request.user.is_authenticated %}
+                    <div class="lg:w-1/4">
+                        <div class="sticky top-20 space-y-6">
+                            <!-- Caja 1 - Perfil -->
+                            <div class="bg-surface rounded-lg p-4 shadow-sm border border-base-300">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    {% if user.profile.profile_picture %}
+                                        <img src="{{ user.profile.profile_picture.url }}" 
+                                            alt="Perfil" 
+                                            class="w-10 h-10 object-cover rounded-full border-2 border-base-300">
+                                    {% else %}
+                                        <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center border-2 border-base-300">
+                                            {{ user.profile.get_profile_initials }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="font-semibold text-base-content truncate">
+                                            {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+                                        </h3>
+                                        <p class="text-muted text-sm truncate">
+                                            @<span class="text-base-content ml-1">{{ user.username }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <ul class="space-y-1">
+                                    <li>
+                                        <a 
+                                            hx-boost="true"
+                                        href="{% url 'profile' user.profile.slug %}" 
+                                        class="flex items-center space-x-2 text-base-content hover:text-primary transition-colors p-2 rounded hover:bg-base-200 w-full">
+                                            <i class="fas fa-user w-5 text-muted"></i>
+                                            <span>Perfil</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button type="button" 
+                                                class="flex items-center space-x-2 text-muted p-2 rounded cursor-not-allowed w-full text-left"
+                                                disabled>
+                                            <i class="fas fa-cog w-5"></i>
+                                            <span>Configuración</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Caja 2 - Intereses (oculta en móvil) -->
+                            <div class="lg:block bg-surface rounded-xl p-6 shadow-sm border border-base-300">
+                                <h2 class="text-lg font-semibold text-base-content mb-4">Intereses</h2>
+                                <hr class="border-base-300 mb-4">
+                                <ul class="space-y-3">
+                                    <li>
+                                        <a href="{% url 'tutoriales' %}" 
+                                        class="flex items-center text-base-content hover:text-primary hover:bg-base-200 p-2 rounded transition-colors w-full">
+                                            <i class="fas fa-graduation-cap text-muted mr-3"></i>
+                                            <span>Tutorial - Deploy</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'politicas' %}" 
+                                        class="flex items-center text-base-content hover:text-primary hover:bg-base-200 p-2 rounded transition-colors w-full">
+                                            <i class="fas fa-file-contract text-muted mr-3"></i>
+                                            <span>Políticas sobre comentarios</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Contenido central -->
+                <div class="{% if request.user.is_authenticated %}flex-1 lg:w-2/4{% else %}max-w-2xl mx-auto w-full{% endif %}">
+                    <div class="space-y-6">
+                        <!-- Crear publicación -->
+                        <div class="bg-surface rounded-lg p-4 shadow-sm border border-base-300">
+                            {% if request.user.is_authenticated %}
+                                <div class="flex space-x-3">
+                                    {% if user.profile.profile_picture %}
+                                        <img src="{{ user.profile.profile_picture.url }}" 
+                                             alt="Perfil" 
+                                             class="w-10 h-10 object-cover rounded-full border-2 border-base-300 flex-shrink-0">
+                                    {% else %}
+                                        <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center border-2 border-base-300 flex-shrink-0">
+                                            {{ user.profile.get_profile_initials }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="flex-1 min-w-0">
+                                        {% include "forms/form_comment.html" %}
+                                    </div>
+                                </div>
                             {% else %}
-                                <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center border-2 border-surface">
-                                    {{ user.profile.get_profile_initials }}
+                                <div class="text-center p-4">
+                                    <p class="text-muted mb-4">Debes iniciar sesión para poder comentar.</p>
+                                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                        <a 
+                                           href="{% url 'login' %}" 
+                                           class="btn btn-primary bg-primary hover:bg-primary-dark text-primary-content px-6 py-2">
+                                            Iniciar sesión
+                                        </a>
+                                        <a 
+                                           href="{% url 'account_signup' %}" 
+                                           class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content px-6 py-2">
+                                            Registrarse
+                                        </a>
+                                    </div>
                                 </div>
                             {% endif %}
-                            <div>
-                                <h3 class="font-semibold text-text">
-                                    {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
-                                </h3>
-                                <p class="text-muted text-sm">
-                                    @<span class="text-text ml-1">{{ user.username }}</span>
-                                </p>
-                            </div>
                         </div>
-                        <ul class="space-y-2">
-                            <li>
 
-                                <a 
-                                    hx-boost="true"
+                        <!-- Lista de publicaciones -->
+                        <div id="commentsContainer" class="space-y-4">
+                            {% for comment in comments  %}
+                                {% include "components/comment_item.html" %}
+                            {% empty %}
+                                <div class="bg-surface rounded-lg p-8 text-center shadow-sm border border-base-300">
+                                    <i class="fas fa-comments text-4xl text-muted mb-4"></i>
+                                    <h3 class="text-xl font-semibold text-base-content mb-2">No hay comentarios aún</h3>
+                                    <p class="text-muted">Sé el primero en comentar</p>
+                                </div>
+                            {% endfor %}
+                        </div>
 
-                                   href="{% url 'profile' user.profile.slug %}" 
-                                   class="flex items-center space-x-2 text-text hover:text-primary transition-colors p-2 rounded hover:bg-surface-hover">
-                                    <i class="fas fa-user w-5 text-muted"></i>
-                                    <span class="text-text">Perfil</span>
-                                </a>
-                            </li>
-                            <li>
-                                <button type="button" 
-                                        class="flex items-center space-x-2 text-muted p-2 rounded cursor-not-allowed w-full text-left"
-                                        disabled>
-                                    <i class="fas fa-cog w-5"></i>
-                                    <span>Configuración</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Caja 2 - Intereses -->
-                    <div class="bg-surface text-text rounded-xl p-6 shadow-comment">
-                        <h2 class="text-lg font-semibold text-text mb-4">Intereses</h2>
-                        <hr class="border-muted mb-4">
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="{% url 'tutoriales' %}" 
-                                   class="flex items-center text-text hover:text-primary hover:bg-surface-hover p-2 rounded transition-colors">
-                                    <i class="fas fa-graduation-cap text-muted mr-3"></i>
-                                    <span>Tutorial - Deploy</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'politicas' %}" 
-                                   class="flex items-center text-text hover:text-primary hover:bg-surface-hover p-2 rounded transition-colors">
-                                    <i class="fas fa-file-contract text-muted mr-3"></i>
-                                    <span>Políticas sobre comentarios</span>
-                                </a>
-                            </li>
-                        </ul>
+                        {% include "components/comments/load_more_button.html" %}
                     </div>
                 </div>
-            </div>
-        {% endif %}
 
-        <!-- Contenido central -->
-        <div class="md:col-span-2 space-y-6">
-            <!-- Crear publicación -->
-            <div class="bg-surface text-text rounded-lg p-4 shadow-comment">
-                <div class="flex space-x-3">
-                    {% if request.user.is_authenticated %}
-                        {% if user.profile.profile_picture %}
-                            <img src="{{ user.profile.profile_picture.url }}" 
-                                 alt="Perfil" 
-                                 class="w-10 h-10 object-cover rounded-full border-2 border-surface">
-                        {% else %}
-                            <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center border-2 border-surface">
-                                {{ user.profile.get_profile_initials }}
-                            </div>
-                        {% endif %}
-                        <div class="flex-1">
-                            {% include "forms/form_comment.html" %}
-                        </div>
-                    {% else %}
-                        <div class="w-full text-center p-4">
-                            <p class="text-muted mb-4">Debes iniciar sesión para poder comentar.</p>
-                            <div class="flex gap-3 justify-center">
-                                <a 
-                                   href="{% url 'login' %}" 
-                                   class="btn btn-primary bg-primary hover:bg-primary-dark text-primary-content">
-                                    Iniciar sesión
-                                </a>
-                                <a 
-                                   href="{% url 'account_signup' %}" 
-                                   class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content">
-                                    Registrarse
-                                </a>
-                            </div>
-                        </div>
-                    {% endif %}
+                <!-- Sidebar derecho - Solo para usuarios autenticados -->
+                {% if request.user.is_authenticated %}
+                <div class=" lg:w-1/4">
+                    <div class="sticky top-20">
+                        {% include "includes/sidebar.html" %}
+                    </div>
                 </div>
+                {% endif %}
             </div>
-
-            <!-- Lista de publicaciones -->
-            <div id="commentsContainer" class="space-y-4">
-                {% for comment in comments  %}
-                    {% include "components/comment_item.html" %}
-                {% empty %}
-                    <div class="bg-surface text-text rounded-lg p-8 text-center shadow-comment">
-                        </div>
-                {% endfor %}
-            </div>
-
-            {% include "components/comments/load_more_button.html" %}
         </div>
-
-        {% if request.user.is_authenticated %}
-            <!-- Sidebar derecho -->
-            {% include "includes/sidebar.html" %}
-        {% endif %}
     </div>
 {% endblock content %}

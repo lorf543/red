@@ -5,22 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if request.user %}
-        <title>ITLAsocial | {{ request.user }}</title>
-    {% else %}
-        <title>ITLAsocial</title>
-    {% endif %}
-
-    <!-- CSS y favicon -->
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <link rel="stylesheet" href="{% static 'css/themes.css' %}">
-    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-    <!-- Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>
+        {% if request.user %}
+            ITLAsocial | {{ request.user }}
+        {% else %}
+            ITLAsocial
+        {% endif %}
+    </title>
 
     <!-- SEO Básico -->
     <meta name="description" content="ITLAsocial es una red social para estudiantes del ITLA donde puedes compartir, comentar y conectar con otros.">
@@ -52,8 +43,82 @@
     <meta name="twitter:image" content="https://itlasocial.org/static/img/preview.png">
     <meta name="twitter:site" content="@itlasocial">
 
+    <!--  FAVICON  -->
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+
+    <!--  CSS CRÍTICO  -->
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        nav {
+            min-height: 64px;
+        }
+    </style>
+
+
+        <!-- CSS PRELOAD  -->
+    {% comment %} <link rel="preload" href="{% static 'css/output.css' %}" as="style" onload="this.rel='stylesheet'"> {% endcomment %}
+    
+    <link rel="preload" href="{% static 'css/themes.css' %}" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="{% static 'css/table_css.css' %}" as="style" onload="this.rel='stylesheet'">
+
+    <link rel="preload"
+          href="https://cdn.jsdelivr.net/npm/daisyui@5"
+          as="style"
+          onload="this.rel='stylesheet'">
+
+    <link rel="preload"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+          as="style"
+          onload="this.rel='stylesheet'">
+
+    <!-- Fallback -->
+    <noscript>
+        {% comment %} <link rel="stylesheet" href="{% static 'css/output.css' %}"> {% endcomment %}
+        <link rel="stylesheet" href="{% static 'css/themes.css' %}">
+        <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
+    </noscript>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+
+    <!--  THEME INIT -->
+        <script>
+            tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                colors: {
+                    primary: 'var(--color-primary)',
+                    secondary: 'var(--color-secondary)',
+                    accent: 'var(--color-accent)',
+                    background: 'var(--color-background)',
+                    text: 'var(--color-text)',
+                    surface: 'var(--color-surface)',
+                    muted: 'var(--color-muted)',
+                    success: 'var(--color-success)',
+                    warning: 'var(--color-warning)',
+                    danger: 'var(--color-danger)',
+                    info: 'var(--color-info)',
+                }
+                }
+            }
+            }
+        </script>
+    <script defer>
+        (function () {
+            const theme = localStorage.getItem("theme");
+            if (theme && theme !== "default") {
+                document.documentElement.setAttribute("data-theme", theme);
+            }
+        })();
+    </script>
+
     <!-- Datos estructurados JSON-LD -->
-    <script type="application/ld+json">
+    {% comment %} <script type="application/ld+json">
         {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -67,52 +132,16 @@
         }
     </script>
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMM8QWLH0R"></script>
-    <script>
+    <script defer>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-CMM8QWLH0R');
-    </script>
+    </script> {% endcomment %}
 </head>
 
-
-<script>
-    // Inicializar tema desde localStorage al cargar
-    (function () {
-        const savedTheme = localStorage.getItem("theme") || "default";
-        if (savedTheme && savedTheme !== "default") {
-            document.documentElement.setAttribute("data-theme", savedTheme);
-        }
-    })();
-
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                colors: {
-                    primary: 'var(--color-primary)',
-                    secondary: 'var(--color-secondary)',
-                    accent: 'var(--color-accent)',
-                    background: 'var(--color-background)',
-                    text: 'var(--color-text)',
-                    surface: 'var(--color-surface)',  // Agregado
-                    muted: 'var(--color-muted)',      // Agregado
-                    success: 'var(--color-success)',  // Agregado
-                    warning: 'var(--color-warning)',  // Agregado
-                    danger: 'var(--color-danger)',    // Agregado
-                    info: 'var(--color-info)',        // Agregado
-                }
-            }
-        }
-    }
-</script>
-
-
-
-<body  class="font-sans min-h-screen transition-colors duration-300"
+<body  class="font-sans"
    >
 
     <!-- Navbar -->
@@ -120,445 +149,301 @@
 
 
     <!-- Main Content -->
-    <main class="" id="main-content">
+     <main id="main-content">
 
-            {% if messages %}
-                <div class="space-y-2 mb-4">
-                    {% for message in messages %}
-                        <div id="message" role="alert" class="alert p-4 rounded text-white {% if message.tags == 'success' %}alert alert-success{% elif message.tags == 'error' %}alert-error{% else %}bg-gray-600{% endif %}">
-                        <span> {{ message }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        {% if messages %}
+        <div class="space-y-2 mb-4">
+            {% for message in messages %}
+            <div id="message"
+                 class="alert p-4 text-white
+                        {% if message.tags == 'success' %}alert-success
+                        {% elif message.tags == 'error' %}alert-error
+                        {% else %}bg-gray-600{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         {% block content %}{% endblock %}
-
-        
     </main>
 
 
 
 
-
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
-    <!-- Hyperscript -->
-    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-
-    <!-- jQuery (debe ir antes que DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!--Alpine Js-->
-    <script src="//unpkg.com/alpinejs" defer></script>
-
+    <!-- ===================== JS LIBRARIES ===================== -->
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" defer></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script>
+        if (document.querySelector('[x-data]')) {
+            const s = document.createElement('script');
+            s.src = 'https://unpkg.com/alpinejs';
+            s.defer = true;
+            document.body.appendChild(s);
+        }
+    </script>
 
     <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" defer></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js" defer></script>
 
     
 
-<script>
+<script defer>
 
-
-
-document.body.addEventListener("htmx:targetError", function (e) {
-  console.error("HTMX targetError:", e.detail);
-});
+        document.addEventListener('DOMContentLoaded', function() {
+    const notificationSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/notifications/'
+    );
     
-// ---------------------- CSRF para HTMX ----------------------
-
-
-document.body.addEventListener('htmx:configRequest', (event) => {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    event.detail.headers['X-CSRFToken'] = csrfToken;
-});
-
-
-
-
-
-// Escuchar clicks en opciones de tema
-function attachThemeListeners() {
-    document.querySelectorAll(".theme-option").forEach(btn => {
-        btn.removeEventListener("click", btn._themeClickHandler); // limpiar si existe
-        btn._themeClickHandler = () => {
-            const theme = btn.dataset.theme;
-            if (theme === "default") {
-                document.documentElement.removeAttribute("data-theme");
-                localStorage.removeItem("theme");
+    notificationSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'unread_count' || data.type === 'new_notification') {
+            // Actualizar contador
+            const badge = document.getElementById('notification-badge');
+            const countSpan = document.getElementById('notification-count');
+            
+            if (data.count === 0) {
+                badge.style.display = 'none';
             } else {
-                document.documentElement.setAttribute("data-theme", theme);
-                localStorage.setItem("theme", theme);
+                badge.style.display = 'flex';
+                countSpan.textContent = data.count;
             }
-        };
-        btn.addEventListener("click", btn._themeClickHandler);
-    });
-}
-
-
-attachThemeListeners();
-
-
-document.body.addEventListener("htmx:afterSwap", attachThemeListeners);
-// ---------------------- Tabla de Maestros ----------------------
-
-{% comment %} function initTeachersTable() {
-    $('#maestrosTable').DataTable({
-        searchDelay: 500,
-        serverSide: true,
-        processing: true,
-        ordering: false,
-        searching: true, // Asegurar que está habilitado
-        destroy: true,
-        language: {
-            search: "Buscar:",
-            searchPlaceholder: "Nombre o área...",
-            zeroRecords: "No se encontraron resultados",
-            processing: "Procesando...",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            infoEmpty: "Mostrando 0 a 0 de 0 registros",
-            infoFiltered: "(filtrado de _MAX_ registros totales)",
-            lengthMenu: "Mostrar _MENU_ registros",
-            paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
+            
+            // Si necesitas Alpine.js
+            if (typeof Alpine !== 'undefined') {
+                Alpine.store('notifications', { count: data.count });
             }
-        },
-        ajax: {
-            url: "{% url 'teachers_data' %}",
-            type: 'GET',
-            data: function (d) {
-                // Asegurar que los parámetros se envíen correctamente
-                d.search = d.search || {};
-                d.search.value = d.search.value || '';
+            
+            // Mostrar notificación toast si es nueva
+            if (data.type === 'new_notification' && data.notification) {
+                showNotificationToast(data.notification);
             }
-        },
-        columns: [
-            { 
-                data: 'full_name',
-                className: 'font-medium text-gray-900'
-            },
-            { 
-                data: 'guagua_votes',
-                className: 'text-center'
-            },
-            { 
-                data: 'te_va_a_quemar_votes',
-                className: 'text-center'
-            },
-            { 
-                data: 'se_aprende_votes',
-                className: 'text-center'
-            },
-            { 
-                data: 'vago_votes',
-                className: 'text-center'
-            },
-            { 
-                data: 'acciones', 
-                orderable: false, 
-                searchable: false,
-                className: 'text-right'
-            }
-        ],
-        createdRow: function(row, data, dataIndex) {
-            $(row).addClass('hover:bg-gray-50 transition-colors');
-            $('td', row).addClass('px-6 py-2 whitespace-nowrap');
-        },
-        responsive: true,
-        initComplete: function() {
-            // Agregar evento personalizado para el input de búsqueda
-            var api = this.api();
-            $('input[type="search"]', api.table().container())
-                .off('keyup change') // Remover eventos previos
-                .on('keyup change', function(e) {
-                    if (e.keyCode === 27) { // Tecla ESC
-                        $(this).val('');
-                    }
-                    api.search(this.value).draw();
-                });
         }
-    });
-}
- {% endcomment %}
-
-function initTeachersTable() {
-    $('#maestrosTable').DataTable({
-
-    })
-
-}
-
-document.addEventListener("DOMContentLoaded", initTeachersTable);
-function initTeachersTable() {
-    $('#maestrosTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        language: {
-            search: "Buscar:",
-            lengthMenu: "Mostrar _MENU_ profesores",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ profesores",
-            paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
-            }
-        },
-        columns: [
-            { width: "30%" },  // Nombre
-            { width: "10%" },  // Guagua
-            { width: "10%" },  // Te va a quemar
-            { width: "10%" },  // Se aprende
-            { width: "10%" },  // Vago
-
-        ]
-    });
-}
-
-// ---------------------- Tabla de Materias ----------------------
-
-$(document).ready(function() {
-    $('#subjectsTable').DataTable({
-        searchDelay: 500,
-        serverSide: true,
-        processing: true,
-        ordering: false,
-        ajax: {
-            url: "{% url 'subjects_data' %}",
-            type: "GET",
-        },
-        columns: [
-            { data: 'name' },
-            { data: 'teacher' },
-            { data: 'modalidad' },
-            { data: 'schedule' },
-            { data: 'guagua_votes' },
-            { data: 'te_va_a_quemar_votes' },
-            { data: 'se_aprende_votes' },
-            { data: 'vago_votes' },
-            { data: 'total_votes' },
-        ],
-        responsive: true
-    });
-});
-
-
-// ---------------------- Menciones ----------------------
-
-// Mejoras al JS existente
-let mentionMode = false;
-let selectedMentionIndex = 0;
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.addEventListener('click', function(e) {
-        if (e.target.closest('.mention-user')) {
-            e.preventDefault();
-            const username = e.target.closest('.mention-user').getAttribute('data-username');
-            insertMention(username);
-        }
-    });
-});
-
-function insertMention(username) {
-    const textarea = document.getElementById('commentTextarea');
-    const mentionsContainer = document.getElementById('mentionsContainer');
-    if (!textarea || !mentionsContainer) return;
-
-    // Reemplazar @ parcial con mención completa
-    textarea.value = textarea.value.replace(/@\w*$/, '@' + username + ' ');
-    mentionsContainer.innerHTML = '';
-    mentionMode = false;
-    selectedMentionIndex = 0;
+    };
     
-    // Focus y mover cursor al final
-    textarea.focus();
-    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    notificationSocket.onclose = function(e) {
+        console.log('WebSocket cerrado. Reconectando...');
+        setTimeout(function() {
+            // Aquí podrías reconectar si quieres
+        }, 1000);
+    };
     
-    // Auto-resize si existe la función
-    if (typeof autoResize === 'function') {
-        autoResize(textarea);
+    function showNotificationToast(notification) {
+        // Crea un toast simple
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-top toast-end';
+        toast.innerHTML = `
+            <div class="alert alert-info">
+                <span>${notification.actor} ${notification.verb}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 5000);
     }
-}
+});
+       
+    // ---------------------- CSRF para HTMX ----------------------
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        event.detail.headers['X-CSRFToken'] = csrfToken;
+    });
 
-function handleTextareaKeydown(event) {
-    const textarea = event.target;
-    const mentionsContainer = document.getElementById('mentionsContainer');
-    const mentions = mentionsContainer.querySelectorAll('.mention-user');
+    // ---------------------- Menciones ----------------------
+    let mentionMode = false;
+    let selectedMentionIndex = 0;
 
-    // Si hay menciones visibles
-    if (mentionMode && mentions.length > 0) {
-        // Navegación con flechas
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            selectedMentionIndex = (selectedMentionIndex + 1) % mentions.length;
-            updateMentionSelection(mentions);
-            return;
-        }
-        
-        if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            selectedMentionIndex = (selectedMentionIndex - 1 + mentions.length) % mentions.length;
-            updateMentionSelection(mentions);
-            return;
-        }
-        
-        // Seleccionar con Enter
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const selectedUser = mentions[selectedMentionIndex];
-            if (selectedUser) {
-                insertMention(selectedUser.getAttribute('data-username'));
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            if (e.target.closest('.mention-user')) {
+                e.preventDefault();
+                const username = e.target.closest('.mention-user').getAttribute('data-username');
+                insertMention(username);
             }
-            return;
-        }
-    }
+        });
+    });
 
-    // Cerrar con Escape o Backspace
-    if ((event.key === 'Backspace' || event.key === 'Delete') && !textarea.value.match(/@\w*$/)) {
+    function insertMention(username) {
+        const textarea = document.getElementById('commentTextarea');
+        const mentionsContainer = document.getElementById('mentionsContainer');
+        if (!textarea || !mentionsContainer) return;
+
+        // Reemplazar @ parcial con mención completa
+        textarea.value = textarea.value.replace(/@\w*$/, '@' + username + ' ');
         mentionsContainer.innerHTML = '';
         mentionMode = false;
         selectedMentionIndex = 0;
-    }
-
-    if (event.key === 'Escape') {
-        mentionsContainer.innerHTML = '';
-        mentionMode = false;
-        selectedMentionIndex = 0;
-    }
-}
-
-function updateMentionSelection(mentions) {
-    mentions.forEach((mention, index) => {
-        if (index === selectedMentionIndex) {
-            mention.classList.add('bg-primary/15');
-            mention.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        } else {
-            mention.classList.remove('bg-primary/15');
+        
+        // Focus y mover cursor al final
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+        
+        // Auto-resize si existe la función
+        if (typeof autoResize === 'function') {
+            autoResize(textarea);
         }
-    });
-}
+    }
 
-function checkMentionMode(event) {
-    const textarea = event.target;
-    const match = textarea.value.match(/@\w*$/);
+    function handleTextareaKeydown(event) {
+        const textarea = event.target;
+        const mentionsContainer = document.getElementById('mentionsContainer');
+        const mentions = mentionsContainer.querySelectorAll('.mention-user');
 
-    if (match) {
-        if (!mentionMode) {
-            mentionMode = true;
+        // Si hay menciones visibles
+        if (mentionMode && mentions.length > 0) {
+            // Navegación con flechas
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                selectedMentionIndex = (selectedMentionIndex + 1) % mentions.length;
+                updateMentionSelection(mentions);
+                return;
+            }
+            
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                selectedMentionIndex = (selectedMentionIndex - 1 + mentions.length) % mentions.length;
+                updateMentionSelection(mentions);
+                return;
+            }
+            
+            // Seleccionar con Enter
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const selectedUser = mentions[selectedMentionIndex];
+                if (selectedUser) {
+                    insertMention(selectedUser.getAttribute('data-username'));
+                }
+                return;
+            }
+        }
+
+        // Cerrar con Escape o Backspace
+        if ((event.key === 'Backspace' || event.key === 'Delete') && !textarea.value.match(/@\w*$/)) {
+            mentionsContainer.innerHTML = '';
+            mentionMode = false;
             selectedMentionIndex = 0;
         }
-        textarea.dispatchEvent(new CustomEvent('mention-trigger', { bubbles: true }));
-    } else {
-        mentionMode = false;
-        selectedMentionIndex = 0;
-        document.getElementById('mentionsContainer').innerHTML = '';
+
+        if (event.key === 'Escape') {
+            mentionsContainer.innerHTML = '';
+            mentionMode = false;
+            selectedMentionIndex = 0;
+        }
     }
-}
-// ---------------------- Mensajes (auto ocultar) ----------------------
 
-function autoHideMessages() {
-    const messages = document.querySelectorAll('#message');
-    if (messages.length > 0) {
-        setTimeout(function() {
-            messages.forEach(function(msg) {
-                msg.style.display = 'none';
-            });
-        }, 7000);
+    function updateMentionSelection(mentions) {
+        mentions.forEach((mention, index) => {
+            if (index === selectedMentionIndex) {
+                mention.classList.add('bg-primary/15');
+                mention.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            } else {
+                mention.classList.remove('bg-primary/15');
+            }
+        });
     }
-}
 
-// Ejecutar al cargar
-document.addEventListener('DOMContentLoaded', autoHideMessages);
+    function checkMentionMode(event) {
+        const textarea = event.target;
+        const match = textarea.value.match(/@\w*$/);
 
-// Ejecutar después de cada actualización HTMX
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-    autoHideMessages();
-});
+        if (match) {
+            if (!mentionMode) {
+                mentionMode = true;
+                selectedMentionIndex = 0;
+            }
+            textarea.dispatchEvent(new CustomEvent('mention-trigger', { bubbles: true }));
+        } else {
+            mentionMode = false;
+            selectedMentionIndex = 0;
+            document.getElementById('mentionsContainer').innerHTML = '';
+        }
+    }
 
-// ---------------------- Comentarios: scroll al crear ----------------------
+    // ---------------------- Mensajes (auto ocultar) ----------------------
+    function autoHideMessages() {
+        const messages = document.querySelectorAll('#message');
+        if (messages.length > 0) {
+            setTimeout(function() {
+                messages.forEach(function(msg) {
+                    msg.style.display = 'none';
+                });
+            }, 7000);
+        }
+    }
 
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-    // Auto-scroll al nuevo comentario si fue creado exitosamente
-    if (evt.detail.successful && evt.detail.requestConfig.path === '/comments/create/') {
-        const response = JSON.parse(evt.detail.xhr.responseText);
-        if (response.status === 'success') {
-            const newComment = document.getElementById(`comment-${response.comment_id}`);
-            if (newComment) {
-                newComment.scrollIntoView({ behavior: 'smooth' });
+    // Ejecutar al cargar
+    document.addEventListener('DOMContentLoaded', autoHideMessages);
+
+    // Ejecutar después de cada actualización HTMX
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        autoHideMessages();
+    });
+
+
+    // ---------------------- Responder comentarios ----------------------
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById(`reply-form-${commentId}`);
+        if (form) {
+            form.classList.toggle('hidden');
+            if (!form.classList.contains('hidden')) {
+                setTimeout(() => {
+                    const textarea = form.querySelector('textarea');
+                    if (textarea) textarea.focus();
+                }, 100);
             }
         }
     }
-});
 
 
-// ---------------------- Responder comentarios ----------------------
+    // ---------------------- Reacciones a comentarios ----------------------
+    async function reactToComment(commentId, reactionType) {
+        try {
+            const response = await fetch(`{% url 'react_to_comment' 0 %}`.replace('0', commentId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({
+                    reaction_type: reactionType
+                })
+            });
 
-function toggleReplyForm(commentId) {
-    const form = document.getElementById(`reply-form-${commentId}`);
-    if (form) {
-        form.classList.toggle('hidden');
-        if (!form.classList.contains('hidden')) {
-            setTimeout(() => {
-                const textarea = form.querySelector('textarea');
-                if (textarea) textarea.focus();
-            }, 100);
-        }
-    }
-}
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
 
-
-// ---------------------- Reacciones a comentarios ----------------------
-
-async function reactToComment(commentId, reactionType) {
-    try {
-        const response = await fetch(`{% url 'react_to_comment' 0 %}`.replace('0', commentId), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-            body: JSON.stringify({
-                reaction_type: reactionType
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
-        }
-
-        const data = await response.json();  // ¡Faltaba esta línea crítica!
-        
-        // Actualizar la UI
-        const container = document.querySelector(`.reaction-container[data-comment-id="${commentId}"]`);
-        if (container) {
-            const likeCount = container.querySelector('.like-count');
-            const dislikeCount = container.querySelector('.dislike-count');
+            const data = await response.json();  // ¡Faltaba esta línea crítica!
             
-            if (likeCount) likeCount.textContent = data.likes_count;
-            if (dislikeCount) dislikeCount.textContent = data.dislikes_count;
-            
-            // Actualizar estilos de botones
-            const likeBtn = container.querySelector('.like-btn i');
-            const dislikeBtn = container.querySelector('.dislike-btn i');
-            
-            likeBtn.className = data.user_reaction === 1 
-                ? 'fas fa-thumbs-up text-blue-500' 
-                : 'far fa-thumbs-up';
+            // Actualizar la UI
+            const container = document.querySelector(`.reaction-container[data-comment-id="${commentId}"]`);
+            if (container) {
+                const likeCount = container.querySelector('.like-count');
+                const dislikeCount = container.querySelector('.dislike-count');
                 
-            dislikeBtn.className = data.user_reaction === -1 
-                ? 'fas fa-thumbs-down text-blue-500' 
-                : 'far fa-thumbs-down';
+                if (likeCount) likeCount.textContent = data.likes_count;
+                if (dislikeCount) dislikeCount.textContent = data.dislikes_count;
+                
+                // Actualizar estilos de botones
+                const likeBtn = container.querySelector('.like-btn i');
+                const dislikeBtn = container.querySelector('.dislike-btn i');
+                
+                likeBtn.className = data.user_reaction === 1 
+                    ? 'fas fa-thumbs-up text-blue-500' 
+                    : 'far fa-thumbs-up';
+                    
+                dislikeBtn.className = data.user_reaction === -1 
+                    ? 'fas fa-thumbs-down text-blue-500' 
+                    : 'far fa-thumbs-down';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('No se pudo registrar tu reacción. Intenta nuevamente.');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('No se pudo registrar tu reacción. Intenta nuevamente.');
     }
-}
 
 </script>
 

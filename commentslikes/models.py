@@ -213,16 +213,20 @@ class Comment(models.Model):
 
     def notify_mentioned_user(self, user):
         try:
-            Notification = apps.get_model('notifications', 'Notification')
-            Notification.objects.create(
+            NotificationModel = apps.get_model('notifications', 'Notification')
+            notification = NotificationModel.objects.create(
                 recipient=user,
                 actor=self.user,
                 verb="te mencionó en un comentario",
                 content_object=self
             )
-        except LookupError:
-            pass  
 
+            from notifications.utils import send_notification_ws
+            send_notification_ws(notification)
+
+        except LookupError:
+            pass
+        
     def save(self, *args, **kwargs):
         content_changed = False
         if self.pk:
