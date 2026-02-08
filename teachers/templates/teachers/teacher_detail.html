@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block schema_extra %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ teacher.name }}",
+    "jobTitle": "Profesor",
+    "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Instituto Tecnológico de Las Américas",
+        "url": "https://www.itla.edu.do/"
+    },
+    "description": "Profesor del ITLA. {{ teacher.comments.count }} comentarios de estudiantes.",
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ teacher.average_rating|default:'0' }}",
+        "reviewCount": "{{ teacher.comments.count }}",
+        "bestRating": "5",
+        "worstRating": "1"
+    }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
     <!-- Header Section -->
@@ -137,7 +161,7 @@
                 <!-- Image Upload Preview -->
                 <div id="teacherImagePreviewContainer" class="hidden">
                     <div class="relative inline-block">
-                        <img id="teacherImagePreview" class="max-h-48 rounded-lg border border-border">
+                        <img id="teacherImagePreview" loading="lazy" class="max-h-48 rounded-lg border border-border">
                         <button type="button"
                                 onclick="removeTeacherImage()"
                                 class="absolute -top-2 -right-2 w-6 h-6 bg-error text-text-on-error rounded-full flex items-center justify-center hover:bg-error-dark transition-colors">

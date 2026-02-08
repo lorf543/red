@@ -29,8 +29,8 @@ urlpatterns = [
     path('comments/<int:comment_id>/likes/', views.get_comment_likes, name='get_comment_likes')
 ,    
     #mentions
-    path('look-users',views.look_users,name="look_users"),
-    
+    path('api/search-users/', views.search_users_for_mention, name='search_users_mention'),
+
     #moderations
     path('moderate/<int:comment_id>/',views.toggle_moderate,name="toggle_moderate"),
     path('get_comment_status/<int:comment_id>/',views.get_comment_status,name="get_comment_status"),

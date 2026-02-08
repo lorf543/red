@@ -590,7 +590,7 @@
                     <!-- Avatar -->
                     <div>
                         {% if vote.user.profile.profile_picture %}
-                            <img src="{{ vote.user.profile.profile_picture.url }}" 
+                            <img src="{{ vote.user.profile.profile_picture.url }}" loading="lazy"
                                  alt="{{ vote.user.username }}"
                                  class="vote-avatar">
                         {% else %}

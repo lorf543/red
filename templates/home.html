@@ -85,7 +85,7 @@
                             {% if request.user.is_authenticated %}
                                 <div class="flex space-x-3">
                                     {% if user.profile.profile_picture %}
-                                        <img src="{{ user.profile.profile_picture.url }}" 
+                                        <img src="{{ user.profile.profile_picture.url }}"  loading="lazy"
                                              alt="Perfil" 
                                              class="w-10 h-10 object-cover rounded-full border-2 border-base-300 flex-shrink-0">
                                     {% else %}

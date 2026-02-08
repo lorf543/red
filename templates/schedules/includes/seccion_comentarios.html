@@ -15,7 +15,7 @@
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
                         {% if comment.user %}
-                            <img src="{{ comment.user.userprofile.get_profile_image }}" 
+                            <img src="{{ comment.user.userprofile.get_profile_image }}"  loading="lazy"
                                  class="h-10 w-10 rounded-full object-cover border-2 border-blue-200">
                         {% else %}
                             <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-200">
@@ -76,7 +76,7 @@
                                 
                                 <div class="flex space-x-3">
                                     {% if request.user.is_authenticated %}
-                                        <img src="{{ request.user.userprofile.get_profile_image }}"
+                                        <img src="{{ request.user.userprofile.get_profile_image }}" loading="lazy"
                                              alt="Tu perfil"
                                              class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                     {% else %}
@@ -103,7 +103,7 @@
                             {% for reply in comment.replies.all %}
                             <div class="flex space-x-3">
                                 {% if reply.user %}
-                                    <img src="{{ reply.user.userprofile.get_profile_image }}"
+                                    <img src="{{ reply.user.userprofile.get_profile_image }}" loading="lazy"
                                          alt="{{ reply.user.username }}"
                                          class="flex-shrink-0 w-8 h-8 rounded-full object-cover border border-gray-200">
                                 {% else %}

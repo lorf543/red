@@ -5,140 +5,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% if request.user %}
-            ITLAsocial | {{ request.user }}
-        {% else %}
-            ITLAsocial
-        {% endif %}
-    </title>
+    
+    <!-- Title dinámico -->
+    <title>{% block title %}ITLAsocial - Red Social ITLA{% endblock %}</title>
 
     <!-- SEO Básico -->
-    <meta name="description" content="ITLAsocial es una red social para estudiantes del ITLA donde puedes compartir, comentar y conectar con otros.">
+    <meta name="description" content="{% block description %}ITLAsocial es una red social para estudiantes del ITLA donde puedes compartir, comentar y conectar con otros.{% endblock %}">
+    <meta name="keywords" content="ITLA, red social, estudiantes, República Dominicana, universidad, tecnología">
     <meta name="language" content="es-DO">
     <meta name="geo.placename" content="República Dominicana">
     <meta name="geo.region" content="DO">
-    <meta name="author" content="lorf543">
-    <meta name="date" content="2025-08-05">
-    <meta name="lastmod" content="2025-08-22">
+    <meta name="author" content="ITLAsocial">
+    <meta name="robots" content="index, follow">
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://itlasocial.org/">
+    <!-- Canonical URL (dinámico) -->
+    <link rel="canonical" href="{% block canonical %}https://itlasocial.org{{ request.path }}{% endblock %}">
 
     <!-- Open Graph (Facebook, WhatsApp) -->
     <meta property="og:site_name" content="ITLAsocial">
-    <meta property="og:title" content="ITLAsocial - Red Social para estudiantes del ITLA">
-    <meta property="og:description" content="Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://itlasocial.org/">
-    <meta property="og:image" content="https://itlasocial.org/static/img/preview.png">
+    <meta property="og:title" content="{% block og_title %}ITLAsocial - Red Social para estudiantes del ITLA{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="https://itlasocial.org{{ request.path }}">
+    <meta property="og:image" content="{% block og_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_DO">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ITLAsocial - Red Social para estudiantes del ITLA">
-    <meta name="twitter:description" content="Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.">
-    <meta name="twitter:image" content="https://itlasocial.org/static/img/preview.png">
+    <meta name="twitter:title" content="{% block twitter_title %}ITLAsocial - Red Social para estudiantes del ITLA{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Conéctate con estudiantes del ITLA, comparte publicaciones y descubre novedades.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}">
     <meta name="twitter:site" content="@itlasocial">
+    <meta name="twitter:creator" content="@itlasocial">
 
-    <!--  FAVICON  -->
+    <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
 
-    <!--  CSS CRÍTICO  -->
+    <!-- Preconnect para optimización -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preload"
+        href="https://cdn.jsdelivr.net/npm/daisyui@5"
+        as="style"
+        onload="this.rel='stylesheet'">
+
+    <link rel="preload"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        as="style"
+        onload="this.rel='stylesheet'">
+    <link rel="preconnect" href="https://code.jquery.com">
+    <link rel="dns-prefetch" href="https://cdn.datatables.net">
+
+    <!-- CSS Crítico inline -->
     <style>
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        nav {
-            min-height: 64px;
+        
+        /* Loading state */
+        .htmx-request {
+            opacity: 0.6;
+            pointer-events: none;
         }
     </style>
 
+    <!-- CSS Preload (solo esenciales, los demás cargar normal) -->
+    <link rel="stylesheet" href="{% static 'css/themes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-        <!-- CSS PRELOAD  -->
-    {% comment %} <link rel="preload" href="{% static 'css/output.css' %}" as="style" onload="this.rel='stylesheet'"> {% endcomment %}
-    
-    <link rel="preload" href="{% static 'css/themes.css' %}" as="style" onload="this.rel='stylesheet'">
-    <link rel="preload" href="{% static 'css/table_css.css' %}" as="style" onload="this.rel='stylesheet'">
-
-    <link rel="preload"
-          href="https://cdn.jsdelivr.net/npm/daisyui@5"
-          as="style"
-          onload="this.rel='stylesheet'">
-
-    <link rel="preload"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-          as="style"
-          onload="this.rel='stylesheet'">
-
-    <!-- Fallback -->
-    <noscript>
-        {% comment %} <link rel="stylesheet" href="{% static 'css/output.css' %}"> {% endcomment %}
-        <link rel="stylesheet" href="{% static 'css/themes.css' %}">
-        <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
-    </noscript>
-
+    <!-- Tailwind CSS (versión 4 desde CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 
-
-    <!--  THEME INIT -->
-        <script>
-            tailwind.config = {
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                colors: {
-                    primary: 'var(--color-primary)',
-                    secondary: 'var(--color-secondary)',
-                    accent: 'var(--color-accent)',
-                    background: 'var(--color-background)',
-                    text: 'var(--color-text)',
-                    surface: 'var(--color-surface)',
-                    muted: 'var(--color-muted)',
-                    success: 'var(--color-success)',
-                    warning: 'var(--color-warning)',
-                    danger: 'var(--color-danger)',
-                    info: 'var(--color-info)',
-                }
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        secondary: 'var(--color-secondary)',
+                        accent: 'var(--color-accent)',
+                        background: 'var(--color-background)',
+                        text: 'var(--color-text)',
+                        surface: 'var(--color-surface)',
+                        'surface-dark': 'var(--color-surface-dark)',
+                        muted: 'var(--color-muted)',
+                        success: 'var(--color-success)',
+                        warning: 'var(--color-warning)',
+                        danger: 'var(--color-danger)',
+                        info: 'var(--color-info)',
+                    },
+                    fontFamily: {
+                        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
                 }
             }
-            }
-        </script>
-    <script defer>
-        (function () {
+        }
+    </script>
+
+    <!-- Theme Initializer (debe ejecutarse ANTES que el DOM cargue) -->
+    <script>
+        (function() {
             const theme = localStorage.getItem("theme");
             if (theme && theme !== "default") {
                 document.documentElement.setAttribute("data-theme", theme);
             }
+            
+            // Dark mode support
+            const darkMode = localStorage.getItem("darkMode");
+            if (darkMode === "true" || (!darkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
         })();
     </script>
 
-    <!-- Datos estructurados JSON-LD -->
-    {% comment %} <script type="application/ld+json">
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
         {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "ITLAsocial",
-        "url": "https://itlasocial.org/",
-        "description": "Red social para estudiantes del ITLA.",
-        "publisher": {
-            "@type": "Organization",
-            "name": "ITLAsocial"
-        }
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "ITLAsocial",
+            "url": "https://itlasocial.org/",
+            "description": "Red social exclusiva para estudiantes del Instituto Tecnológico de Las Américas (ITLA)",
+            "publisher": {
+                "@type": "Organization",
+                "name": "ITLAsocial",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://itlasocial.org{% static 'img/logo.png' %}"
+                }
+            },
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://itlasocial.org/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            },
+            "inLanguage": "es-DO"
         }
     </script>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMM8QWLH0R"></script>
-    <script defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CMM8QWLH0R');
-    </script> {% endcomment %}
+    {% block schema_extra %}{% endblock %}
 </head>
 
 <body  class="font-sans"
@@ -149,17 +165,22 @@
 
 
     <!-- Main Content -->
-     <main id="main-content">
-
+    <main id="main-content" class="min-h-screen">
         {% if messages %}
-        <div class="space-y-2 mb-4">
+        <div class="container mx-auto px-4 py-4 space-y-2">
             {% for message in messages %}
-            <div id="message"
-                 class="alert p-4 text-white
-                        {% if message.tags == 'success' %}alert-success
-                        {% elif message.tags == 'error' %}alert-error
-                        {% else %}bg-gray-600{% endif %}">
-                {{ message }}
+            <div class="alert p-4 rounded-lg text-white shadow-lg animate-fadeIn
+                {% if message.tags == 'success' %}bg-success
+                {% elif message.tags == 'error' %}bg-danger
+                {% elif message.tags == 'warning' %}bg-warning
+                {% elif message.tags == 'info' %}bg-info
+                {% else %}bg-gray-600{% endif %}">
+                <div class="flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 hover:opacity-70">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -190,262 +211,126 @@
 
     
 
-<script defer>
-
-        document.addEventListener('DOMContentLoaded', function() {
-    const notificationSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/notifications/'
-    );
-    
-    notificationSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        
-        if (data.type === 'unread_count' || data.type === 'new_notification') {
-            // Actualizar contador
-            const badge = document.getElementById('notification-badge');
-            const countSpan = document.getElementById('notification-count');
-            
-            if (data.count === 0) {
-                badge.style.display = 'none';
-            } else {
-                badge.style.display = 'flex';
-                countSpan.textContent = data.count;
-            }
-            
-            // Si necesitas Alpine.js
-            if (typeof Alpine !== 'undefined') {
-                Alpine.store('notifications', { count: data.count });
-            }
-            
-            // Mostrar notificación toast si es nueva
-            if (data.type === 'new_notification' && data.notification) {
-                showNotificationToast(data.notification);
-            }
-        }
-    };
-    
-    notificationSocket.onclose = function(e) {
-        console.log('WebSocket cerrado. Reconectando...');
-        setTimeout(function() {
-            // Aquí podrías reconectar si quieres
-        }, 1000);
-    };
-    
-    function showNotificationToast(notification) {
-        // Crea un toast simple
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-top toast-end';
-        toast.innerHTML = `
-            <div class="alert alert-info">
-                <span>${notification.actor} ${notification.verb}</span>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => toast.remove(), 5000);
-    }
-});
-       
-    // ---------------------- CSRF para HTMX ----------------------
-    document.body.addEventListener('htmx:configRequest', (event) => {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        event.detail.headers['X-CSRFToken'] = csrfToken;
-    });
-
-    // ---------------------- Menciones ----------------------
-    let mentionMode = false;
-    let selectedMentionIndex = 0;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.body.addEventListener('click', function(e) {
-            if (e.target.closest('.mention-user')) {
-                e.preventDefault();
-                const username = e.target.closest('.mention-user').getAttribute('data-username');
-                insertMention(username);
+    <script>
+        // ---------------------- CSRF para HTMX ----------------------
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+            if (csrfToken) {
+                event.detail.headers['X-CSRFToken'] = csrfToken;
             }
         });
-    });
 
-    function insertMention(username) {
-        const textarea = document.getElementById('commentTextarea');
-        const mentionsContainer = document.getElementById('mentionsContainer');
-        if (!textarea || !mentionsContainer) return;
-
-        // Reemplazar @ parcial con mención completa
-        textarea.value = textarea.value.replace(/@\w*$/, '@' + username + ' ');
-        mentionsContainer.innerHTML = '';
-        mentionMode = false;
-        selectedMentionIndex = 0;
-        
-        // Focus y mover cursor al final
-        textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-        
-        // Auto-resize si existe la función
-        if (typeof autoResize === 'function') {
-            autoResize(textarea);
-        }
-    }
-
-    function handleTextareaKeydown(event) {
-        const textarea = event.target;
-        const mentionsContainer = document.getElementById('mentionsContainer');
-        const mentions = mentionsContainer.querySelectorAll('.mention-user');
-
-        // Si hay menciones visibles
-        if (mentionMode && mentions.length > 0) {
-            // Navegación con flechas
-            if (event.key === 'ArrowDown') {
-                event.preventDefault();
-                selectedMentionIndex = (selectedMentionIndex + 1) % mentions.length;
-                updateMentionSelection(mentions);
-                return;
-            }
-            
-            if (event.key === 'ArrowUp') {
-                event.preventDefault();
-                selectedMentionIndex = (selectedMentionIndex - 1 + mentions.length) % mentions.length;
-                updateMentionSelection(mentions);
-                return;
-            }
-            
-            // Seleccionar con Enter
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const selectedUser = mentions[selectedMentionIndex];
-                if (selectedUser) {
-                    insertMention(selectedUser.getAttribute('data-username'));
-                }
-                return;
-            }
-        }
-
-        // Cerrar con Escape o Backspace
-        if ((event.key === 'Backspace' || event.key === 'Delete') && !textarea.value.match(/@\w*$/)) {
-            mentionsContainer.innerHTML = '';
-            mentionMode = false;
-            selectedMentionIndex = 0;
-        }
-
-        if (event.key === 'Escape') {
-            mentionsContainer.innerHTML = '';
-            mentionMode = false;
-            selectedMentionIndex = 0;
-        }
-    }
-
-    function updateMentionSelection(mentions) {
-        mentions.forEach((mention, index) => {
-            if (index === selectedMentionIndex) {
-                mention.classList.add('bg-primary/15');
-                mention.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            } else {
-                mention.classList.remove('bg-primary/15');
-            }
-        });
-    }
-
-    function checkMentionMode(event) {
-        const textarea = event.target;
-        const match = textarea.value.match(/@\w*$/);
-
-        if (match) {
-            if (!mentionMode) {
-                mentionMode = true;
-                selectedMentionIndex = 0;
-            }
-            textarea.dispatchEvent(new CustomEvent('mention-trigger', { bubbles: true }));
-        } else {
-            mentionMode = false;
-            selectedMentionIndex = 0;
-            document.getElementById('mentionsContainer').innerHTML = '';
-        }
-    }
-
-    // ---------------------- Mensajes (auto ocultar) ----------------------
-    function autoHideMessages() {
-        const messages = document.querySelectorAll('#message');
-        if (messages.length > 0) {
-            setTimeout(function() {
-                messages.forEach(function(msg) {
-                    msg.style.display = 'none';
-                });
-            }, 7000);
-        }
-    }
-
-    // Ejecutar al cargar
-    document.addEventListener('DOMContentLoaded', autoHideMessages);
-
-    // Ejecutar después de cada actualización HTMX
-    document.body.addEventListener('htmx:afterSwap', function(evt) {
-        autoHideMessages();
-    });
-
-
-    // ---------------------- Responder comentarios ----------------------
-    function toggleReplyForm(commentId) {
-        const form = document.getElementById(`reply-form-${commentId}`);
-        if (form) {
-            form.classList.toggle('hidden');
-            if (!form.classList.contains('hidden')) {
+        // ---------------------- Auto-hide Messages ----------------------
+        function autoHideMessages() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
                 setTimeout(() => {
-                    const textarea = form.querySelector('textarea');
-                    if (textarea) textarea.focus();
-                }, 100);
-            }
-        }
-    }
-
-
-    // ---------------------- Reacciones a comentarios ----------------------
-    async function reactToComment(commentId, reactionType) {
-        try {
-            const response = await fetch(`{% url 'react_to_comment' 0 %}`.replace('0', commentId), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: JSON.stringify({
-                    reaction_type: reactionType
-                })
+                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
             });
-
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-
-            const data = await response.json();  // ¡Faltaba esta línea crítica!
-            
-            // Actualizar la UI
-            const container = document.querySelector(`.reaction-container[data-comment-id="${commentId}"]`);
-            if (container) {
-                const likeCount = container.querySelector('.like-count');
-                const dislikeCount = container.querySelector('.dislike-count');
-                
-                if (likeCount) likeCount.textContent = data.likes_count;
-                if (dislikeCount) dislikeCount.textContent = data.dislikes_count;
-                
-                // Actualizar estilos de botones
-                const likeBtn = container.querySelector('.like-btn i');
-                const dislikeBtn = container.querySelector('.dislike-btn i');
-                
-                likeBtn.className = data.user_reaction === 1 
-                    ? 'fas fa-thumbs-up text-blue-500' 
-                    : 'far fa-thumbs-up';
-                    
-                dislikeBtn.className = data.user_reaction === -1 
-                    ? 'fas fa-thumbs-down text-blue-500' 
-                    : 'far fa-thumbs-down';
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('No se pudo registrar tu reacción. Intenta nuevamente.');
         }
-    }
 
-</script>
+        // Ejecutar al cargar
+        document.addEventListener('DOMContentLoaded', autoHideMessages);
+
+        // Ejecutar después de cada actualización HTMX
+        document.body.addEventListener('htmx:afterSwap', autoHideMessages);
+
+        // ---------------------- Responder comentarios ----------------------
+        function toggleReplyForm(commentId) {
+            const form = document.getElementById(`reply-form-${commentId}`);
+            if (form) {
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        const textarea = form.querySelector('textarea');
+                        if (textarea) textarea.focus();
+                    }, 100);
+                }
+            }
+        }
+
+        // ---------------------- Reacciones a comentarios ----------------------
+        async function reactToComment(commentId, reactionType) {
+            try {
+                const response = await fetch(`{% url 'react_to_comment' 0 %}`.replace('0', commentId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        reaction_type: reactionType
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+
+                const data = await response.json();
+                
+                // Actualizar la UI
+                const container = document.querySelector(`.reaction-container[data-comment-id="${commentId}"]`);
+                if (container) {
+                    const likeCount = container.querySelector('.like-count');
+                    const dislikeCount = container.querySelector('.dislike-count');
+                    
+                    if (likeCount) likeCount.textContent = data.likes_count;
+                    if (dislikeCount) dislikeCount.textContent = data.dislikes_count;
+                    
+                    // Actualizar estilos de botones
+                    const likeBtn = container.querySelector('.like-btn i');
+                    const dislikeBtn = container.querySelector('.dislike-btn i');
+                    
+                    if (likeBtn) {
+                        likeBtn.className = data.user_reaction === 1 
+                            ? 'fas fa-thumbs-up text-primary' 
+                            : 'far fa-thumbs-up';
+                    }
+                    
+                    if (dislikeBtn) {
+                        dislikeBtn.className = data.user_reaction === -1 
+                            ? 'fas fa-thumbs-down text-danger' 
+                            : 'far fa-thumbs-down';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('No se pudo registrar tu reacción. Intenta nuevamente.', 'error');
+            }
+        }
+
+        // ---------------------- Toast Notifications ----------------------
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 p-4 rounded-lg text-white shadow-lg z-50 animate-slideIn ${
+                type === 'success' ? 'bg-success' :
+                type === 'error' ? 'bg-danger' :
+                type === 'warning' ? 'bg-warning' :
+                'bg-info'
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.3s ease-out';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ---------------------- Performance Monitoring ----------------------
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const perfData = window.performance.timing;
+                const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+                console.log(`⚡ Página cargada en ${pageLoadTime}ms`);
+            }
+        });
+    </script>
 
 
 </body>

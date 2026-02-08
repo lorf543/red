@@ -7,47 +7,47 @@
     <div class="flex items-center gap-3 relative max-w-lg">
 
       <!-- Logo -->
-      <a href="{% url 'home' %}" class=" text-xl font-semibold text-primary">
+      <a href="{% url 'home' %}" class="text-xl font-semibold text-primary">
         ITLAsocial
       </a>
-
+      
       <!-- SEARCH -->
-      <div class="relative w-50">
-        <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
-          <svg class="w-4 h-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
-            <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
-          </svg>
+      {% if user.is_authenticated %}
+        <div class="relative w-96">
+          <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
+            <svg class="w-4 h-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
+            </svg>
 
-          <input
-            id="search-input"
-            name="q"
-            type="search"
-            placeholder="Buscar personas..."
-            hx-get="{% url 'search-view' %}"
-            hx-trigger="keyup changed delay:400ms"
-            hx-target="#search-results"
-            hx-swap="innerHTML"
-            hx-indicator="#search-loader"
-            class="grow bg-transparent focus:outline-none"
-            autocomplete="off"
-          />
-        </label>
+            <input
+              id="search-input"
+              name="q"
+              type="search"
+              placeholder="Buscar personas..."
+              hx-get="{% url 'search-view' %}"
+              hx-trigger="keyup changed delay:400ms"
+              hx-target="#search-results"
+              hx-swap="innerHTML"
+              hx-indicator="#search-loader"
+              class="grow bg-transparent focus:outline-none"
+              autocomplete="off"
+            />
+          </label>
 
-        <!-- LOADER -->
-        <div id="search-loader"
-             class="htmx-indicator absolute top-full left-0 w-full mt-1 z-50">
-          <div class="bg-base-100 border rounded-lg shadow p-3 flex justify-center">
-            <span class="loading loading-spinner loading-sm text-primary"></span>
+          <!-- LOADER (solo cuando HTMX está cargando) -->
+          <div id="search-loader" class="htmx-indicator absolute top-full left-0 w-full mt-1 z-50">
+            <div class="bg-base-100 border rounded-lg shadow-lg p-3 flex justify-center">
+              <span class="loading loading-spinner loading-sm text-primary"></span>
+            </div>
+          </div>
+
+          <!-- RESULTS (sin hidden, se muestra cuando hay contenido) -->
+          <div id="search-results" class="absolute top-full left-0 w-full mt-1 z-50">
+            <!-- HTMX injecta aquí -->
           </div>
         </div>
-
-        <!-- RESULTS -->
-        <div id="search-results"
-             class="absolute top-full left-0 w-full mt-1 z-50 hidden">
-          <!-- HTMX injecta aquí -->
-        </div>
-      </div>
+      {% endif %}
     </div>
   </div>
 
@@ -114,11 +114,11 @@
       </div>
 
       <!-- WebSocket Connection -->
-      <div id="ws-notifications" 
+      <!-- <div id="ws-notifications" 
           hx-ext="ws" 
           ws-connect="/ws/notifications/"
           style="display: none;">
-      </div>
+      </div> -->
 
 
     <!-- 📚 Dashboard Shortcut -->
@@ -135,7 +135,7 @@
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
           {% if user.profile.profile_picture.url %} 
-            <img src="{{ user.profile.profile_picture.url}}" alt="Foto de perfil" 
+            <img src="{{ user.profile.profile_picture.url}}" loading="lazy" alt="Foto de perfil" 
                  class="w-10 h-10 object-cover rounded-full">
           {% else %} 
             <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">
@@ -154,7 +154,7 @@
           <div class="avatar">
             <div class="w-12 rounded-full">
               {% if user.profile.profile_picture.url %} 
-                <img src="{{ user.profile.profile_picture.url}}" 
+                <img src="{{ user.profile.profile_picture.url}}" loading="lazy"
                      class="w-12 h-12 rounded-full object-cover">
               {% else %}
                 <div class="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">

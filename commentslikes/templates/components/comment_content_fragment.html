@@ -19,7 +19,7 @@
             
             <div class="mt-2">
                 {% if comment.image_status == "safe" and comment.image %}
-                    <img src="{{comment.image.url}}" 
+                    <img src="{{comment.image.url}}" loading="lazy"  height="150" width="150"
                         alt="Imagen del comentario"
                         class="comment-image-thumbnail cursor-pointer rounded-lg border border-muted"
                         onclick="openImageModal('modal-{{ comment.id }}', '{{comment.image.url}}')">
@@ -53,7 +53,7 @@
             {{ comment.content|censurar|highlight_mentions|linebreaksbr|safe }}
             
             {% if comment.image and comment.image_status == "safe" %}
-                <img src="{{comment.image.url}}" 
+                <img src="{{comment.image.url}}" loading="lazy"
                     class="comment-image-thumbnail mt-2"
                     onclick="openImageModal('modal-{{ comment.id }}', '{{comment.image.url}}')">
             {% endif %}

@@ -127,6 +127,7 @@ def create_comment(request):
             image=image,  
             image_status='pending' if image else None 
         )
+        
         comment.process_mentions()
 
         # Si hay imagen, validar en segundo plano
@@ -190,6 +191,7 @@ def create_teacher_comment(request, teacher_id):
             image=image,
             image_status='pending' if image else None
         )
+
         comment.process_mentions()
 
         # Si hay imagen, validar en segundo plano
@@ -381,20 +383,46 @@ def react_to_comment(request, comment_id):
     
     return HttpResponse(html)
 
-def look_users(request):
-    content = request.GET.get('content', '')
-    match = re.search(r'@(\w+)$', content)
-    if not match:
-        return HttpResponse('')  # Vacío si no hay @
+@login_required
+def search_users_for_mention(request):
+    query = request.GET.get('q', '').strip()
+    
+    if not query or len(query) < 1:
+        return JsonResponse({'users': []})
+    
+    users = User.objects.filter(
+        username__istartswith=query,
+        is_active=True
+    ).select_related('profile').exclude(
+        id=request.user.id
+    )[:10]
+    
+    users_data = []
+    for user in users:
+        profile = getattr(user, 'profile', None)
+        
+        avatar_url = None
+        if profile and profile.profile_picture:
+            try:
+                avatar_url = profile.profile_picture.url
+                print(f"✅ Avatar URL para {user.username}: {avatar_url}")  # 👈 Debug
+            except Exception as e:
+                print(f"❌ Error obteniendo avatar de {user.username}: {e}")  # 👈 Debug
+        
+        initials = profile.get_profile_initials if profile else user.username[0:2].upper()
+        
+        users_data.append({
+            'username': user.username,
+            'full_name': user.get_full_name() or '',
+            'avatar': avatar_url,
+            'initials': initials
+        })
+    
+    print(f"📤 Enviando {len(users_data)} usuarios")  # 👈 Debug
+    return JsonResponse({'users': users_data})
 
-    query = match.group(1)
-    users = User.objects.filter(username__icontains=query)[:15]
 
-    if not users:
-        return HttpResponse('')
 
-    html = render_to_string('partials/mentions_list.html', {'users': users})
-    return HttpResponse(html)
 
 @login_required
 @require_POST

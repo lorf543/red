@@ -1,36 +1,50 @@
 {% if users %}
-<div class="bg-base-100 border rounded-lg shadow-xl max-h-72 overflow-y-auto animate-dropdown">
-  <ul class="divide-y">
+<div class="bg-surface border border-muted/30 rounded-lg shadow-xl max-h-96 overflow-y-auto animate-slideDown">
+  <ul class="divide-y divide-muted/20">
     {% for user in users %}
     <li>
       <a href="{% url 'profile' user.profile.slug %}"
-         class="flex items-center gap-3 p-3 hover:bg-base-200 transition">
+         class="flex items-center gap-3 p-3 hover:bg-primary/10 transition-colors">
         
         <div class="avatar">
-          <div class="w-9 rounded-full">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
             {% if user.profile.profile_picture %}
-              <img src="{{ user.profile.profile_picture.url }}">
+              <img src="{{ user.profile.profile_picture.url }}" 
+                   alt="{{ user.get_full_name }}"
+                   class="w-full h-full object-cover">
             {% else %}
-              <div class="bg-primary text-primary-content flex items-center justify-center">
-                {{ user.username|first|upper }}
+              <div class="w-full h-full bg-primary/20 text-primary flex items-center justify-center font-semibold">
+                {{ user.profile.get_profile_initials }}
               </div>
             {% endif %}
           </div>
         </div>
 
-        <div>
-          <p class="font-medium text-sm">
+        <div class="flex-1 min-w-0">
+          <p class="font-medium text-sm text-text truncate">
             {{ user.get_full_name|default:user.username }}
           </p>
-          <p class="text-xs opacity-60">@{{ user.username }}</p>
+          <p class="text-xs text-muted truncate">@{{ user.username }}</p>
         </div>
+
+        <i class="fas fa-chevron-right text-xs text-muted/50"></i>
       </a>
     </li>
     {% endfor %}
   </ul>
+  
+  <!-- Footer si hay muchos resultados -->
+  {% if users|length >= 20 %}
+  <div class="p-2 text-center border-t border-muted/20 bg-surface-dark">
+    <p class="text-xs text-muted">Mostrando primeros 20 resultados</p>
+  </div>
+  {% endif %}
 </div>
-{% else %}
-<div class="bg-base-100 border rounded-lg shadow p-4 text-sm opacity-70">
-  No se encontraron resultados
+
+{% elif query %}
+<!-- Solo mostrar "no encontrado" si hay query pero sin resultados -->
+<div class="bg-surface border border-muted/30 rounded-lg shadow-lg p-4 text-center">
+  <i class="fas fa-search text-3xl text-muted/50 mb-2"></i>
+  <p class="text-sm text-muted">No se encontraron resultados para "{{ query }}"</p>
 </div>
 {% endif %}

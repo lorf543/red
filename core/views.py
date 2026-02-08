@@ -146,17 +146,14 @@ def check_username(request):
 def search_view(request):
     query = request.GET.get('q', '').strip()
 
-    # 👉 Si no hay texto, no mostrar nada
+    # Si no hay query, retornar vacío
     if not query:
-        if request.headers.get('HX-Request'):
-            return HttpResponse("")
-        
+        return HttpResponse("")  # Esto limpiará el contenedor
 
     users = User.objects.filter(
         Q(username__icontains=query) |
         Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(email__icontains=query)
+        Q(last_name__icontains=query)
     )
 
     if request.user.is_authenticated:

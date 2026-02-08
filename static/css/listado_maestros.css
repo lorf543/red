@@ -89,10 +89,6 @@ ul.pagination li {
     gap: 0.25rem;
 }
 
-.header-emoji {
-    font-size: 1.5rem;
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
-}
 
 .header-text {
     font-size: 0.75rem;
