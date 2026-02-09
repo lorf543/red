@@ -252,8 +252,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-print(os.getenv("google_client_id") + "client_id") 
-print(os.getenv("google_secret") + "secret")
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_USERNAME_REQUIRED = False

@@ -17,7 +17,7 @@
             <!-- Header: Username & Date -->
             <div class="flex items-center justify-between gap-2 mb-1">
                 <div class="flex items-center gap-2 min-w-0">
-                    <a href="{% url 'profile' comment.user.id %}" 
+                    <a href="{% url 'profile' comment.user.profile.slug %}" 
                        class="font-medium text-sm text-primary hover:text-primary-dark truncate">
                         {{ comment.user.username }}
                     </a>

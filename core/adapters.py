@@ -11,9 +11,7 @@ User = get_user_model()
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def populate_user(self, request, sociallogin, data):
-        """
-        Este método SE EJECUTA ANTES de guardar el usuario
-        """
+
         user = super().populate_user(request, sociallogin, data)
 
         email = data.get("email", "")
@@ -41,7 +39,6 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def save_user(self, request, user, form, commit=True):
         user = super().save_user(request, user, form, commit=False)
         
-        # Manejar emails temporales si es necesario
         if user.email and user.email.endswith('@temp.noemail'):
             pass
         
