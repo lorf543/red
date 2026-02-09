@@ -223,8 +223,6 @@ else:
     MEDIA_URL = f"https://res.cloudinary.com/{CLOUDINARY_STORAGE['CLOUD_NAME']}/"
 
 
-# CONFIGURACIÓN DE WHITENOISE
-
 
 WHITENOISE_AUTOREFRESH = DEBUG
 WHITENOISE_USE_FINDERS = DEBUG
@@ -311,24 +309,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # }
 
 
-
-
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': os.environ.get('REDIS_URL'), 
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            # Recomendado: compresión para ahorrar memoria
             'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            # Timeout de conexión (evita hangs)
             'SOCKET_CONNECT_TIMEOUT': 5,
             'SOCKET_TIMEOUT': 5,
-            # Ignora errores de conexión en desarrollo (opcional)
-            'IGNORE_EXCEPTIONS': True,  # útil si Redis falla temporalmente
+
+            'IGNORE_EXCEPTIONS': True,  #
         },
-        'KEY_PREFIX': 'https://itlasocial.org/',  # evita colisiones si usas el mismo Redis para más cosas
-        'TIMEOUT': 300,  # 5 minutos por defecto para cachés generales
+        'KEY_PREFIX': 'https://itlasocial.org/', 
+        'TIMEOUT': 300, 
     }
 }
 
