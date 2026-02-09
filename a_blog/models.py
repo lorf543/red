@@ -2,6 +2,13 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from cloudinary.models import CloudinaryField
+
+from django.db.models.signals import pre_save, post_delete
+from django.dispatch import receiver
+from .models import BlogPost
+from cloudinary import api as cloudinary_api
+
 User = get_user_model()
 
 class Tag(models.Model):
@@ -24,7 +31,15 @@ class BlogPost(models.Model):
     tags = models.ManyToManyField(Tag, related_name='blog_posts', blank=True)
     slug = models.SlugField(unique=True, max_length=255, blank=True)
 
-    main_image = models.ImageField(upload_to='blog_images/', null=True, blank=True, verbose_name="Imagen Principal")
+    main_image = CloudinaryField(
+        folder="blogs",
+        null=True,
+        blank=True,
+        transformation={
+            'quality': 'auto:good',
+            'fetch_format': 'auto',
+        }
+    )
     main_paragraph = models.TextField(verbose_name="Párrafo Principal (Intro)")
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -72,3 +87,35 @@ class PostSection(models.Model):
 
     def __str__(self):
         return f"{self.post.title} - {self.subtitle}"
+    
+    
+    
+    
+@receiver(pre_save, sender=BlogPost)
+def delete_old_image_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return
+
+    try:
+        old = BlogPost.objects.get(pk=instance.pk)
+    except BlogPost.DoesNotExist:
+        return
+
+    if old.main_image and old.main_image != instance.main_image:
+        public_id = old.main_image.public_id
+        if public_id and "default" not in public_id:
+            try:
+                cloudinary_api.delete_resources([public_id])
+            except Exception as e:
+                print(f"Cloudinary delete error: {e}")
+
+
+@receiver(post_delete, sender=BlogPost)
+def delete_image_on_delete(sender, instance, **kwargs):
+    if instance.main_image:
+        public_id = instance.main_image.public_id
+        if public_id and "default" not in public_id:
+            try:
+                cloudinary_api.delete_resources([public_id])
+            except Exception as e:
+                print(f"Cloudinary delete error: {e}")

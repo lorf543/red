@@ -18,12 +18,10 @@ from django.dispatch import receiver
 import re
 
 from schedules.models import Subject,Teacher
-
 from notifications.models import Notification
 
 User = get_user_model()
 
-# Create your models here.
 def censor_badwords(text):
     badwords = Badword.objects.all().values('pattern', 'replacement')
     for bw in badwords:
