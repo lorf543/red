@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG=False
+DEBUG=True
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",") 
 
@@ -235,23 +235,32 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': False,
-        'APP': {
-            'client_id': os.getenv("google_client_id"),
-            'secret': os.getenv("google_secret"),
-            'key': ''
-        }
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
     }
 }
 
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         },
+#         'METHOD': 'oauth2',
+#         'VERIFIED_EMAIL': False,
+#         'APP': {
+#             'client_id': os.getenv("google_client_id"),
+#             'secret': os.getenv("google_secret"),
+#             'key': ''
+#         }
+#     }
+# }
+
+print(os.getenv("google_client_id") + "client_id") 
+print(os.getenv("google_secret") + "secret")
 
 # Configuración de allauth
 ACCOUNT_LOGIN_METHODS = {"email"}
@@ -296,30 +305,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ----------------------------
 # CACHE (opcional)
 # ----------------------------
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#         'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
-#     }
-# }
-
-
 CACHES = {
     'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.environ.get('REDIS_URL'), 
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-
-            'IGNORE_EXCEPTIONS': True,  #
-        },
-        'KEY_PREFIX': 'https://itlasocial.org/', 
-        'TIMEOUT': 300, 
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
     }
 }
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': os.environ.get('REDIS_URL'), 
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#             'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+#             'SOCKET_CONNECT_TIMEOUT': 5,
+#             'SOCKET_TIMEOUT': 5,
+
+#             'IGNORE_EXCEPTIONS': True,  #
+#         },
+#         'KEY_PREFIX': 'https://itlasocial.org/', 
+#         'TIMEOUT': 300, 
+#     }
+# }
+
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_CACHE_ALIAS = 'default'
