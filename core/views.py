@@ -197,15 +197,49 @@ def tutoriales(request):
     return render(request,'tutoriales/deploy.html',{"steps": steps})
 
 
+
 def robots_txt(request):
     lines = [
         "User-agent: *",
         "Disallow: /admin/",
-        "Disallow: /private/",
-        "Allow: /",
-        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}"
+        "Disallow: /accounts/",
+        "Disallow: /login/",
+        "Disallow: /logout/",
+        "Disallow: /password/",       
+        "Disallow: /signup/",
+        "Disallow: /profile/edit/",
+        
+
+        "Disallow: /search/",
+        "Disallow: /*?q=", 
+        "Disallow: /*?page=", 
+        "Disallow: /*?sort=",
+        "Disallow: /*?filter=",
+        
+
+        "Disallow: /media/private/",
+        "Disallow: /static/admin/",
+
+        "Allow: /", 
+
+        # Bloqueo a crawlers de IA (muy recomendado en 2025-2026)
+        "",
+        "User-agent: GPTBot",
+        "Disallow: /",
+        "User-agent: Google-Extended",
+        "Disallow: /",
+        "User-agent: anthropic-ai",
+        "Disallow: /",
+        # Añade más si quieres (Claude, Perplexity, etc.) — ver listas actualizadas en GitHub
+
+        "",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
+
+
+def donations(request):
+    return render(request,'politicas/donaciones.html')
 
 

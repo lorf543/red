@@ -221,9 +221,6 @@ class Comment(models.Model):
                 content_object=self
             )
 
-            from notifications.utils import send_notification_ws
-            send_notification_ws(notification)
-
         except LookupError:
             pass
         

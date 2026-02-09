@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-6">
+
+  {% include "components/comment_item.html" with comment=comment %}
+
+</div>
+
+<script>
+  const el = document.getElementById("comment-{{ highlight_id }}");
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("ring-2", "ring-primary");
+  }
+</script>
+{% endblock %}

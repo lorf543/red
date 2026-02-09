@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/donation_btn.css' %}">
     <div class="min-h-screen ">
         <div class="max-w-7xl mx-auto px-4 py-6">
             <!-- Contenedor principal con flex -->
@@ -42,6 +45,14 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a 
+                                            hx-boost="true"
+                                        href="{% url 'votes_analysis' %}" 
+                                        class="flex items-center space-x-2 text-base-content hover:text-primary transition-colors p-2 rounded hover:bg-base-200 w-full">
+                                            <span>Votaciones</span>
+                                        </a>
+                                    </li>
+                                    <li>
                                         <button type="button" 
                                                 class="flex items-center space-x-2 text-muted p-2 rounded cursor-not-allowed w-full text-left"
                                                 disabled>
@@ -49,11 +60,18 @@
                                             <span>Configuración</span>
                                         </button>
                                     </li>
+                                    <li>
+                                    <button
+                                        onclick="window.location.href='{% url 'donations' %}'"  
+                                        class="mt-2 glow-on-hover text-text bg-surface" type="button">
+                                        Donaciones!
+                                    </button>
+                                    </li>
                                 </ul>
                             </div>
 
                             <!-- Caja 2 - Intereses (oculta en móvil) -->
-                            <div class="lg:block bg-surface rounded-xl p-6 shadow-sm border border-base-300">
+                            <div class=" bg-surface rounded-xl p-6 shadow-sm border border-base-300 hidden lg:block">
                                 <h2 class="text-lg font-semibold text-base-content mb-4">Intereses</h2>
                                 <hr class="border-base-300 mb-4">
                                 <ul class="space-y-3">

@@ -1,0 +1,203 @@
+/* mentions-system.css */
+/* Estilos para el sistema de menciones */
+
+/* ==================== ANIMACIONES ==================== */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ==================== DROPDOWN DE MENCIONES ==================== */
+#mentionsDropdown,
+[id^="mentionsDropdown-"] {
+    animation: slideUp 0.2s ease-out;
+    backdrop-filter: blur(8px);
+}
+
+/* Estado seleccionado */
+.mention-item.selected {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.mention-item.selected .mention-username {
+    color: rgb(59, 130, 246);
+}
+
+/* Hover en items */
+.mention-item:hover {
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+/* ==================== SCROLLBAR PERSONALIZADO ==================== */
+.mentions-scrollbar,
+#mentionsList,
+[id^="mentionsList-"] {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1);
+}
+
+.mentions-scrollbar::-webkit-scrollbar,
+#mentionsList::-webkit-scrollbar,
+[id^="mentionsList-"]::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mentions-scrollbar::-webkit-scrollbar-track,
+#mentionsList::-webkit-scrollbar-track,
+[id^="mentionsList-"]::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.mentions-scrollbar::-webkit-scrollbar-thumb,
+#mentionsList::-webkit-scrollbar-thumb,
+[id^="mentionsList-"]::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.mentions-scrollbar::-webkit-scrollbar-thumb:hover,
+#mentionsList::-webkit-scrollbar-thumb:hover,
+[id^="mentionsList-"]::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 640px) {
+    #mentionsDropdown,
+    [id^="mentionsDropdown-"] {
+        width: calc(100vw - 2rem);
+        max-width: 100%;
+        left: 0 !important;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* ==================== ESTADOS DE CARGA ==================== */
+#mentionsLoading,
+[id^="mentionsLoading-"] {
+    animation: fadeIn 0.2s ease-out;
+}
+
+.fa-spinner.fa-spin {
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== MENCIONES EN TEXTO ==================== */
+/* Para cuando quieras resaltar las menciones en el contenido final */
+.mention-highlight {
+    color: rgb(59, 130, 246);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.mention-highlight:hover {
+    color: rgb(37, 99, 235);
+    text-decoration: underline;
+}
+
+/* ==================== TEMA OSCURO ==================== */
+@media (prefers-color-scheme: dark) {
+    .mention-item.selected {
+        background-color: rgba(59, 130, 246, 0.25);
+    }
+    
+    .mention-item:hover {
+        background-color: rgba(59, 130, 246, 0.15);
+    }
+    
+    .mentions-scrollbar::-webkit-scrollbar-track,
+    #mentionsList::-webkit-scrollbar-track,
+    [id^="mentionsList-"]::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .mentions-scrollbar::-webkit-scrollbar-thumb,
+    #mentionsList::-webkit-scrollbar-thumb,
+    [id^="mentionsList-"]::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .mentions-scrollbar::-webkit-scrollbar-thumb:hover,
+    #mentionsList::-webkit-scrollbar-thumb:hover,
+    [id^="mentionsList-"]::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* ==================== ACCESIBILIDAD ==================== */
+.mention-item:focus-visible {
+    outline: 2px solid rgb(59, 130, 246);
+    outline-offset: -2px;
+}
+
+/* Reducir movimiento para usuarios que lo prefieren */
+@media (prefers-reduced-motion: reduce) {
+    #mentionsDropdown,
+    [id^="mentionsDropdown-"],
+    .mention-item,
+    .mention-highlight {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ==================== UTILIDADES ==================== */
+.mention-avatar {
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mention-username {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mention-fullname {
+    font-size: 0.75rem;
+    color: rgba(107, 114, 128, 1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mention-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 500;
+}

@@ -1,79 +1,164 @@
-<div id="vote-buttons-{{ teacher.id }}" class="flex flex-wrap gap-2 my-4">
+<div id="vote-buttons-{{ teacher.id }}" class="flex flex-wrap justify-center gap-1 sm:gap-2 my-3 sm:my-4">
   {% for code, label in teacher.votes.model.VOTE_CHOICES %}
-    <form hx-post="{% url 'vote_teacher_2' teacher.id %}" 
-          hx-target="#vote-buttons-{{ teacher.id }}" 
-          hx-swap="outerHTML" 
-          hx-indicator="#loading-{{ teacher.id }}-{{ code }}"
-          class="inline">
-      
-      <input type="hidden" name="vote_type" value="{{ code }}">
+    <div class="relative group">
+      {% if request.user.is_authenticated %}
+        <form hx-post="{% url 'vote_teacher_2' teacher.id %}" 
+              hx-target="#vote-buttons-{{ teacher.id }}" 
+              hx-swap="outerHTML" 
+              hx-indicator="#loading-{{ teacher.id }}-{{ code }}"
+              class="inline">
+          
+          <input type="hidden" name="vote_type" value="{{ code }}">
 
-      <button type="submit" 
-        class="group relative px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center space-x-2 min-w-[100px] justify-center
-               {% if current_vote == code %}
-                 bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg ring-2 ring-blue-300 ring-opacity-50
-               {% else %}
-                 bg-background border-2 border-surface text-muted hover:border-gray-300 hover:shadow-md
-               {% endif %}"
-        title="{{ label }}">
+          <button type="submit" 
+            class="vote-button relative px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-all duration-300 ease-in-out flex flex-col items-center justify-center min-w-[60px] sm:min-w-[80px] md:min-w-[100px]
+                   {% if current_vote == code %}
+                     bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg ring-1 sm:ring-2 ring-blue-300 ring-opacity-50 text-white
+                   {% else %}
+                     bg-background border border-surface text-muted hover:border-blue-300 hover:shadow-sm active:scale-95
+                   {% endif %}"
+            title="{{ label }}">
+            
+            <div class="flex flex-col items-center w-full">
+              <!-- Label - mejor responsive -->
+              <span class="text-[10px] xs:text-xs font-medium opacity-90 whitespace-nowrap truncate w-full text-center px-1">
+                {{ label|capfirst }}
+              </span>
 
-        <div class="flex flex-col items-center">
-          <span class="text-xs font-medium opacity-75">{{ label|capfirst }}</span>
+              <!-- Counter with loader -->
+              <div class="relative mt-0.5">
+                <span id="count-{{ teacher.id }}-{{ code }}" 
+                      class="inline-flex items-center justify-center min-w-[20px] h-5 text-xs sm:text-sm font-bold rounded-full transition-all duration-500">
+                  {% if code == 1 %}{{ votes_count.guagua }}
+                  {% elif code == 2 %}{{ votes_count.te_va_a_quemar }}
+                  {% elif code == 3 %}{{ votes_count.se_aprende }}
+                  {% elif code == 4 %}{{ votes_count.vago }}
+                  {% else %}0{% endif %}
+                </span>
 
-          <div class="relative">
-            <span id="count-{{ teacher.id }}-{{ code }}" 
-                  class="inline-flex items-center justify-center min-w-[24px] h-6 text-sm font-bold rounded-full transition-all duration-500">
-              {% if code == 1 %}{{ votes_count.guagua }}
-              {% elif code == 2 %}{{ votes_count.te_va_a_quemar }}
-              {% elif code == 3 %}{{ votes_count.se_aprende }}
-              {% elif code == 4 %}{{ votes_count.vago }}
-              {% else %}0{% endif %}
+                <!-- Loader -->
+                <div id="loading-{{ teacher.id }}-{{ code }}" 
+                     class="htmx-indicator absolute inset-0 flex items-center justify-center">
+                  <div class="w-3 h-3 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active overlay effect -->
+            <div class="absolute inset-0 rounded-lg bg-blue-400 opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
+          </button>
+        </form>
+      {% else %}
+        <!-- Visualización sin interacción para usuarios no autenticados -->
+        <div class="vote-display px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg flex flex-col items-center justify-center min-w-[60px] sm:min-w-[80px] md:min-w-[100px]
+                   {% if current_vote == code %}
+                     bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg text-white
+                   {% else %}
+                     bg-background border border-surface text-muted opacity-90
+                   {% endif %}">
+          <div class="flex flex-col items-center w-full">
+            <!-- Label -->
+            <span class="text-[10px] xs:text-xs font-medium opacity-90 whitespace-nowrap truncate w-full text-center px-1">
+              {{ label|capfirst }}
             </span>
 
-            
-            <!-- Loader -->
-            <div id="loading-{{ teacher.id }}-{{ code }}" 
-                 class="htmx-indicator absolute inset-0 flex items-center justify-center">
-              <div class="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            <!-- Counter -->
+            <div class="relative mt-0.5">
+              <span id="count-{{ teacher.id }}-{{ code }}" 
+                    class="inline-flex items-center justify-center min-w-[20px] h-5 text-xs sm:text-sm font-bold rounded-full">
+                {% if code == 1 %}{{ votes_count.guagua }}
+                {% elif code == 2 %}{{ votes_count.te_va_a_quemar }}
+                {% elif code == 3 %}{{ votes_count.se_aprende }}
+                {% elif code == 4 %}{{ votes_count.vago }}
+                {% else %}0{% endif %}
+              </span>
             </div>
           </div>
+          
+          <!-- Tooltip para login -->
+          <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+            Inicia sesión para votar
+            <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
+          </div>
         </div>
-
-        <div class="absolute inset-0 rounded-lg bg-blue-400 opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
-      </button>
-    </form>
+      {% endif %}
+    </div>
   {% endfor %}
 </div>
 
 <style>
-/* Animaciones UX */
+/* Animaciones optimizadas para móvil */
 @keyframes vote-success {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
 @keyframes counter-update {
   0% { transform: scale(1); }
-  50% { transform: scale(1.2); background-color: #10b981; color: white; }
+  50% { transform: scale(1.15); background-color: #10b981; color: white; }
   100% { transform: scale(1); }
 }
 
 .counter-updated {
-  animation: counter-update 0.6s ease-in-out;
+  animation: counter-update 0.4s ease-in-out;
 }
 
 .vote-selected {
-  animation: vote-success 0.5s ease-in-out;
+  animation: vote-success 0.3s ease-in-out;
 }
 
-@media (max-width: 768px) {
-  #vote-buttons-{{ teacher.id }} {
-    justify-content: center;
+/* Estilos responsivos para botones */
+@media (max-width: 640px) {
+  .vote-button, .vote-display {
+    min-width: 55px !important;
+    padding: 0.4rem 0.5rem !important;
   }
-  #vote-buttons-{{ teacher.id }} button {
-    min-width: 80px;
-    padding: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  #vote-buttons-{{ teacher.id }} {
+    gap: 0.5rem;
+  }
+  
+  .vote-button, .vote-display {
+    min-width: 50px !important;
+    padding: 0.35rem 0.4rem !important;
+  }
+  
+  .vote-button span, .vote-display span {
+    font-size: 9px !important;
+  }
+  
+  #count-{{ teacher.id }}-{{ code }} {
+    min-width: 18px !important;
+    height: 18px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* Mejoras de touch para móvil */
+@media (hover: none) and (pointer: coarse) {
+  .vote-button {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .vote-button:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Asegurar que los botones se vean bien en dark mode */
+@media (prefers-color-scheme: dark) {
+  .vote-button:not(.bg-gradient-to-r) {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+  
+  .vote-display:not(.bg-gradient-to-r) {
+    background-color: #1f2937;
+    border-color: #374151;
+    opacity: 0.8;
   }
 }
 </style>
@@ -85,7 +170,7 @@ document.body.addEventListener("htmx:afterSwap", function(evt) {
         const counters = evt.detail.target.querySelectorAll("span[id^='count-']");
         counters.forEach(c => {
             c.classList.add("counter-updated");
-            setTimeout(() => c.classList.remove("counter-updated"), 600);
+            setTimeout(() => c.classList.remove("counter-updated"), 400);
         });
     }
 });

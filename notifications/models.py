@@ -26,6 +26,24 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.actor} {self.verb} {self.content_object} → {self.recipient}"
     
+    def get_absolute_url(self):
+        if self.content_object:
+            # Si el objeto tiene get_absolute_url, úsalo
+            if hasattr(self.content_object, 'get_absolute_url'):
+                return self.content_object.get_absolute_url()
+            
+            # Si es un comentario, construir URL manualmente
+            if hasattr(self.content_object, 'teacher'):
+                # Comentario en profesor
+                return f"{self.content_object.teacher.get_absolute_url()}#comment-{self.content_object.id}"
+            elif hasattr(self.content_object, 'parent'):
+                # Es una respuesta (reply)
+                parent = self.content_object.parent
+                if hasattr(parent, 'teacher'):
+                    return f"{parent.teacher.get_absolute_url()}#comment-{self.content_object.id}"
+        
+        return "#"
+    
     def mark_as_read(self):
         if not self.read:
             self.read = True

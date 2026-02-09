@@ -1,0 +1,71 @@
+{% load static %}
+
+{% if notifications %}
+  <div class="divide-y divide-base-300">
+    {% for notification in notifications %}
+    <ul>
+      <li>
+        <a href="{% url 'notification_detail' notification.id %}"
+         class="block px-4 py-3 hover:bg-base-200 transition-colors duration-200
+         {% if not notification.read %}bg-primary-200 border-2 border-primary{% endif %}">
+         {{notification.read}}
+        <div class="flex gap-3 items-start">
+          <!-- Avatar del actor -->
+          <div class="flex-shrink-0">
+            {% if notification.actor.profile.profile_picture %}
+              <img src="{{ notification.actor.profile.profile_picture.url }}" 
+                   alt="{{ notification.actor.username }}"
+                   class="w-10 h-10 rounded-full object-cover border-2 border-base-300">
+            {% else %}
+              <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm border-2 border-base-300">
+                {{ notification.actor.profile.get_profile_initials }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Contenido de la notificación -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex-1">
+                <p class="text-sm">
+                  <span class="font-semibold text-primary">{{ notification.actor.username }}</span>
+                  <span class="text-base-content/70">{{ notification.verb }}</span>
+                </p>
+                
+                <!-- Preview del comentario si existe -->
+                {% if notification.get_comment_preview %}
+                  <p class="text-xs text-base-content/60 mt-1 line-clamp-2">
+                    "{{ notification.get_comment_preview }}"
+                  </p>
+                {% endif %}
+                
+                <!-- Timestamp -->
+                <p class="text-xs text-base-content/50 mt-1">
+                  <i class="far fa-clock mr-1"></i>
+                  {{ notification.timestamp|timesince }} atrás
+                </p>
+              </div>
+
+              <!-- Indicador de no leída -->
+              {% if not notification.read %}
+                <div class="flex-shrink-0">
+                  <div class="w-2 h-2 bg-primary rounded-full"></div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        </a>
+      </li>
+    </ul>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <!-- Empty state -->
+  <div class="p-8 text-center text-base-content/50">
+    <i class="fas fa-bell-slash text-4xl mb-3 opacity-50"></i>
+    <p class="text-sm">No tienes notificaciones</p>
+  </div>
+{% endif %}
+

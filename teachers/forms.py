@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from schedules.models import Subject
+from schedules.models import Subject, Teacher
 
 
 
@@ -75,6 +75,23 @@ class SubjectForm(forms.ModelForm):
             'credits': 'Número de créditos (1-5)',
         }
 
+class TeacherForm(forms.ModelForm):
+    class Meta:
+        model = Teacher
+        fields = ("full_name",)
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Nombre del maestro'
+            }),
+        }
+        labels = {
+            'full_name': 'Nombre del Maestro',
+
+        }
+        help_texts = {
+            'full_name': 'Ingrese el nombre completo del maestro',
+        }
 
 class CommentForm(forms.Form):
     content = forms.CharField(

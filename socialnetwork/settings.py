@@ -183,8 +183,6 @@ if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
 
 
-# CONFIGURACIÓN SEGÚN ENTORNO (Desarrollo vs Producción)
-
 
 if DEBUG:
     # ========== DESARROLLO ==========
@@ -305,9 +303,34 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ----------------------------
 # CACHE (opcional)
 # ----------------------------
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
+#     }
+# }
+
+
+
+
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.environ.get('REDIS_URL'), 
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # Recomendado: compresión para ahorrar memoria
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            # Timeout de conexión (evita hangs)
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            # Ignora errores de conexión en desarrollo (opcional)
+            'IGNORE_EXCEPTIONS': True,  # útil si Redis falla temporalmente
+        },
+        'KEY_PREFIX': 'https://itlasocial.org/',  # evita colisiones si usas el mismo Redis para más cosas
+        'TIMEOUT': 300,  # 5 minutos por defecto para cachés generales
     }
 }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'

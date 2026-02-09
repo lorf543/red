@@ -30,6 +30,11 @@ from .models import Comment, Reaction, Teacher
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.utils.html import escape
 
+from django.core.cache import cache
+def test_redis(request):
+    cache.set('test_railway', '¡Redis en Railway funciona!', 60)
+    value = cache.get('test_railway')
+    return HttpResponse(f"Valor desde Redis: {value}")
 
 
 ai = JigsawStack(api_key="sk_8fc49d46d26248a05274e78faf07893cffb62e8b25790d47e2b7ef4eca158b07ef7fbb73c69ef0e5514e8c2ac92ff956111ecbb0d7335d13cdcdb50a1525ddad024KIVF6vZqFa5acHSxde")
@@ -275,6 +280,7 @@ def create_reply(request, comment_id):
             reply_data['teacher'] = parent_comment.teacher
         
         reply = Comment.objects.create(**reply_data)
+        reply.process_mentions()
         
         return render(request, 'components/reply_item.html', {
             'comment': reply
@@ -299,7 +305,7 @@ def comment_detail_partial(request, comment_id):
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id, user=request.user)
     comment.delete()
-    return HttpResponse(status=204)
+    return HttpResponse("")
 
 
 def load_more_replies(request, comment_id):

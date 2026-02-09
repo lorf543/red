@@ -43,46 +43,18 @@
 
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
-    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/preview.png' %}">
 
 
 
     <!-- CSS Preload (solo esenciales, los demás cargar normal) -->
     <link rel="stylesheet" href="{% static 'css/themes_raw.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mentions-system.css' %}">
     <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
 
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: 'var(--color-primary)',
-                        secondary: 'var(--color-secondary)',
-                        accent: 'var(--color-accent)',
-                        background: 'var(--color-background)',
-                        text: 'var(--color-text)',
-                        surface: 'var(--color-surface)',
-                        'surface-dark': 'var(--color-surface-dark)',
-                        muted: 'var(--color-muted)',
-                        success: 'var(--color-success)',
-                        warning: 'var(--color-warning)',
-                        danger: 'var(--color-danger)',
-                        info: 'var(--color-info)',
-                    },
-                    fontFamily: {
-                        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Theme Initializer (debe ejecutarse ANTES que el DOM cargue) -->
     <script>
         (function() {
             const theme = localStorage.getItem("theme");
@@ -111,7 +83,7 @@
                 "name": "ITLAsocial",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://itlasocial.org{% static 'img/logo.png' %}"
+                    "url": "https://itlasocial.org{% static 'img/preview.png' %}"
                 }
             },
             "potentialAction": {
@@ -126,15 +98,17 @@
     {% block schema_extra %}{% endblock %}
 </head>
 
-<body  class="font-sans"
-   >
+
+
+
+<body class="font-sans static " >
 
     <!-- Navbar -->
         {% include "includes/navbar.html" %}
 
 
     <!-- Main Content -->
-    <main id="main-content" class="min-h-screen">
+    <main id="main-content" class="min-h-screen relative pt-16">
         {% if messages %}
             <div id="django-messages" class="container mx-auto px-4 py-4 space-y-2">
                 {% for message in messages %}
@@ -157,13 +131,21 @@
         <div id="app-shell">
             {% block content %}{% endblock %}
         </div>
+        
+        <!-- <div class="fixed bottom-4 px-10 py-4 rounded-xs right-4">
+              <button id="chatToggle" 
+                    class="btn btn-secondary btn-circle btn-lg shadow-lg hover:shadow-xl transition-all duration-300 animate-bounce hover:animate-none">
+                <i class="fas fa-comment-dots text-xl"></i>
+                <span class="absolute -top-1 -right-1 w-6 h-6 bg-error text-white text-xs rounded-full flex items-center justify-center animate-ping opacity-75">3</span>
+            </button>
+        </div> -->
     </main>
-
 
 
 
     <!-- ===================== JS LIBRARIES ===================== -->
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/form_comment.js' %}" defer></script>
     <script>
         if (document.querySelector('[x-data]')) {
             const s = document.createElement('script');
@@ -174,7 +156,7 @@
     </script>
 
 
-    
+
 
     <script>
         // ---------------------- CSRF para HTMX ----------------------

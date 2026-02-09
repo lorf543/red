@@ -18,5 +18,6 @@ urlpatterns = [
     path('check-username/',views.check_username,name='check_username'),
     path('search/', views.search_view, name='search-view'),
     
-    path('tutorail',views.tutoriales,name='tutoriales'),
+    path('tutorail/',views.tutoriales,name='tutoriales'),
+    path('donaciones',views.donations,name='donations'),
 ]

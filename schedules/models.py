@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils.text import slugify
+from django.urls import reverse
 
 
 
@@ -72,13 +73,13 @@ class Subject(models.Model):
     def total_score(self):
         return self.votes.aggregate(total=models.Sum('vote_type'))['total'] or 0
 
-from django.db import models
-from django.utils.text import slugify
 
 class Teacher(models.Model):
     full_name = models.CharField(max_length=100)
     area = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(blank=True)  
+
+    is_aproved = models.BooleanField(default=False, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -96,6 +97,8 @@ class Teacher(models.Model):
 
     def total_score(self):
         return self.votes.aggregate(total=models.Sum('vote_type'))['total'] or 0
-
+    
+    def get_absolute_url(self):
+        return reverse('teacher_detail', kwargs={'teacher_slug': self.slug})
 
 

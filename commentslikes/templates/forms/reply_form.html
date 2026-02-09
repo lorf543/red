@@ -1,0 +1,94 @@
+<!-- reply_form.html - VERSIÓN CORREGIDA -->
+<div x-show="replyFormOpen" 
+     x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100 translate-y-0"
+     x-transition:leave-end="opacity-0 -translate-y-2"
+     x-init="initReplyMentions{{ comment.id }}()"
+     class="mt-3">
+  <form hx-post="{% url 'create_reply' comment.id %}"
+        hx-target="#replies-{{ comment.id }}"
+        hx-swap="afterbegin"
+        @htmx:after-request="replyFormOpen = false; $event.target.reset(); resetReplyForm{{ comment.id }}()"
+        class="space-y-3">
+    {% csrf_token %}
+    
+    <!-- Contenedor RELATIVO para el textarea y dropdown -->
+    <div class="relative">
+      <textarea 
+        name="content"
+        x-ref="replyTextarea"
+        id="replyTextarea-{{ comment.id }}"
+        class="commentBox w-full border border-primary rounded-lg p-3 text-sm bg-surface text-text placeholder:text-muted transition-colors duration-300 resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        placeholder="Escribe tu respuesta... Usa @ para mencionar"
+        oninput="autoResize(this)"
+        required></textarea>
+
+      <!-- Dropdown de menciones con ID único -->
+      <div id="mentionsDropdown-{{ comment.id }}" 
+           class="hidden absolute left-0 bottom-full mb-2 w-80 max-w-full bg-surface border border-muted/30 rounded-lg shadow-2xl overflow-hidden z-50">
+        <div class="px-3 py-2 bg-surface-dark border-b border-muted/20">
+          <p class="text-xs text-muted flex items-center gap-1.5">
+            <i class="fas fa-at text-primary"></i>
+            <span>Mencionar usuario</span>
+          </p>
+        </div>
+        
+        <ul id="mentionsList-{{ comment.id }}" class="max-h-64 overflow-y-auto mentions-scrollbar"></ul>
+        
+        <div id="mentionsLoading-{{ comment.id }}" class="hidden px-4 py-3 text-center text-sm text-muted">
+          <i class="fas fa-spinner fa-spin"></i> Buscando...
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex gap-2">
+      <button 
+        type="button" 
+        @click="toggleReply()" 
+        class="comment-button px-4 py-2 text-sm text-text hover:text-primary border border-border rounded transition-colors duration-300">
+        Cancelar
+      </button>
+      <button 
+        type="submit"
+        class="comment-button px-4 py-2 bg-primary text-primary-content text-sm rounded hover:bg-primary-dark transition-colors duration-300">
+        Responder
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Función de reset para este formulario específico
+  function resetReplyForm{{ comment.id }}() {
+    const textarea = document.getElementById('replyTextarea-{{ comment.id }}');
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.value = '';
+    }
+  }
+
+  // Función de inicialización que se llama desde x-init de Alpine
+  window.initReplyMentions{{ comment.id }} = function() {
+    // Esperar a que Alpine termine de mostrar el elemento
+    setTimeout(() => {
+      const textareaId = 'replyTextarea-{{ comment.id }}';
+      const textarea = document.getElementById(textareaId);
+      
+
+      // Inicializar el sistema de menciones
+      try {
+        window['mentionSystem_{{ comment.id }}'] = new MentionSystem(
+          textareaId,
+          "{% url 'search_users_mention' %}"
+        );
+      } catch (error) {
+        console.error(' Error al inicializar menciones para reply {{ comment.id }}:', error);
+      }
+    }, 50);
+  };
+</script>

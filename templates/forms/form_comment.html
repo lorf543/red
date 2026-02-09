@@ -1,3 +1,4 @@
+<!-- comment_form.html -->
 <form 
     id="commentForm"
     method="post"
@@ -12,7 +13,7 @@
             resetCommentForm();
         }
     "
-    class="bg-surfacetive rounded-lg transition-shadow duration-200"
+    class="bg-surface rounded-lg transition-shadow duration-200"
 >
     {% csrf_token %}
     
@@ -29,8 +30,9 @@
                 required
             ></textarea>
             
-            <!-- Dropdown de menciones (ahora HERMANO del textarea, no hijo) -->
-            <div id="mentionsDropdown" class="hidden absolute left-0 bottom-full mb-2 w-80 max-w-full bg-surface border border-muted/30 rounded-lg shadow-2xl overflow-hidden z-50">
+            <!-- Dropdown de menciones -->
+            <div id="mentionsDropdown" 
+                 class="hidden absolute left-0 bottom-full mb-2 w-80 max-w-full bg-surface border border-muted/30 rounded-lg shadow-2xl overflow-hidden z-50">
                 <div class="px-3 py-2 bg-surface-dark border-b border-muted/20">
                     <p class="text-xs text-muted flex items-center gap-1.5">
                         <i class="fas fa-at text-primary"></i>
@@ -38,7 +40,7 @@
                     </p>
                 </div>
                 
-                <ul id="mentionsList" class="max-h-64 overflow-y-auto"></ul>
+                <ul id="mentionsList" class="max-h-64 overflow-y-auto mentions-scrollbar"></ul>
                 
                 <div id="mentionsLoading" class="hidden px-4 py-3 text-center text-sm text-muted">
                     <i class="fas fa-spinner fa-spin"></i> Buscando...
@@ -46,20 +48,31 @@
             </div>
         </div>
         
+        <!-- Preview de imagen -->
         <div id="imagePreviewContainer" class="hidden mt-3 relative group w-fit">
             <img id="imagePreview" src="" alt="Preview" class="max-h-48 rounded-lg border border-muted object-cover">
-            <button type="button" onclick="removeImage()" class="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center transition-colors">
+            <button type="button" 
+                    onclick="removeImage()" 
+                    class="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center transition-colors">
                 <i class="fas fa-times text-xs"></i>
             </button>
         </div>
     </div>
 
+    <!-- Barra de acciones -->
     <div class="flex items-center w-full justify-between px-3 py-2 border-t border-muted/20">
         <div class="flex items-center text-primary gap-2">
-            <input type="file" name="image" id="imageInput" accept="image/*" class="hidden cursor-pointer" onchange="handleFileSelect(this)">
+            <input type="file" 
+                   name="image" 
+                   id="imageInput" 
+                   accept="image/*" 
+                   class="hidden cursor-pointer" 
+                   onchange="handleFileSelect(this)">
             
-            <button type="button" onclick="document.getElementById('imageInput').click()" 
-                    class="cursor-pointer p-2 rounded-full hover:bg-primary/10 transition-colors" title="Añadir imagen">
+            <button type="button" 
+                    onclick="document.getElementById('imageInput').click()" 
+                    class="cursor-pointer p-2 rounded-full hover:bg-primary/10 transition-colors" 
+                    title="Añadir imagen">
                 <i class="far fa-image text-lg"></i>
             </button>
         </div>
@@ -73,69 +86,59 @@
     <div id="commentErrorContainer" class="px-4 pb-2 text-danger text-sm"></div>
 </form>
 
-<style>
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    #mentionsDropdown {
-        animation: slideUp 0.2s ease-out;
-    }
-
-    .mention-item.selected {
-        background-color: rgba(59, 130, 246, 0.15);
-    }
-
-    #mentionsList {
-        scrollbar-width: thin;
-    }
-
-    #mentionsList::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #mentionsList::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    #mentionsList::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 3px;
-    }
-</style>
-
 <script>
     // ==================== AUTO-RESIZE ====================
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-        if(textarea.value === '') textarea.style.height = 'auto';
+    if (typeof autoResize !== 'function') {
+        window.autoResize = function(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+            if(textarea.value === '') textarea.style.height = 'auto';
+        };
     }
 
     // ==================== IMÁGENES ====================
     function handleFileSelect(input) {
         if (input.files && input.files[0]) {
-            showPreview(input.files[0]);
+            const file = input.files[0];
+            
+            // Validar tamaño (máx 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('La imagen es demasiado grande. El tamaño máximo es 5MB.');
+                input.value = '';
+                return;
+            }
+            
+            // Validar tipo
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona un archivo de imagen válido.');
+                input.value = '';
+                return;
+            }
+            
+            showPreview(file);
         }
     }
 
+    // Pegar imágenes desde el portapapeles
     document.getElementById('commentTextarea').addEventListener('paste', function(e) {
         const items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (let index in items) {
             const item = items[index];
             if (item.kind === 'file' && item.type.includes('image/')) {
                 const blob = item.getAsFile();
+                
+                // Validar tamaño
+                if (blob.size > 5 * 1024 * 1024) {
+                    alert('La imagen es demasiado grande. El tamaño máximo es 5MB.');
+                    return;
+                }
+                
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(blob);
                 document.getElementById('imageInput').files = dataTransfer.files;
                 showPreview(blob);
+                e.preventDefault();
+                break;
             }
         }
     });
@@ -145,6 +148,9 @@
         reader.onload = function(e) {
             document.getElementById('imagePreview').src = e.target.result;
             document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        }
+        reader.onerror = function() {
+            alert('Error al cargar la imagen. Por favor intenta de nuevo.');
         }
         reader.readAsDataURL(file);
     }
@@ -157,216 +163,27 @@
 
     function resetCommentForm() {
         const textarea = document.getElementById('commentTextarea');
-        textarea.style.height = 'auto';
+        if (textarea) {
+            textarea.style.height = 'auto';
+        }
         removeImage();
     }
 
     // ==================== SISTEMA DE MENCIONES ====================
-    (function() {
-        'use strict';
-        
-        class MentionSystem {
-            constructor(textareaId, searchUrl) {
-                this.textarea = document.getElementById(textareaId);
-                this.dropdown = document.getElementById('mentionsDropdown');
-                this.list = document.getElementById('mentionsList');
-                this.loading = document.getElementById('mentionsLoading');
-                this.searchUrl = searchUrl;
-                
-                this.isActive = false;
-                this.selectedIndex = 0;
-                this.users = [];
-                this.currentSearch = '';
-                this.searchTimeout = null;
-                
-                if (this.textarea && this.dropdown) {
-                    this.init();
-                } else {
-                    console.error('❌ Elementos de menciones no encontrados');
-                }
-            }
-            
-            init() {
-                this.textarea.addEventListener('input', this.handleInput.bind(this));
-                this.textarea.addEventListener('keydown', this.handleKeydown.bind(this));
-                
-                document.addEventListener('click', (e) => {
-                    if (!this.dropdown.contains(e.target) && e.target !== this.textarea) {
-                        this.hide();
-                    }
-                });
-            }
-            
-            handleInput(e) {
-                const cursorPos = this.textarea.selectionStart;
-                const textBeforeCursor = this.textarea.value.substring(0, cursorPos);
-                const match = textBeforeCursor.match(/@(\w*)$/);
-                
-                if (match) {
-                    this.currentSearch = match[1];
-                    this.isActive = true;
-                    
-                    clearTimeout(this.searchTimeout);
-                    this.searchTimeout = setTimeout(() => {
-                        this.searchUsers(this.currentSearch);
-                    }, 300);
-                } else {
-                    this.hide();
-                }
-            }
-            
-            async searchUsers(query) {
-                this.showLoading();
-                
-                try {
-                    const response = await fetch(`${this.searchUrl}?q=${encodeURIComponent(query)}`);
-                    const data = await response.json();
-                    
-                    this.users = data.users || [];
-                    this.selectedIndex = 0;
-                    this.renderUsers();
-                    
-                } catch (error) {
-                    console.error('Error buscando usuarios:', error);
-                    this.hide();
-                }
-            }
-            
-            renderUsers() {
-                this.hideLoading();
-                
-                if (this.users.length === 0) {
-                    this.list.innerHTML = `
-                        <li class="px-4 py-3 text-sm text-muted text-center">
-                            <i class="fas fa-search mb-2 text-2xl opacity-50"></i>
-                            <p>No se encontraron usuarios</p>
-                        </li>
-                    `;
-                    this.show();
-                    return;
-                }
-                
-                this.list.innerHTML = this.users.map((user, index) => `
-                    <li class="mention-item ${index === this.selectedIndex ? 'selected' : ''}" 
-                        data-index="${index}"
-                        data-username="${user.username}">
-                        <div class="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-primary/10 transition-colors duration-150 border-b border-muted/10 last:border-b-0">
-                            ${user.avatar ? 
-                                `<img src="${user.avatar}" alt="${user.username}" class="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-primary/30">` :
-                                `<div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-medium text-xs flex-shrink-0">${user.initials}</div>`
-                            }
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-text truncate">@${user.username}</p>
-                                ${user.full_name ? `<p class="text-xs text-muted truncate">${user.full_name}</p>` : ''}
-                            </div>
-                            <i class="fas fa-chevron-right text-xs text-muted/50"></i>
-                        </div>
-                    </li>
-                `).join('');
-                
-                this.list.querySelectorAll('.mention-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const username = item.getAttribute('data-username');
-                        this.insertMention(username);
-                    });
-                });
-                
-                this.show();
-            }
-            
-            handleKeydown(e) {
-                if (!this.isActive || this.users.length === 0) return;
-                
-                switch(e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        this.selectedIndex = (this.selectedIndex + 1) % this.users.length;
-                        this.updateSelection();
-                        break;
-                        
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        this.selectedIndex = (this.selectedIndex - 1 + this.users.length) % this.users.length;
-                        this.updateSelection();
-                        break;
-                        
-                    case 'Enter':
-                    case 'Tab':
-                        if (this.isActive) {
-                            e.preventDefault();
-                            this.insertMention(this.users[this.selectedIndex].username);
-                        }
-                        break;
-                        
-                    case 'Escape':
-                        e.preventDefault();
-                        this.hide();
-                        break;
-                }
-            }
-            
-            updateSelection() {
-                const items = this.list.querySelectorAll('.mention-item');
-                items.forEach((item, index) => {
-                    if (index === this.selectedIndex) {
-                        item.classList.add('selected');
-                        item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                    } else {
-                        item.classList.remove('selected');
-                    }
-                });
-            }
-            
-            insertMention(username) {
-                const cursorPos = this.textarea.selectionStart;
-                const textBeforeCursor = this.textarea.value.substring(0, cursorPos);
-                const textAfterCursor = this.textarea.value.substring(cursorPos);
-                
-                const newTextBefore = textBeforeCursor.replace(/@\w*$/, `@${username} `);
-                this.textarea.value = newTextBefore + textAfterCursor;
-                
-                const newCursorPos = newTextBefore.length;
-                this.textarea.setSelectionRange(newCursorPos, newCursorPos);
-                this.textarea.focus();
-                
-                autoResize(this.textarea);
-                this.hide();
-            }
-            
-            show() {
-                this.dropdown.classList.remove('hidden');
-            }
-            
-            hide() {
-                this.dropdown.classList.add('hidden');
-                this.isActive = false;
-                this.users = [];
-                this.currentSearch = '';
-                this.selectedIndex = 0;
-            }
-            
-            showLoading() {
-                this.list.classList.add('hidden');
-                this.loading.classList.remove('hidden');
-                this.show();
-            }
-            
-            hideLoading() {
-                this.list.classList.remove('hidden');
-                this.loading.classList.add('hidden');
-            }
-        }
-        
-        // Inicializar
-        function initMentions() {
+    // Inicializar después de cargar el script mentions-system.js
+    function initMainCommentMentions() {
+        if (typeof MentionSystem !== 'undefined') {
             const searchUrl = "{% url 'search_users_mention' %}";
-            window.mentionSystem = new MentionSystem('commentTextarea', searchUrl);
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initMentions);
+            window.mainCommentMentionSystem = new MentionSystem('commentTextarea', searchUrl);
         } else {
-            initMentions();
+            console.error('❌ MentionSystem no está disponible. Asegúrate de cargar mentions-system.js primero.');
         }
-    })();
+    }
+    
+    // Inicializar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMainCommentMentions);
+    } else {
+        initMainCommentMentions();
+    }
 </script>

@@ -14,7 +14,7 @@ import hashlib
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 
-from django.db.models import Count,Q, Prefetch, Case, When, IntegerField, Sum
+from django.db.models import Q, Prefetch, Sum
 
 
 from commentslikes.models import Comment, Vote
@@ -22,7 +22,7 @@ from commentslikes.models import Comment, Vote
 # Create your views here.
 
 from schedules.models import Teacher, Subject
-from .forms import SubjectForm
+from .forms import SubjectForm, TeacherForm
 
 
 def get_comments(user=None, teacher_id=None):
@@ -61,9 +61,11 @@ def get_comments(user=None, teacher_id=None):
     
     return result
 
-# @cache_page(60 * 5)
+
 def teachers_list(request):
     """Vista principal con paginación y búsqueda optimizada"""
+    user_is_staff = request.user.is_authenticated and request.user.is_staff
+    
     
     # Parámetros de búsqueda y paginación
     search_query = request.GET.get('search', '').strip()
@@ -81,13 +83,13 @@ def teachers_list(request):
         context = cached_data
     else:
         # Query base optimizado
-        teachers_qs = Teacher.objects.annotate(
+        teachers_qs = Teacher.objects.filter(is_aproved=True).annotate(
             guagua_votes=Count('votes', filter=Q(votes__vote_type=1)),
             te_va_a_quemar_votes=Count('votes', filter=Q(votes__vote_type=2)),
             se_aprende_votes=Count('votes', filter=Q(votes__vote_type=3)),
             vago_votes=Count('votes', filter=Q(votes__vote_type=4)),
             total_votes=Count('votes')
-        ).select_related()  # Si tienes ForeignKeys
+        ).select_related()  
         
         # Aplicar búsqueda si existe
         if search_query:
@@ -184,8 +186,46 @@ def teacher_detail(request, teacher_slug):
     }
     return render(request, 'teachers/teacher_detail.html', context)
 
+
+@login_required
 def create_teacher(request):
-    return render(request, 'teachers/create_teacher.html')
+
+    form = TeacherForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            teacher = form.save()
+            messages.success(request, f"Maestro '{teacher.full_name}' creado exitosamente.")
+            return redirect('teachers_list')
+        else:
+            messages.error(request, "Formulario inválido. Verifica los campos.")
+
+    context = {
+        'form': form
+    }
+    return render(request, 'teachers/create_teacher.html', context)
+
+def manage_teachers(request):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permisos para acceder a esta página.")
+        return redirect('teachers_list')
+
+    teachers = Teacher.objects.filter(is_aproved=False)
+
+    context = {
+        'teachers': teachers
+    }
+    return render(request, 'teachers/manage_teachers.html', context)
+
+def approve_teacher(request, teacher_slug):
+    if not request.user.is_staff:
+        messages.error(request, "No tienes permisos para realizar esta acción.")
+        return redirect('teachers_list')
+
+    teacher = get_object_or_404(Teacher, slug=teacher_slug)
+    teacher.is_aproved = True
+    teacher.save()
+    messages.success(request, f"Maestro '{teacher.full_name}' aprobado exitosamente.")
+    return redirect('teachers_list')
 
 @login_required
 def assign_subject(request, teacher_slug):
@@ -295,10 +335,6 @@ def vote_teacher_2(request, teacher_id):
 
 
 def votes_analysis(request):
-    """
-    Vista de análisis de votos con paginación y estadísticas optimizadas.
-    Muestra rankings por categoría y feed de votos recientes.
-    """
     
     # Parámetros
     page_number = request.GET.get('page', 1)

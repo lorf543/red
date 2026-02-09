@@ -54,7 +54,7 @@
                     <span>Comentario moderado</span>
                 </div>
             {% else %}
-                <p class="text-text text-sm leading-relaxed whitespace-pre-wrap break-words">
+                <p class="text-text text-sm leading-relaxed break-words">
                     {{ comment.content|censurar|highlight_mentions|linebreaksbr|safe  }}
                 </p>
                 <div class="mt-1">

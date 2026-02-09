@@ -17,10 +17,11 @@
     <span class="text-border">|</span>
     
     <!-- Botón Eliminar -->
-    <button hx-post="{% url 'delete_comment' comment.id %}"
+    <button 
+            hx-post="{% url 'delete_comment' comment.id %}"
             hx-target="#comment-{{ comment.id }}"
             hx-swap="outerHTML"
-            hx-confirm="¿Estás seguro de que quieres eliminar este comentario?"
+            hx-confirm="¿Estás seguro de que quieres eliminar este comentario?, "
             hx-indicator="#delete-spinner-{{ comment.id }}"
             _="on htmx:afterRequest if event.detail.successful remove #comment-{{ comment.id }} end"
             class="text-muted hover:text-danger transition-colors duration-200 p-1.5 rounded hover:bg-danger/10 cursor-pointer"

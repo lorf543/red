@@ -1,7 +1,6 @@
-from django.shortcuts import get_object_or_404, render, HttpResponse
-
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse
 # Create your views here.
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
@@ -11,60 +10,97 @@ from commentslikes.models import Comment, Reaction
 
 
 
+
+
 @login_required
 def notifications_view(request):
-    notifications = request.user.notifications.all().order_by('read')
-    return render(request, 'notifications/partials/notifications_list.html', {'notifications': notifications})
+    """Retorna la lista de notificaciones del usuario"""
+    notifications = request.user.notifications.all().order_by('-timestamp')[:20]  # Últimas 20
+    return render(request, 'notifications/partials/notifications_list.html', {
+        'notifications': notifications
+    })
 
 @login_required
-def mark_as_read(request, notification_id):
-    notification = request.user.notifications.get(id=notification_id)
-    notification.read = True
-    notification.save()
-    return redirect('notifications_view')
+def notification_redirect(request, notification_id):
+    """Redirige al usuario al objeto de la notificación y marca como leída"""
+    notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+    notification.mark_as_read()
+    
+    # Redirigir a la URL del objeto
+    redirect_url = notification.get_absolute_url()
+    print("hola que hace")
+    
+    return redirect( 'notification_detail',notification_id=notification.id)
 
 @login_required
-def mark_all_read(request):
+def mark_notification_read(request, notification_id):
+    """Marca una notificación como leída y retorna el item actualizado"""
+    notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+    notification.mark_as_read()
+    
+    # Actualizar el contador en el badge
+    unread_count = request.user.notifications.filter(read=False).count()
+    
+    # Retornar el item actualizado
+    response = render(request, 'notifications/partials/notification_item.html', {
+        'notification': notification
+    })
+    
+    # Agregar header para actualizar el contador
+    response['HX-Trigger'] = f'{{"updateNotificationCount": {unread_count}}}'
+    
+    return response
+
+@login_required
+def mark_all_notifications_read(request):
+    """Marca todas las notificaciones como leídas"""
     request.user.notifications.filter(read=False).update(read=True)
-    return redirect('notifications_view')
+    
+    # Retornar la lista actualizada
+    notifications = request.user.notifications.all().order_by('-timestamp')[:20]
+    response = render(request, 'notifications/partials/notifications_list.html', {
+        'notifications': notifications
+    })
+    
+    # Trigger para actualizar el contador a 0
+    response['HX-Trigger'] = '{"updateNotificationCount": 0}'
+    
+    return response
+
+
 
 @login_required
 def notification_detail(request, notification_id):
-    # Obtener la notificación
-    notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+    notification = get_object_or_404(
+        Notification,
+        id=notification_id,
+        recipient=request.user
+    )
 
-    # Verificar si el contenido de la notificación aún existe
-    comment = notification.content_object
-    if not comment or not Comment.objects.filter(id=getattr(comment, 'id', None)).exists():
-        # Comentario eliminado: mostrar mensaje o redirigir
-        notification.mark_as_read()
-        return HttpResponse("El comentario asociado a esta notificación ya no existe.", status=404)
+    obj = notification.content_object
+    if not obj:
+        return HttpResponse("Contenido no disponible", status=404)
 
     # Determinar comentario raíz
-    root_comment = comment.parent if comment.parent else comment
+    if hasattr(obj, 'parent') and obj.parent:
+        root_comment = obj.parent
+        highlight_id = obj.id
+    else:
+        root_comment = obj
+        highlight_id = obj.id
 
-    comments_qs = Comment.objects.filter(id=root_comment.id)
-
-    comments = []
-    for c in comments_qs:
-        replies_qs = c.replies.all().order_by('created_at') if hasattr(c, 'replies') else []
-        total_replies = replies_qs.count() if hasattr(replies_qs, 'count') else 0
-        comments.append({
-            'comment': c,
-            'preview_replies': replies_qs[:3],  # mostrar solo primeras 3
-            'total_replies': total_replies,
-            'has_more_replies': total_replies > 3,
-        })
-
-    # Marcar la notificación como leída
     notification.mark_as_read()
 
     context = {
-        'parent': root_comment.parent if root_comment.parent else None,
         'comment': root_comment,
-        'comments': comments,
+        'highlight_id': highlight_id,
     }
-    return render(request, 'notifications/notification_detail.html', context)
+
+    return render(
+        request,
+        'notifications/notification_detail.html',
+        context
+    )
 
 
 @login_required

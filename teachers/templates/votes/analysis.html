@@ -474,7 +474,7 @@
 
 <div hx-boost="true" class="max-w-7xl mx-auto px-4 py-8">
         <!-- Stats Overview -->
-    {% comment %} <div class="stats-overview">
+    <div class="stats-overview">
         {% for category in categories %}
             <div class="stat-card-large {% if category.id == 1 %}guagua{% elif category.id == 2 %}quemar{% elif category.id == 3 %}aprende{% else %}vago{% endif %}">
                 <span class="stat-emoji">{{ category.emoji }}</span>
@@ -502,10 +502,10 @@
                 </div>
             </div>
         {% endfor %}
-    </div> {% endcomment %}
+    </div>
 
     <!-- Top Overall Teachers -->
-    {% comment %} {% if top_overall %}
+    {% if top_overall %}
         <div class="bg-surface border border-border rounded-xl p-6 mb-8">
             <h3 class="text-2xl font-bold mb-4 text-text">
                 <i class="fas fa-trophy text-yellow-500 mr-2"></i>
@@ -531,7 +531,7 @@
                 {% endfor %}
             </div>
         </div>
-    {% endif %} {% endcomment %}
+    {% endif %}
 
     <!-- Filters -->
     <div class="filters-bar">

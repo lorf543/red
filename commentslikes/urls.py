@@ -7,6 +7,7 @@ urlpatterns = [
     
     # CRUD de comentarios
     path('comment/create/', views.create_comment, name='create_comment'),
+    path('test_redis', views.test_redis, name='test_redis'),
     path('comments/<int:comment_id>/edit/', views.update_comment, name='update_comment'),
     path('comments/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
     
@@ -34,5 +35,6 @@ urlpatterns = [
     #moderations
     path('moderate/<int:comment_id>/',views.toggle_moderate,name="toggle_moderate"),
     path('get_comment_status/<int:comment_id>/',views.get_comment_status,name="get_comment_status"),
+    
     
 ]
