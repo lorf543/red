@@ -233,6 +233,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+SOCIALACCOUNT_ADAPTER = "core.adapters.CustomSocialAccountAdapter"
+ACCOUNT_ADAPTER = "core.adapters.CustomAccountAdapter"
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APPS": [
@@ -252,7 +255,7 @@ SOCIALACCOUNT_PROVIDERS = {
 print(os.getenv("google_client_id") + "client_id") 
 print(os.getenv("google_secret") + "secret")
 
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_USERNAME_REQUIRED = False
 
 ACCOUNT_AUTHENTICATION_METHOD = "email"
