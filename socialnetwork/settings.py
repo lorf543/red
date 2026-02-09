@@ -14,30 +14,25 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ----------------------------
-# SECURITY
-# ----------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "valor_por_defecto_para_dev")
-DEBUG = os.getenv("DEBUG", "False") == "True"
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG=False
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",") 
 
 
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:8000"
+).split(",")
 
-# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-ALLOWED_HOSTS = ['*']
+
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
-# ESTO ES VITAL PARA TÚNELES:
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Tu lógica de CSRF está bien para testear
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.devtunnels.ms",
-    "http://localhost:8000"
-]
 
-# ----------------------------
 # INSTALLED APPS
-# ----------------------------
+
 INSTALLED_APPS = [
     # 'daphne',
     'django.contrib.admin',
@@ -67,6 +62,7 @@ INSTALLED_APPS = [
     'teachers',
     'commentslikes',
     'notifications.apps.NotificationsConfig',
+    'a_blog.apps.ABlogConfig',
 
     # Allauth
     'allauth',
@@ -129,12 +125,12 @@ ASGI_APPLICATION = 'socialnetwork.asgi.application'
 # DATABASE
 # ----------------------------
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 DATABASES = {
     'default': dj_database_url.config(

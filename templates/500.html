@@ -1,12 +1,7 @@
-
-
+{% load static %}
 <style>
-    /* Estilos para la página 404 */
-
     body{
-        
-    margin: 0;
-
+        margin: 0;
     }
 
     
@@ -27,13 +22,13 @@
     width: 100%;
     text-align: center;
     line-height: 1.4;
-    padding: 0 20px;
+
 }
 
 .notfound-404 {
     position: relative;
     height: 200px;
-    margin: 0 auto 20px;
+
 }
 
 .notfound-404 h1 {
@@ -49,10 +44,6 @@
     align-items: center;
 }
 
-.notfound-404 h1 span {
-    font-size: 120px;
-    margin: 0 15px;
-}
 
 .notfound h2 {
     font-family: 'Montserrat', sans-serif;
@@ -68,7 +59,7 @@
     font-family: 'Roboto', sans-serif;
     color: #3d3f3f;
     font-weight: 400;
-    margin-bottom: 25px;
+
 }
 
 .notfound a {
@@ -131,10 +122,10 @@
     <div id="notfound">
 		<div class="notfound">
 			<div class="notfound-404">
-				<h1>4<span>😭</span>4</h1>
+                <img src="{% static 'img/505.webp' %}" alt="505 error image" style="width: 250px; height: auto;">
 			</div>
-			<h2>Oops! Pagina no encontrada</h2>
-            <p>Lo sentimos la pagina que estas buscando no existe, ha sido removida o removido temporalmente</p>
+			<h2>Oops! que paso!</h2>
+            <p>Ha ocurrido un error interno en el servidor. Por favor, inténtalo de nuevo más tarde.</p>
 			<a href="{% url 'home' %}">Back to homepage</a>
 		</div>
 	</div>

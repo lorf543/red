@@ -1,0 +1,55 @@
+<!-- Template: add_section_form.html -->
+<div class="section-item rounded-lg p-6 border" 
+     style="background-color: var(--color-background); border-color: var(--color-border);">
+    
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold" style="color: var(--color-text);">
+            Sección #<span class="section-number"></span>
+        </h3>
+        <button type="button" 
+                class="remove-section btn btn-sm btn-circle"
+                style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="space-y-4">
+        <!-- Subtítulo de la sección -->
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
+                Subtítulo de la Sección
+            </label>
+            <input type="text" 
+                   name="sections[{{ section_index }}][subtitle]" 
+                   required
+                   class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+                   style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                   placeholder="Subtítulo de esta sección...">
+        </div>
+
+        <!-- Contenido de la sección -->
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
+                Contenido
+            </label>
+            <textarea name="sections[{{ section_index }}][content]" 
+                      required
+                      rows="4"
+                      class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+                      style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                      placeholder="Escribe el contenido de esta sección..."></textarea>
+        </div>
+
+        <!-- Orden -->
+        <input type="hidden" name="sections[{{ section_index }}][order]" value="{{ section_index }}">
+    </div>
+</div>
+
+<script>
+    // Actualizar números de sección
+    document.querySelectorAll('.section-number').forEach((el, index) => {
+        el.textContent = index + 1;
+    });
+</script>

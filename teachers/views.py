@@ -453,6 +453,7 @@ def votes_analysis(request):
             'border_class': 'border-muted/30',
         }
     ]
+    stats_version = cache.get("votes:stats:version", 1)
     
     context = {
         'votes': votes_page,
@@ -461,6 +462,7 @@ def votes_analysis(request):
         'top_overall': stats['top_overall'],
         'category_filter': category_filter,
         'vote_type_filter': vote_type_filter,
+        'stats_version': stats_version,
     }
     
     return render(request, 'votes/analysis.html', context)

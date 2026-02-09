@@ -1,6 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from schedules.models import Teacher
+from a_blog.models import BlogPost
 
 
 from django.http import HttpResponse
@@ -48,6 +49,21 @@ class StaticViewSitemap(Sitemap):
 
     def location(self, item):
         return reverse(item)
+    
+    
+class BlogPostSitemap(Sitemap):
+    priority = 1.0
+    changefreq = 'weekly'
+    protocol = 'https'
+
+    def items(self):
+        return BlogPost.objects.filter(is_published=True) 
+    
+    def lastmod(self, obj):
+        return obj.updated_at
+
+    def location(self, obj):
+        return obj.get_absolute_url()
 
 class TeacherSitemap(Sitemap):
     changefreq = "monthly"

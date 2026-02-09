@@ -8,13 +8,14 @@ import os
 from core import views as views_robot
 
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import TeacherSitemap, StaticViewSitemap
+from .sitemaps import TeacherSitemap, StaticViewSitemap, BlogPostSitemap
 
 
 
 sitemaps = {
     'static': StaticViewSitemap,
     'teachers': TeacherSitemap,     
+    'blogs': BlogPostSitemap,     
 }
 
 
@@ -26,6 +27,8 @@ urlpatterns = [
     path("teachers/", include("teachers.urls")),
     path("comments/", include("commentslikes.urls")),
     path("notifications/", include("notifications.urls")),
+    path("blogs/", include("a_blog.urls")),
+
     path("schema-viewer/", include("schema_viewer.urls")),
 
     path("robots.txt", views_robot.robots_txt, name="robots_txt"),

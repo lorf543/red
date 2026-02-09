@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!-- SEO: Title -->
+{% block title %}{{ post.title }} - Blog ITLAsocial{% endblock %}
+
+<!-- SEO: Description -->
+{% block description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
+
+<!-- SEO: Canonical URL -->
+{% block canonical %}https://itlasocial.org{{ post.get_absolute_url }}{% endblock %}
+
+<!-- Open Graph -->
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
+
+<!-- Twitter Cards -->
+{% block twitter_title %}{{ post.title }}{% endblock %}
+{% block twitter_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
+{% block twitter_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
+
+<!-- Structured Data (JSON-LD) para BlogPosting -->
+
+
+
+    <!-- Article specific meta tags -->
+<meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
+<meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
+<meta property="article:author" content="{{ post.author.username }}">
+{% for tag in post.tags.all %}
+    <meta property="article:tag" content="{{ tag.name }}">
+{% endfor %}
+<meta property="article:section" content="{% if post.tags.first %}{{ post.tags.first.name }}{% else %}General{% endif %}">
+    
+    <!-- Reading time -->
+<meta name="twitter:label1" content="Tiempo de lectura">
+<meta name="twitter:data1" content="{{ post.sections.count|add:2 }} min">
+<meta name="twitter:label2" content="Autor">
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.title|escapejs }}",
+    "alternativeHeadline": "{{ post.subtitle|escapejs }}",
+    "image": {% if post.main_image %}"https://itlasocial.org{{ post.main_image.url }}"{% else %}"https://itlasocial.org{% static 'img/preview.png' %}"{% endif %},
+    "author": {
+        "@type": "Person",
+        "name": "{{ post.author.username|escapejs }}",
+        "url": "https://itlasocial.org{% url 'profile' post.author.profile.slug %}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "ITLAsocial",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://itlasocial.org{% static 'img/preview.png' %}"
+        }
+    },
+    "datePublished": "{{ post.created_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|date:'c' }}",
+    "description": "{{ post.main_paragraph|truncatewords:50|escapejs }}",
+    "articleBody": "{{ post.main_paragraph|escapejs }}",
+    "keywords": "{% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}",
+    "wordCount": {{ post.main_paragraph|wordcount|add:post.sections.all|length }},
+    "inLanguage": "es-DO",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://itlasocial.org{{ post.get_absolute_url }}"
+    }{% if post.tags.all %},
+    "articleSection": "{{ post.tags.first.name }}"{% endif %}
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://itlasocial.org/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://itlasocial.org{% url 'blog_list' %}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ post.title|escapejs }}",
+            "item": "https://itlasocial.org{{ post.get_absolute_url }}"
+        }
+    ]
+}
+</script>
+
+
+
+
+
+
+{% block content %}
+
+<div class="min-h-screen">
+    <!-- Navegación -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <a class="btn bg-surface" hx-boost="true" href="{% url 'blog_list' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver a blogs
+        </a>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-8">
+        <!-- Contenido Principal -->
+        {% include 'a_blog/partials/article.html' %}
+
+        <!-- Sidebar -->
+        <aside class="lg:w-1/4">
+            <!-- Información del Autor -->
+            <div class="rounded-xl p-6 mb-8 border sticky top-4"
+                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                
+                <h3 class="text-xl font-bold mb-4 pb-3 border-b"
+                    style="color: var(--color-text); border-color: var(--color-border);">
+                    Sobre el Autor
+                </h3>
+
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-3"
+                         style="background-color: var(--color-primary); color: white; font-size: 2rem;">
+                        {{ post.author.username|slice:":1"|upper }}
+                    </div>
+                    <h4 class="font-bold text-lg" style="color: var(--color-text);">
+                        {{ post.author.username }}
+                    </h4>
+                    <p class="text-sm mt-2" style="color: var(--color-muted);">
+                        {{ post.author.blog_authored.count }} artículos publicados
+                    </p>
+                </div>
+
+                <!-- <p class="text-sm text-center mb-4" style="color: var(--color-muted);">
+                    Apasionado por compartir conocimiento y experiencias.
+                </p> -->
+
+                <!-- <button class="btn btn-sm w-full"
+                        style="background-color: var(--color-primary); color: white;">
+                    Seguir
+                </button> -->
+            </div>
+
+            <!-- Posts Recientes -->
+            <div class="rounded-xl p-6 mb-8 border"
+                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                
+                <h3 class="text-xl font-bold mb-6 pb-3 border-b"
+                    style="color: var(--color-text); border-color: var(--color-border);">
+                    Posts Recientes
+                </h3>
+
+                <div class="space-y-5">
+                    {% for recent in recent_posts %}
+                    <div class="pb-4 border-b last:border-0"
+                         style="border-color: color-mix(in srgb, var(--color-border) 50%, transparent);">
+                        <a href="{{ recent.get_absolute_url }}" 
+                           class="font-medium hover:opacity-80 block" 
+                           style="color: var(--color-text);">
+                            {{ recent.title|truncatewords:10 }}
+                        </a>
+                        <p class="text-sm mt-1" style="color: var(--color-muted);">
+                            {{ recent.created_at|timesince }} atrás
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="rounded-xl p-6 border"
+                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                
+                <h3 class="text-xl font-bold mb-6 pb-3 border-b"
+                    style="color: var(--color-text); border-color: var(--color-border);">
+                    Tags Populares
+                </h3>
+
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in all_tags %}
+                    <a href="{% url 'blog_list' %}?tag={{ tag.slug }}" 
+                       class="px-3 py-1.5 text-sm rounded-full cursor-pointer hover:opacity-80"
+                       style="background-color: color-mix(in srgb, {{ tag.color }} 10%, transparent); 
+                              color: {{ tag.color }}; 
+                              border: 1px solid color-mix(in srgb, {{ tag.color }} 20%, transparent);">
+                        {{ tag.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+{% endblock content %}

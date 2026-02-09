@@ -13,13 +13,12 @@
       
   <!-- SEARCH -->
       {% if user.is_authenticated %}
-      <div class="relative w-full sm:w-20 hidden lg:block max-w-full">
+      <div class="relative flex-1 max-w-md hidden lg:block">
         <label class="input input-bordered flex items-center gap-2 w-full rounded-full">
           <svg class="w-4 h-4 opacity-50 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
             <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2"/>
           </svg>
-
           <input
             id="search-input"
             name="q"
@@ -138,10 +137,20 @@
     
     <!-- 📚 Dashboard Shortcut -->
     <a href="{% url 'teachers_list' %}" 
-       class="hidden lg:block" 
+       class="flex gap-3 items-center" 
        aria-label="Dashboard">
         <i class="fas fa-chalkboard-teacher"></i>
-        Profesores
+        <span class="hidden lg:block md:block">
+          Profesores
+        </span>
+    </a>
+    <a href="{% url 'blog_list' %}" 
+       class="flex gap-3 items-center" 
+       aria-label="Dashboard">
+        <i class="fa-solid fa-blog"></i>
+        <span class="hidden lg:block md:block">
+          Blog
+        </span>
     </a>
     
     <!-- 👤 Profile Dropdown - FIXED -->

@@ -13,6 +13,9 @@ from django.template.loader import render_to_string
 from .forms import  UserEditForm, ProfileEditForm
 from .models import UserProfile
 from commentslikes.models import  Comment, Vote
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
 
 
 from commentslikes.utils import UsernameValidator
@@ -22,29 +25,32 @@ User = get_user_model()
 
 
 def home_view(request):
-    votes = Vote.objects.select_related(
-        'user__profile',  
-        'teacher', 
-        'subject'
-    ).order_by('-created_at')[:10]
-    
-    # Todos los comentarios principales
-    comments_qs = Comment.objects.filter(
-        parent__isnull=True,
+    votes = cache.get("home:votes:latest")
+    if votes is None:
+        votes = list(
+            Vote.objects.select_related(
+                'user__profile', 'teacher', 'subject'
+            ).order_by('-created_at')[:10]
+        )
+        cache.set("home:votes:latest", votes, 60)
 
-    ).order_by('-created_at')
-    
-    paginator = Paginator(comments_qs, 10)
-    page = paginator.page(1) 
-    
+    comments = cache.get("home:comments:page:1")
+    if comments is None:
+        comments = list(
+            Comment.objects
+            .filter(parent__isnull=True)
+            .order_by('-created_at')[:10]
+        )
+        cache.set("home:comments:page:1", comments, 60)
+
     context = {
-        'comments': page.object_list,   
-        'page_obj': page,             
-        'notifications': request.user.notifications.all() if request.user.is_authenticated else [],
+        'comments': comments,
         'votes': votes,
-        'enable_polling': False,    
+        'notifications': request.user.notifications.all() if request.user.is_authenticated else [],
+        'enable_polling': False,
     }
     return render(request, 'home.html', context)
+
 
 
 def profile_view(request, slug):
@@ -123,6 +129,7 @@ def confifraciones(request):
     return render(request,'conf/configuraciones.html')
 
 
+@cache_page(60 * 60 * 24) 
 def politicas(request):
     context = {
         'omitir_includes': True,  # Variable de control.
@@ -166,6 +173,8 @@ def search_view(request):
         'query': query
     })
 
+
+@cache_page(60 * 60 * 24) 
 def tutoriales(request):
     steps = [
         {
@@ -238,7 +247,7 @@ def robots_txt(request):
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
-
+@cache_page(60 * 15)
 def donations(request):
     return render(request,'politicas/donaciones.html')
 
