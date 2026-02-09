@@ -234,30 +234,20 @@ AUTHENTICATION_BACKENDS = [
 
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
+    "google": {
+        "APPS": [
+            {
+                "client_id": os.getenv("google_client_id"),
+                "secret": os.getenv("google_secret"),
+                "key": "",
+                "settings": {
+                    "scope": ["profile", "email"],
+                    "auth_params": {"access_type": "online"},
+                },
+            }
+        ]
     }
 }
-
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google': {
-#         'SCOPE': [
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS': {
-#             'access_type': 'online',
-#         },
-#         'METHOD': 'oauth2',
-#         'VERIFIED_EMAIL': False,
-#         'APP': {
-#             'client_id': os.getenv("google_client_id"),
-#             'secret': os.getenv("google_secret"),
-#             'key': ''
-#         }
-#     }
-# }
 
 print(os.getenv("google_client_id") + "client_id") 
 print(os.getenv("google_secret") + "secret")
