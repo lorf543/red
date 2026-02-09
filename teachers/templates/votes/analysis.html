@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/vote_analysis.css' %}">
+{% load cache %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/vote_analysis.css' %}">
 
 <div hx-boost="true" class="max-w-7xl mx-auto px-4 py-8">
         <!-- Stats Overview -->
