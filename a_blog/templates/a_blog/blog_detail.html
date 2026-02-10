@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load poll_extras %}
 
 <!-- SEO: Title -->
 {% block title %}{{ post.title }} - Blog ITLAsocial{% endblock %}
@@ -15,9 +16,9 @@
 {% block og_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
-
 <!-- Twitter Cards -->
 {% block twitter_title %}{{ post.title }}{% endblock %}
+{% block og_logo %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
 {% block twitter_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
 {% block twitter_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
 

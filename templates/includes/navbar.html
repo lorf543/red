@@ -158,7 +158,7 @@
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
           {% if user.profile.profile_picture.url %} 
-            <img src="{{ user.profile.profile_picture.url}}" loading="lazy" alt="Foto de perfil" 
+            <img src="{{ user.profile.profile_picture.url|force_https}}" loading="lazy" alt="Foto de perfil" 
                  class="w-10 h-10 object-cover rounded-full">
           {% else %} 
             <div class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">
@@ -177,7 +177,7 @@
           <div class="avatar">
             <div class="w-12 rounded-full">
               {% if user.profile.profile_picture.url %} 
-                <img src="{{ user.profile.profile_picture.url}}" loading="lazy"
+                <img src="{{ user.profile.profile_picture.url|force_https}}" loading="lazy"
                      class="w-12 h-12 rounded-full object-cover">
               {% else %}
                 <div class="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-medium">

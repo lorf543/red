@@ -1,3 +1,4 @@
+{% load poll_extras %}
 <div class="md:col-span-1 space-y-4">
     <!-- Últimos votos -->
     <div class="bg-surface text-text rounded-lg p-4 shadow-comment transition-all duration-200 hover:shadow-lg hover:shadow-primary/10">
@@ -16,7 +17,7 @@
                 <div class="avatar">
                     <div class="w-10 rounded-full flex items-center justify-center">
                         {% if vote.user.profile.profile_picture %}
-                            <img src="{{ vote.user.profile.profile_picture.url }}" 
+                            <img src="{{ vote.user.profile.profile_picture.url|force_https }}" 
                                  alt="Perfil de {{ vote.user.username }}"
                                  class="w-10 h-10 rounded-full object-cover border-2 border-surface">
                         {% else %}

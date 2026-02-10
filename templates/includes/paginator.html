@@ -1,0 +1,48 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<div  class="flex justify-center items-center space-x-2 mt-8">
+    <!-- Botón Previous -->
+    {% if page_obj.has_previous %}
+        <a hx-boost="true" href="?page={{ page_obj.previous_page_number }}" 
+           class="px-4 py-2 rounded-lg bg-surface hover:bg-surface-300 transition">
+            Anterior
+        </a>
+    {% else %}
+        <span class="px-4 py-2 rounded-lg bg-surface text-text cursor-not-allowed">
+            Anterior
+        </span>
+    {% endif %}
+
+    <!-- Números de página -->
+    <div class="flex space-x-1">
+        {% for page in page_obj.paginator.page_range %}
+            {% if page == page_obj.number %}
+                <span class="px-4 py-2 rounded-lg bg-aqua-bright text-text">
+                    {{ page }}
+                </span>
+            {% elif page > page_obj.number|add:-3 and page < page_obj.number|add:3 %}
+                <a hx-boost="true" href="?page={{ page }}" 
+                   class="px-4 py-2 rounded-lg bg-surface hover:bg-surfacetransition">
+                    {{ page }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Botón Next -->
+    {% if page_obj.has_next %}
+        <a hx-boost="true" href="?page={{ page_obj.next_page_number }}" 
+           class="px-4 py-2 rounded-lg bg-surface hover:bg-surface0 transition">
+            Siguiente
+        </a>
+    {% else %}
+        <span class="px-4 py-2 rounded-lg bg-surface text-text cursor-not-allowed">
+            Siguiente
+        </span>
+    {% endif %}
+</div>
+
+<!-- Información de la página actual -->
+<div class="text-center text-text mt-4">
+    Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} artículos
+</div>
+{% endif %}

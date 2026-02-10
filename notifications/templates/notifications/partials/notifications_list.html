@@ -1,5 +1,7 @@
 {% load static %}
 
+{% load poll_extras %}
+
 {% if notifications %}
   <div class="divide-y divide-base-300">
     {% for notification in notifications %}
@@ -13,7 +15,7 @@
           <!-- Avatar del actor -->
           <div class="flex-shrink-0">
             {% if notification.actor.profile.profile_picture %}
-              <img src="{{ notification.actor.profile.profile_picture.url }}" 
+              <img src="{{ notification.actor.profile.profile_picture.url|force_https }}" 
                    alt="{{ notification.actor.username }}"
                    class="w-10 h-10 rounded-full object-cover border-2 border-base-300">
             {% else %}

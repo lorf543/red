@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load poll_extras %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/donation_btn.css' %}">
@@ -17,7 +17,7 @@
                             <div class="bg-surface rounded-lg p-4 shadow-sm border border-base-300">
                                 <div class="flex items-center space-x-3 mb-4">
                                     {% if user.profile.profile_picture %}
-                                        <img src="{{ user.profile.profile_picture.url }}" 
+                                        <img src="{{ user.profile.profile_picture.url|force_https }}" 
                                             alt="Perfil" 
                                             class="w-10 h-10 object-cover rounded-full border-2 border-base-300">
                                     {% else %}
@@ -103,7 +103,7 @@
                             {% if request.user.is_authenticated %}
                                 <div class="flex space-x-3">
                                     {% if user.profile.profile_picture %}
-                                        <img src="{{ user.profile.profile_picture.url }}"  loading="lazy"
+                                        <img src="{{ user.profile.profile_picture.url|force_https }}"  loading="lazy"
                                              alt="Perfil" 
                                              class="w-10 h-10 object-cover rounded-full border-2 border-base-300 flex-shrink-0">
                                     {% else %}

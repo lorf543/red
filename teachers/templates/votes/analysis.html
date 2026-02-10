@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load cache %}
+{% load poll_extras %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/vote_analysis.css' %}">
@@ -128,7 +129,7 @@
                     <!-- Avatar -->
                     <div>
                         {% if vote.user.profile.profile_picture %}
-                            <img src="{{ vote.user.profile.profile_picture.url }}" loading="lazy"
+                            <img src="{{ vote.user.profile.profile_picture.url|force_https }}" loading="lazy"
                                  alt="{{ vote.user.username }}"
                                  class="vote-avatar">
                         {% else %}

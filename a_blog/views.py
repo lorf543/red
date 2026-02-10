@@ -3,25 +3,45 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import BlogPost, Tag, PostSection
 from django.views.decorators.http import require_POST
-import json
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
+
+
+from django.core.cache import cache
 # Create your views here.
 
 
 def blog_list(request):
-    posts = BlogPost.objects.filter(is_published=True).select_related('author').prefetch_related('tags')
-    tags = Tag.objects.all()
-    
-    context = {
-        'posts': posts,
-        'tags': tags,
-    }
-    
-    if request.headers.get('HX-Request'):
-        return render(request, 'a_blog/blog_list.html', context)
-    
-    return render(request, 'a_blog/blog_list.html', context)
+    page_number = request.GET.get("page", 1)
 
+    version = cache.get_or_set("blog:posts:version", 1)
+    cache_key = f"blog:posts:v{version}:page:{page_number}"
+
+    cached_data = cache.get(cache_key)
+
+    if cached_data:
+        page_obj, posts = cached_data
+    else:
+        posts_qs = (
+            BlogPost.objects
+            .filter(is_published=True)
+            .select_related('author')
+            .prefetch_related('tags')
+        )
+
+        paginator = Paginator(posts_qs, 5)
+        page_obj = paginator.get_page(page_number)
+        posts = list(page_obj.object_list)
+
+        cache.set(cache_key, (page_obj, posts), 60 * 5)
+
+    tags = Tag.objects.all()
+
+    return render(request, "a_blog/blog_list.html", {
+        "page_obj": page_obj,
+        "posts": posts,
+        "tags": tags,
+    })
 
 def create_blog(request):
     if request.method == 'POST':
@@ -84,7 +104,6 @@ def add_section_form(request):
     return render(request, 'a_blog/add_section_form.html', {
         'section_index': section_index
     })
-
 
 
 def blog_detail(request, slug):

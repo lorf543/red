@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load poll_extras %}
 
 {% block schema_extra %}
 <script type="application/ld+json">
@@ -53,7 +54,7 @@
         <div class="bg-surface text-text rounded-xl shadow-comment p-6 sticky top-20 border border-border">
             <div class="flex flex-col items-center text-center">
                 {% if user_profile.profile_picture %}
-                    <img src="{{ user_profile.profile_picture.url }}"  loading="lazy"
+                    <img src="{{ user_profile.profile_picture.url|force_https }}"  loading="lazy"
                          alt="Foto de perfil de {{ user_profile.full_name }}" 
                          class="w-32 h-32 rounded-full border-4 border-primary object-cover mb-4">
                 {% else %}

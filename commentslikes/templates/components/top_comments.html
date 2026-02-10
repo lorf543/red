@@ -14,7 +14,7 @@
                 <!-- Usuario -->
                 <div class="flex items-center gap-2 mb-2">
                     {% if comment.user.profile.profile_picture %}
-                        <img src="{{ comment.user.profile.profile_picture.url }}" alt="Perfil" loading="lazy"
+                        <img src="{{ comment.user.profile.profile_picture.url|force_https }}" alt="Perfil" loading="lazy"
                              class="w-10 h-10 object-cover object-center rounded-full border border-indigo-300">
                     {% else %}
                         <div class="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-500 flex items-center justify-center text-sm font-bold">

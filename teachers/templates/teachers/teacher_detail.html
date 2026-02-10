@@ -2,37 +2,37 @@
 {% load static %}
 
 {% block schema_extra %}
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "{{ teacher.full_name }}",
-    "jobTitle": "Profesor",
-    "worksFor": {
-        "@type": "EducationalOrganization",
-        "name": "Instituto Tecnológico de Las Américas",
-        "url": "https://www.itla.edu.do/"
-    },
-    "description": "Profesor del ITLA con {{ subjects|length }} materia{% if subjects|length != 1 %}s{% endif %} asignada{% if subjects|length != 1 %}s{% endif %} y {{ teacher.comments.count }} comentario{% if teacher.comments.count != 1 %}s{% endif %} de estudiantes."{% if teacher.average_rating and teacher.comments.count > 0 %},
-    "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ teacher.average_rating|floatformat:1 }}",
-        "reviewCount": "{{ teacher.comments.count }}",
-        "bestRating": "5",
-        "worstRating": "1"
-    }{% endif %}{% if subjects %},
-    "teaches": [
-        {% for subject in subjects %}
+    <script type="application/ld+json">
         {
-            "@type": "Course",
-            "name": "{{ subject.name }}",
-            "courseMode": "{{ subject.modalidad }}"{% if subject.subject_schedule %},
-            "timeRequired": "{{ subject.subject_schedule }}"{% endif %}
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ]{% endif %}
-}
-</script>
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "{{ teacher.full_name }}",
+            "jobTitle": "Profesor",
+            "worksFor": {
+                "@type": "EducationalOrganization",
+                "name": "Instituto Tecnológico de Las Américas",
+                "url": "https://www.itla.edu.do/"
+            },
+            "description": "Profesor del ITLA con {{ subjects|length }} materia{% if subjects|length != 1 %}s{% endif %} asignada{% if subjects|length != 1 %}s{% endif %} y {{ teacher.comments.count }} comentario{% if teacher.comments.count != 1 %}s{% endif %} de estudiantes."{% if teacher.average_rating and teacher.comments.count > 0 %},
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ teacher.average_rating|floatformat:1 }}",
+                "reviewCount": "{{ teacher.comments.count }}",
+                "bestRating": "5",
+                "worstRating": "1"
+            }{% endif %}{% if subjects %},
+            "teaches": [
+                {% for subject in subjects %}
+                {
+                    "@type": "Course",
+                    "name": "{{ subject.name }}",
+                    "courseMode": "{{ subject.modalidad }}"{% if subject.subject_schedule %},
+                    "timeRequired": "{{ subject.subject_schedule }}"{% endif %}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]{% endif %}
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -150,12 +150,12 @@
         {% if request.user.is_authenticated %}
         <div class="p-4 sm:p-6 border-b border-border">
             <form id="commentForm"
-                  method="post"
-                  hx-post="{% url 'create_teacher_comment' teacher.id %}"
-                  hx-target="#commentsContainer"
-                  hx-swap="afterbegin"
-                  _="on htmx:afterRequest reset() me"
-                  class="space-y-3 sm:space-y-4">
+                method="post"
+                hx-post="{% url 'create_teacher_comment' teacher.id %}"
+                hx-target="#commentsContainer"
+                hx-swap="afterbegin"
+                hx-on::after-request="handleCommentSubmit(event)"
+                class="space-y-3 sm:space-y-4">
                 {% csrf_token %}
                 
                 <div class="relative">
@@ -170,15 +170,15 @@
 
                 <!-- Image Upload Preview -->
                 <div id="teacherImagePreviewContainer" class="hidden">
-                    <div class="relative inline-block">
-                        <img id="teacherImagePreview" loading="lazy" class="max-h-32 sm:max-h-48 rounded-lg border border-border">
-                        <button type="button"
-                                onclick="removeTeacherImage()"
-                                class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-error text-text-on-error rounded-full flex items-center justify-center hover:bg-error-dark transition-colors">
-                            <i class="fas fa-times text-xs"></i>
-                        </button>
+                        <div class="relative inline-block">
+                            <img id="teacherImagePreview" loading="lazy" class="max-h-32 sm:max-h-48 rounded-lg border border-border">
+                            <button type="button"
+                                    onclick="removeTeacherImage()"
+                                    class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-error text-text-on-error rounded-full flex items-center justify-center hover:bg-error-dark transition-colors">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
                 <!-- Form Actions -->
                 <div class="flex items-center justify-between pt-1 sm:pt-2">
@@ -187,11 +187,11 @@
                         <label class="cursor-pointer p-1.5 sm:p-2 text-text-secondary hover:text-primary transition-colors">
                             <i class="fas fa-image text-base sm:text-lg"></i>
                             <input type="file"
-                                   id="teacherImageInput"
-                                   name="image"
-                                   accept="image/*"
-                                   class="hidden"
-                                   onchange="handleTeacherFileSelect(this)">
+                                id="teacherImageInput"
+                                name="image"
+                                accept="image/*"
+                                class="hidden"
+                                onchange="handleTeacherFileSelect(this)">
                         </label>
                         
                         <!-- Emoji Picker -->
@@ -208,12 +208,7 @@
                     </button>
                 </div>
             </form>
-            
-            <!-- Emoji Picker Popover -->
-            <div id="emojiPickerPopover" 
-                 class="absolute z-50 hidden bg-surface border border-border rounded-lg shadow-xl">
-                <emoji-picker></emoji-picker>
-            </div>
+
         </div>
         {% endif %}
 
@@ -241,6 +236,30 @@
     </div>
 </div>
 <script>
+// Auto-resize textarea
+function handleCommentSubmit(event) {
+    // Solo resetear si la solicitud fue exitosa (código 200-299)
+    if (event.detail.successful) {
+        const form = document.getElementById('commentForm');
+        const textarea = document.getElementById('teacherCommentTextarea');
+        
+        // Resetear el formulario
+        form.reset();
+        
+        // Limpiar la imagen preview
+        removeTeacherImage();
+        
+        // Resetear el tamaño del textarea
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        // Opcional: Mostrar mensaje de éxito
+        // console.log('Comentario publicado exitosamente');
+    }
+}
+
 // Auto-resize textarea
 document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('teacherCommentTextarea');

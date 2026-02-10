@@ -13,7 +13,7 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(unique=True, max_length=100, blank=True, null=True)
     color = models.CharField(max_length=7, default='#4f46e5')  # Color HEX
     
     def save(self, *args, **kwargs):

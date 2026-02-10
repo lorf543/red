@@ -51,6 +51,14 @@ def highlight_mentions(text, current_user=None):
     return mark_safe(f'<span class="text-text">{highlighted}</span>')
 
 
+@register.filter
+def force_https(url):
+    if url:
+        url_str = str(url)
+        if url_str.startswith('http://'):
+            return url_str.replace('http://', 'https://', 1)
+    return url
+
 @register.filter()
 def unread_count(user):
     if user.is_authenticated:

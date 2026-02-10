@@ -1,3 +1,4 @@
+{% load poll_extras %}
 {% if users %}
 <div class="bg-surface border border-muted/30 rounded-lg shadow-xl max-h-96 overflow-y-auto animate-slideDown">
   <ul class="divide-y divide-muted/20">
@@ -9,7 +10,7 @@
         <div class="avatar">
           <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
             {% if user.profile.profile_picture %}
-              <img src="{{ user.profile.profile_picture.url }}" 
+              <img src="{{ user.profile.profile_picture.url|force_https }}" 
                    alt="{{ user.get_full_name }}"
                    class="w-full h-full object-cover">
             {% else %}

@@ -1,225 +1,225 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Donaciones - Apoya Nuestro Proyecto{% endblock %}
+{% block title %}Donaciones - Apoya El Proyecto{% endblock %}
 
 {% block content %}
 <!-- VERSIÓN MEJORADA - Responsive y visualmente atractiva -->
-<div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-6 sm:py-8 lg:py-12">
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6">
-        
-        <!-- Hero Section - Mejor responsive -->
-        <div class="text-center mb-8 sm:mb-10 lg:mb-12">
-            <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full mb-4 sm:mb-6 animate-pulse">
-                <i class="fas fa-heart text-3xl sm:text-4xl text-primary"></i>
-            </div>
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary mb-3 sm:mb-4">
-                Apoya Nuestro Proyecto
-            </h1>
-            <p class="text-base sm:text-lg lg:text-xl text-text-secondary max-w-2xl mx-auto px-2">
-                Tu generosidad mantiene esta plataforma gratuita para todos
-            </p>
-        </div>
-
-        <!-- Main Donation Card - Más compacta en móvil -->
-        <div class="bg-surface rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl p-4 sm:p-6 lg:p-8 border border-border mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6 text-center">Elige tu Contribución</h2>
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-6 sm:py-8 lg:py-12">
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6">
             
-            <!-- Preset Amounts Grid - Mejor distribución en móvil -->
-            <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
-                <!-- $5 -->
-                <a href="https://www.paypal.me/ITLAsocial?amount=5" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Café</div>
-                    <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$5</div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">☕</div>
-                </a>
+            <!-- Hero Section - Mejor responsive -->
+            <div class="text-center mb-8 sm:mb-10 lg:mb-12">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full mb-4 sm:mb-6 animate-pulse">
+                    <i class="fas fa-heart text-3xl sm:text-4xl text-primary"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary mb-3 sm:mb-4">
+                    Apoya El Proyecto
+                </h1>
+                <p class="text-base sm:text-lg lg:text-xl text-text-secondary max-w-2xl mx-auto px-2">
+                    Tu generosidad mantiene esta plataforma gratuita para todos
+                </p>
+            </div>
+
+            <!-- Main Donation Card - Más compacta en móvil -->
+            <div class="bg-surface rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl p-4 sm:p-6 lg:p-8 border border-border mb-6 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6 text-center">Elige tu Contribución</h2>
                 
-                <!-- $10 -->
-                <a href="https://www.paypal.me/ITLAsocial?amount=10" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Almuerzo</div>
-                    <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$10</div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">🍕</div>
-                </a>
-                
-                <!-- $25 -->
-                <a href="https://www.paypal.me/ITLAsocial?amount=25" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Generoso</div>
-                    <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$25</div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">🎁</div>
-                </a>
-                
-                <!-- $50 -->
-                <a href="https://www.paypal.me/ITLAsocial?amount=50" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Héroe</div>
-                    <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$50</div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">🌟</div>
-                </a>
-                
-                <!-- $100 -->
-                <a href="https://www.paypal.me/ITLAsocial?amount=100" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Súper Héroe</div>
-                    <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$100</div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">🦸</div>
-                </a>
-                
-                <!-- Custom Amount - Diferente visual -->
-                <a href="https://www.paypal.me/ITLAsocial" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="group bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/30 hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
-                    <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Personalizado</div>
-                    <div class="text-lg sm:text-xl lg:text-2xl font-bold text-primary">
-                        <i class="fas fa-edit"></i>
+                <!-- Preset Amounts Grid - Mejor distribución en móvil -->
+                <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
+                    <!-- $5 -->
+                    <a href="https://www.paypal.me/ITLAsocial?amount=5" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Café</div>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$5</div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">☕</div>
+                    </a>
+                    
+                    <!-- $10 -->
+                    <a href="https://www.paypal.me/ITLAsocial?amount=10" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Almuerzo</div>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$10</div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">🍕</div>
+                    </a>
+                    
+                    <!-- $25 -->
+                    <a href="https://www.paypal.me/ITLAsocial?amount=25" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Generoso</div>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$25</div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">🎁</div>
+                    </a>
+                    
+                    <!-- $50 -->
+                    <a href="https://www.paypal.me/ITLAsocial?amount=50" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Héroe</div>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$50</div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">🌟</div>
+                    </a>
+                    
+                    <!-- $100 -->
+                    <a href="https://www.paypal.me/ITLAsocial?amount=100" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-background border border-border hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Súper Héroe</div>
+                        <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary group-hover:text-primary transition-colors">$100</div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">🦸</div>
+                    </a>
+                    
+                    <!-- Custom Amount - Diferente visual -->
+                    <a href="https://www.paypal.me/ITLAsocial" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/30 hover:border-primary rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center transition-all duration-300 hover:shadow-md lg:hover:shadow-lg hover:-translate-y-1">
+                        <div class="text-xs sm:text-sm text-text-secondary mb-1 sm:mb-2">Personalizado</div>
+                        <div class="text-lg sm:text-xl lg:text-2xl font-bold text-primary">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="text-xs text-text-disabled mt-1 sm:mt-2">Tu monto</div>
+                    </a>
+                </div>
+
+                <!-- Security Note - Mejor responsive -->
+                <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-success/10 border border-success/20 rounded-lg flex gap-3">
+                    <i class="fas fa-shield-alt text-success text-lg mt-0.5"></i>
+                    <div class="text-xs sm:text-sm text-text-secondary">
+                        <strong class="text-text-primary">100% Seguro.</strong> 
+                        Todas las transacciones son procesadas por PayPal con encriptación SSL.
                     </div>
-                    <div class="text-xs text-text-disabled mt-1 sm:mt-2">Tu monto</div>
-                </a>
-            </div>
-
-            <!-- Security Note - Mejor responsive -->
-            <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-success/10 border border-success/20 rounded-lg flex gap-3">
-                <i class="fas fa-shield-alt text-success text-lg mt-0.5"></i>
-                <div class="text-xs sm:text-sm text-text-secondary">
-                    <strong class="text-text-primary">100% Seguro.</strong> 
-                    Todas las transacciones son procesadas por PayPal con encriptación SSL.
                 </div>
             </div>
-        </div>
 
-        <!-- Why Donate & Benefits - Mejor grid responsive -->
-        <div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <!-- Why Donate -->
-            <div class="bg-surface rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-border">
-                <h3 class="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <i class="fas fa-question-circle text-primary"></i>
-                    </div>
-                    ¿Por qué donar?
-                </h3>
-                <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-text-secondary">
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-check text-success mt-1"></i>
-                        <span>Mantener los servidores activos y rápidos</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-check text-success mt-1"></i>
-                        <span>Desarrollar nuevas funcionalidades útiles</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-check text-success mt-1"></i>
-                        <span>Mejorar constantemente la plataforma</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-check text-success mt-1"></i>
-                        <span>Mantenerla 100% gratuita para estudiantes</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-check text-success mt-1"></i>
-                        <span>Cubrir costos de hosting y dominio</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Benefits -->
-            <div class="bg-surface bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-primary/20">
-                <h3 class="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-                    <div class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center">
-                        <i class="fas fa-gift text-secondary"></i>
-                    </div>
-                    Beneficios
-                </h3>
-                <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-text-secondary">
-                    <!-- <li class="flex gap-2 items-start">
-                        <i class="fas fa-badge-check text-primary mt-1"></i>
-                        <span><strong class="text-text-primary">Insignia de "Benefactor"</strong> en tu perfil</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-star text-warning mt-1"></i>
-                        <span><strong class="text-text-primary">Acceso anticipado</strong> a nuevas funciones</span>
-                    </li> -->
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-heart text-danger mt-1"></i>
-                        <span><strong class="text-text-primary">Nuestro agradecimiento</strong> eterno ❤️</span>
-                    </li>
-                    <li class="flex gap-2 items-start">
-                        <i class="fas fa-trophy text-warning mt-1"></i>
-                        <span><strong class="text-text-primary">Reconocimiento</strong> especial en la plataforma</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Thank You Section - Mejor responsive -->
-        <div class="bg-surface text-center bg-gradient-to-r from-primary to-secondary p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl">
-            <div class="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 animate-bounce">🙏</div>
-            <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 sm:mb-3">¡Muchísimas Gracias!</h3>
-            <p class="text-white/90 text-sm sm:text-base lg:text-lg max-w-md mx-auto px-2">
-                Cada donación, sin importar el monto, nos ayuda a mantener esta plataforma gratuita y accesible para toda la comunidad estudiantil.
-            </p>
-            
-            <!-- FAQ Link -->
-            <div class="mt-4 sm:mt-6">
-                <a href="#faq" 
-                   class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm sm:text-base transition-colors">
-                    <i class="fas fa-question-circle"></i>
-                    Preguntas frecuentes sobre donaciones
-                </a>
-            </div>
-        </div>
-
-        <!-- FAQ Section -->
-        <div id="faq" class="mt-6 sm:mt-8 lg:mt-12">
-            <h3 class="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6 text-center">Preguntas Frecuentes</h3>
-            <div class="space-y-3 sm:space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
-                    <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
-                        <i class="fas fa-question text-primary"></i>
-                        ¿Cómo funcionan los enlaces de PayPal?
-                    </h4>
-                    <p class="text-xs sm:text-sm text-text-secondary">
-                        Al hacer clic en cualquier monto, serás redirigido a PayPal donde podrás completar la donación de forma segura. No necesitas tener cuenta PayPal para donar con tarjeta.
-                    </p>
+            <!-- Why Donate & Benefits - Mejor grid responsive -->
+            <div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <!-- Why Donate -->
+                <div class="bg-surface rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-border">
+                    <h3 class="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-question-circle text-primary"></i>
+                        </div>
+                        ¿Por qué donar?
+                    </h3>
+                    <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-text-secondary">
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-check text-success mt-1"></i>
+                            <span>Mantener los servidores activos y rápidos</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-check text-success mt-1"></i>
+                            <span>Desarrollar nuevas funcionalidades útiles</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-check text-success mt-1"></i>
+                            <span>Mejorar constantemente la plataforma</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-check text-success mt-1"></i>
+                            <span>Mantenerla 100% gratuita para estudiantes</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-check text-success mt-1"></i>
+                            <span>Cubrir costos de hosting y dominio</span>
+                        </li>
+                    </ul>
                 </div>
+
+                <!-- Benefits -->
+                <div class="bg-surface bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-primary/20">
+                    <h3 class="text-lg sm:text-xl font-bold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+                        <div class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-gift text-secondary"></i>
+                        </div>
+                        Beneficios
+                    </h3>
+                    <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-text-secondary">
+                        <!-- <li class="flex gap-2 items-start">
+                            <i class="fas fa-badge-check text-primary mt-1"></i>
+                            <span><strong class="text-text-primary">Insignia de "Benefactor"</strong> en tu perfil</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-star text-warning mt-1"></i>
+                            <span><strong class="text-text-primary">Acceso anticipado</strong> a nuevas funciones</span>
+                        </li> -->
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-heart text-danger mt-1"></i>
+                            <span><strong class="text-text-primary">Nuestro agradecimiento</strong> eterno ❤️</span>
+                        </li>
+                        <li class="flex gap-2 items-start">
+                            <i class="fas fa-trophy text-warning mt-1"></i>
+                            <span><strong class="text-text-primary">Reconocimiento</strong> especial en la plataforma</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Thank You Section - Mejor responsive -->
+            <div class="bg-surface text-center bg-gradient-to-r from-primary to-secondary p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl">
+                <div class="text-3xl sm:text-4xl lg:text-5xl mb-2 sm:mb-3 animate-bounce">🙏</div>
+                <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 sm:mb-3">¡Muchísimas Gracias!</h3>
+                <p class="text-white/90 text-sm sm:text-base lg:text-lg max-w-md mx-auto px-2">
+                    Cada donación, sin importar el monto, nos ayuda a mantener esta plataforma gratuita y accesible para toda la comunidad estudiantil.
+                </p>
                 
-                <!-- FAQ Item 2 -->
-                <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
-                    <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
-                        <i class="fas fa-question text-primary"></i>
-                        ¿Recibo algún comprobante?
-                    </h4>
-                    <p class="text-xs sm:text-sm text-text-secondary">
-                        Sí, PayPal te enviará automáticamente un recibo por email con todos los detalles de tu donación.
-                    </p>
-                </div>
-                
-                <!-- FAQ Item 3 -->
-                <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
-                    <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
-                        <i class="fas fa-question text-primary"></i>
-                        ¿Puedo donar más de una vez?
-                    </h4>
-                    <p class="text-xs sm:text-sm text-text-secondary">
-                        ¡Claro! Puedes hacer tantas donaciones como desees. Cada contribución es muy apreciada.
-                    </p>
+                <!-- FAQ Link -->
+                <div class="mt-4 sm:mt-6">
+                    <a href="#faq" 
+                    class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm sm:text-base transition-colors">
+                        <i class="fas fa-question-circle"></i>
+                        Preguntas frecuentes sobre donaciones
+                    </a>
                 </div>
             </div>
-        </div>
 
+            <!-- FAQ Section -->
+            <div id="faq" class="mt-6 sm:mt-8 lg:mt-12">
+                <h3 class="text-xl sm:text-2xl font-bold text-text-primary mb-4 sm:mb-6 text-center">Preguntas Frecuentes</h3>
+                <div class="space-y-3 sm:space-y-4">
+                    <!-- FAQ Item 1 -->
+                    <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
+                        <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
+                            <i class="fas fa-question text-primary"></i>
+                            ¿Cómo funcionan los enlaces de PayPal?
+                        </h4>
+                        <p class="text-xs sm:text-sm text-text-secondary">
+                            Al hacer clic en cualquier monto, serás redirigido a PayPal donde podrás completar la donación de forma segura. No necesitas tener cuenta PayPal para donar con tarjeta.
+                        </p>
+                    </div>
+                    
+                    <!-- FAQ Item 2 -->
+                    <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
+                        <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
+                            <i class="fas fa-question text-primary"></i>
+                            ¿Recibo algún comprobante?
+                        </h4>
+                        <p class="text-xs sm:text-sm text-text-secondary">
+                            Sí, PayPal te enviará automáticamente un recibo por email con todos los detalles de tu donación.
+                        </p>
+                    </div>
+                    
+                    <!-- FAQ Item 3 -->
+                    <div class="bg-surface rounded-lg sm:rounded-xl p-3 sm:p-4 border border-border">
+                        <h4 class="font-semibold text-text-primary mb-2 flex items-center gap-2">
+                            <i class="fas fa-question text-primary"></i>
+                            ¿Puedo donar más de una vez?
+                        </h4>
+                        <p class="text-xs sm:text-sm text-text-secondary">
+                            ¡Claro! Puedes hacer tantas donaciones como desees. Cada contribución es muy apreciada.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>
 {% endblock %}

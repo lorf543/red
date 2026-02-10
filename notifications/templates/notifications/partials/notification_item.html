@@ -1,3 +1,4 @@
+{% load poll_extras %}
 <div class="notification-item px-4 py-3 hover:bg-base-200 transition-colors duration-200 cursor-pointer
             {% if not notification.read %}bg-primary/5 border-l-2 border-l-primary{% endif %}"
 
@@ -8,7 +9,7 @@
     <!-- Avatar del actor -->
     <div class="flex-shrink-0">
       {% if notification.actor.profile.profile_picture %}
-        <img src="{{ notification.actor.profile.profile_picture.url }}" 
+        <img src="{{ notification.actor.profile.profile_picture.url|force_https }}" 
              alt="{{ notification.actor.username }}"
              class="w-10 h-10 rounded-full object-cover border-2 border-base-300">
       {% else %}

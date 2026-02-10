@@ -149,6 +149,8 @@ def check_username(request):
     })
     return HttpResponse(html)
 
+def about(request):
+    return render(request,'politicas/about.html')
 
 def search_view(request):
     query = request.GET.get('q', '').strip()
@@ -240,6 +242,10 @@ def robots_txt(request):
         "User-agent: anthropic-ai",
         "Disallow: /",
         # Añade más si quieres (Claude, Perplexity, etc.) — ver listas actualizadas en GitHub
+        
+        # Información de marca
+        # Itla Social - Red Social de ITLA
+         "Términos: itla, itla social, itlasocial"
 
         "",
         f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",

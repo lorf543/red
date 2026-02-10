@@ -94,7 +94,8 @@
             <!-- Footer -->
             <div class="flex justify-between items-center border-t border-border pt-6">
                 <p class="text-sm text-muted">
-                    Los campos marcados con <span class="text-danger">*</span> son obligatorios
+                    Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                          <a href="{% url 'about' %}" class="text-danger" >*</a>
                 </p>
                 <div class="flex space-x-3">
                     <a href="{% url 'profile' user.profile.slug %}" 

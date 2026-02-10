@@ -1,38 +1,41 @@
+{% load poll_extras %}
+
 <div onclick="window.location.href='{% url 'blog_detail' post.slug %}'" class="rounded-xl overflow-hidden mb-8 border"
     style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
     <div class="flex  ">
         <div class="">
             
             {% if  post.main_image %}
-                            <img src="{{ post.main_image.url }}" alt="{{ post.title }}"
+                <img src="{{ post.main_image.url|force_https }}" alt="{{ post.title }}"
                 class="w-55 h-full object-cover md:h-full md:min-h-0">
             {% endif %}
                 
 
         </div>
         <div class="md:w-2/3 p-2 lg:p-6">
-            <div class="flex items-center ">
-                {% if loop.index == 1 %}
-                <span class="px-3 py-1 text-xs font-medium rounded-full"
-                    style="background-color: color-mix(in srgb, var(--color-info) 10%, transparent); color: var(--color-info); border: 1px solid color-mix(in srgb, var(--color-info) 20%, transparent);">Lifestyle</span>
-                {% elif loop.index == 2 %}
-                <span class="px-3 py-1 text-xs font-medium rounded-full"
-                    style="background-color: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success); border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);">Sports</span>
-                {% else %}
-                <span class="px-3 py-1 text-xs font-medium rounded-full"
-                    style="background-color: color-mix(in srgb, var(--color-primary) 10%, transparent); color: var(--color-primary); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);">Business</span>
-                {% endif %}
-            </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {% for tag in post.tags.all %}
+                        <span class="px-3 py-1.5 text-sm font-medium rounded-full"
+                              style="background-color: color-mix(in srgb, {{ tag.color }} 10%, transparent); 
+                                     color: {{ tag.color }}; 
+                                     border: 1px solid color-mix(in srgb, {{ tag.color }} 20%, transparent);">
+                            {{ tag.name }}
+                        </span>
+                        {% endfor %}
+                    </div>
             <h2 class="text-1xs lg:text-xl font-bold mb-3 " style="color: var(--color-text);">{{ post.title }}</h2>
             <p class="mb-4 hidden lmd:block lg:block" style="color: var(--color-muted);">{{ post.subtitle }}
             </p>
             <div class="flex items-center text-sm hidden md:block lg:block" style="color: var(--color-muted);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span>{{ post.created_at }}</span>
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{{ post.created_at }}</span>
+                    </div>
+                <p class="text-sm mt-1" style="color: var(--color-muted);">Author: {{post.author}}</p>
             </div>
         </div>
     </div>

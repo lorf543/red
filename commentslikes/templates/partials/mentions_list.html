@@ -1,5 +1,6 @@
 <!-- mentions_list.html -->
 <!-- Elimina el div wrapper y retorna solo el contenido -->
+{% load poll_extras %}
 
 <!-- Header -->
 <div class="px-3 py-2 bg-surface-dark border-b border-muted/20">
@@ -17,7 +18,7 @@
             <div class="flex items-center gap-3">
                 <!-- Avatar -->
                 {% if user.profile.profile_picture %}
-                    <img src="{{ user.profile.profile_picture.url }}" loading="lazy"
+                    <img src="{{ user.profile.profile_picture.url|force_https }}" loading="lazy"
                          alt="{{ user.username }}"
                          class="w-8 h-8 rounded-full object-cover flex-shrink-0 border-2 border-primary/30">
                 {% else %}

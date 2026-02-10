@@ -130,7 +130,7 @@
     <!-- User Avatar -->
     <div class="flex-shrink-0">
       {% if comment.user.profile.profile_picture %}
-        <img src="{{ comment.user.profile.profile_picture.url }}" 
+        <img src="{{ comment.user.profile.profile_picture.url|force_https }}" 
             alt="Perfil de {{ comment.user.username }}" 
             class="comment-avatar w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-full border-2 border-surface">
       {% else %}
@@ -223,7 +223,7 @@
             <div class="comment-image-container mt-3 group">
               <div class="relative inline-block max-w-full rounded-xl overflow-hidden border-2 border-border/30 hover:border-primary/40 transition-all duration-300 shadow-md hover:shadow-lg">
                 <img 
-                  src="{{ comment.image.url }}"
+                  src="{{ comment.image.url|force_https }}"
                   loading="lazy"
                   @click="openModal()"
                   class="comment-image-thumbnail max-h-96 w-auto"
@@ -266,7 +266,7 @@
                   
                   <!-- Imagen ampliada (solo se carga cuando se abre el modal) -->
                   <img 
-                    :src="'{{ comment.image.url }}'" 
+                    :src="'{{ comment.image.url|force_https }}'" 
                     class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
                     alt="Imagen ampliada del comentario"
                   >

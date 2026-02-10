@@ -1,3 +1,4 @@
+{% load poll_extras %}    
     <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 border border-gray-100">
         <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700">
             <h2 class="text-xl font-semibold text-white flex items-center">
@@ -76,7 +77,7 @@
                                 
                                 <div class="flex space-x-3">
                                     {% if request.user.is_authenticated %}
-                                        <img src="{{ request.user.userprofile.get_profile_image }}" loading="lazy"
+                                        <img src="{{ request.user.userprofile.get_profile_image|force_https }}" loading="lazy"
                                              alt="Tu perfil"
                                              class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                     {% else %}
