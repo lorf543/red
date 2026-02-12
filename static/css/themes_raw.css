@@ -13,11 +13,11 @@
         --color-info: #2563eb;
         --color-border: #e5e7eb;
         /* Agregado para consistencia */
-        --background-image-dark: url("https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg");
+        /* --background-image-dark: url("https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"); */
         /* --background-image-light: url("{% static 'images/bg-light.jpg' %}");
         --background-image-blue: url("{% static 'images/bg-blue.jpg' %}");
         --background-image-sunset: url("{% static 'images/bg-sunset.jpg' %}");*/
-        --background-image-forest: url("https://wallpaperaccess.com/full/8406757.gif"); 
+        /* --background-image-forest: url("https://wallpaperaccess.com/full/8406757.gif");  */
 
 
 

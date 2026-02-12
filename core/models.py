@@ -23,6 +23,8 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=250, blank=True)
     location = models.CharField(max_length=100, blank=True)
     birth_date = models.DateField(null=True, blank=True)
+    
+
 
     profile_picture = CloudinaryField(
         folder="red/profile_picture",
@@ -34,6 +36,21 @@ class UserProfile(models.Model):
         }
     )
 
+    #configuration
+    background_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="URL de la imagen de fondo"
+    )
+    
+    cursor_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="URL del cursor personalizado (.cur o .png)"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

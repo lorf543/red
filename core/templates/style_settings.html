@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="flex h-screen bg-background">
+    <div class="flex w-full">
+        
+        <!-- Sidebar -->
+        <div class="hidden md:flex md:w-64 bg-surface border-r border-gray-200 flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-text">Configuración</h2>
+            </div>
+            <nav class="flex-1 overflow-y-auto">
+                <ul class="space-y-1 p-2">
+                    <li>
+                        <a href="{% url 'style_settings' %}" 
+                           class="flex items-center p-3 rounded-lg text-indigo-700 bg-indigo-50">
+                            <i class="fas fa-palette mr-3"></i>
+                            Personalización
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" 
+                           class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
+                            <i class="fas fa-shield-alt mr-3"></i>
+                            Seguridad
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Encabezado -->
+                <div class="mb-8 p-6 bg-surface rounded-xl">
+                    <h1 class="text-2xl font-bold text-text">Personalización de Estilos</h1>
+                    <p class="text-gray-600">Cambia el fondo y cursor de tu perfil</p>
+                </div>
+
+                <!-- Mensajes -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Formulario -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Imagen de Fondo -->
+                    <div class="bg-surface rounded-xl shadow-sm p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-text mb-4">
+                            <i class="fas fa-image mr-2"></i>
+                            Imagen de Fondo
+                        </h2>
+                        
+                        <!-- Vista Previa del Fondo -->
+                        <div class="mb-4 h-48 rounded-lg overflow-hidden border-2 border-gray-200 relative"
+                             {% if form.background_url.value %}
+                             style="background-image: url('{{ form.background_url.value }}'); background-size: cover; background-position: center;"
+                             {% else %}
+                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+                             {% endif %}>
+                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                <span class="text-white text-sm font-medium px-4 py-2 bg-black bg-opacity-50 rounded">
+                                    Vista Previa del Fondo
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Input URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-text mb-2">
+                                URL de la imagen
+                            </label>
+                            {{ form.background_url }}
+                            <p class="text-xs text-gray-500 mt-1">
+                                Pega aquí la URL de una imagen (JPG, PNG, WEBP)
+                            </p>
+                            
+                            <!-- Sugerencias -->
+                            <div class="mt-3">
+                                <p class="text-xs font-medium text-gray-600 mb-2">Sugerencias de fondos:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=background_url]').value='https://images.unsplash.com/photo-1579546929518-9e396f3cc809'"
+                                            class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                        Gradiente Morado
+                                    </button>
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=background_url]').value='https://images.unsplash.com/photo-1557683316-973673baf926'"
+                                            class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                        Gradiente Azul
+                                    </button>
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=background_url]').value='https://images.unsplash.com/photo-1534796636912-3b95b3ab5986'"
+                                            class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                        Espacial
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cursor Personalizado -->
+                    <div class="bg-surface rounded-xl shadow-sm p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-text mb-4">
+                            <i class="fas fa-mouse-pointer mr-2"></i>
+                            Cursor Personalizado
+                        </h2>
+                        
+                        <!-- Área de prueba del cursor -->
+                        <div class="mb-4 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center"
+                             {% if form.cursor_url.value %}
+                             style="cursor: url('{{ form.cursor_url.value }}'), auto;"
+                             {% endif %}>
+                            <p class="text-gray-500 text-sm">Mueve el mouse aquí para probar el cursor</p>
+                        </div>
+                        
+                        <!-- Input URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-text mb-2">
+                                URL del cursor
+                            </label>
+                            {{ form.cursor_url }}
+                            <p class="text-xs text-gray-500 mt-1">
+                                Formato .cur o .png (recomendado 32x32 píxeles)
+                            </p>
+                            
+                            <!-- Sugerencias -->
+                            <div class="mt-3">
+                                <p class="text-xs font-medium text-gray-600 mb-2">Cursores de ejemplo:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=cursor_url]').value='https://cur.cursors-4u.net/symbols/sym-1/sym46.cur'"
+                                            class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                        Estrella
+                                    </button>
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=cursor_url]').value='https://ani.cursors-4u.net/symbols/sym-11/sym1054.ani'"
+                                            class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                        Corazón
+                                    </button>
+                                    <button type="button" 
+                                            onclick="document.querySelector('[name=cursor_url]').value=''"
+                                            class="text-xs px-3 py-1 bg-red-100 hover:bg-red-200 rounded text-red-700">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" 
+                                onclick="if(confirm('¿Eliminar personalizaciones?')) { document.querySelector('[name=background_url]').value=''; document.querySelector('[name=cursor_url]').value=''; this.form.submit(); }"
+                                class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700">
+                            Restaurar por defecto
+                        </button>
+                        <button type="submit" 
+                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

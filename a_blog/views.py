@@ -1,13 +1,18 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import BlogPost, Tag, PostSection
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
-
-
+from django.db.models import Count, Q
 from django.core.cache import cache
+from django.utils import timezone
+from datetime import timedelta
+
+from .utils import get_client_ip
+from .models import BlogPost, Tag, PostSection, BlogPostStatistics, BlogPostView
+
+
+from .forms import BlogPostForm
 # Create your views here.
 
 
@@ -45,56 +50,102 @@ def blog_list(request):
 
 def create_blog(request):
     if request.method == 'POST':
-        # Procesar el formulario
-        title = request.POST.get('title')
-        subtitle = request.POST.get('subtitle')
-        main_paragraph = request.POST.get('main_paragraph')
-        main_image = request.FILES.get('main_image')
-        tags = request.POST.getlist('tags')
-        action = request.POST.get('action')
+        form = BlogPostForm(request.POST, request.FILES)
         
-        # Crear el blog post
-        blog_post = BlogPost.objects.create(
-            author=request.user,
-            title=title,
-            subtitle=subtitle,
-            main_paragraph=main_paragraph,
-            main_image=main_image,
-            is_published=(action == 'publish')
-        )
-        
-        # Agregar tags
-        blog_post.tags.set(tags)
-        
-        # Crear secciones
-        section_data = {}
-        for key, value in request.POST.items():
-            if key.startswith('sections['):
-                # Extraer índice y campo
-                import re
-                match = re.match(r'sections\[(\d+)\]\[(\w+)\]', key)
-                if match:
-                    index, field = match.groups()
-                    if index not in section_data:
-                        section_data[index] = {}
-                    section_data[index][field] = value
-        
-        # Crear PostSection para cada sección
-        for index, data in section_data.items():
-            PostSection.objects.create(
-                post=blog_post,
-                subtitle=data.get('subtitle', ''),
-                content=data.get('content', ''),
-                order=int(data.get('order', 0))
-            )
-        
-        return redirect('blog_detail', slug=blog_post.slug)
+        if form.is_valid():
+            # Crear el blog post pero no guardar aún
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+            blog_post.is_published = (request.POST.get('action') == 'publish')
+            blog_post.save()
+            
+            # Guardar relaciones ManyToMany
+            form.save_m2m()
+            
+            # Crear secciones
+            section_data = {}
+            for key, value in request.POST.items():
+                if key.startswith('sections['):
+                    import re
+                    match = re.match(r'sections\[(\d+)\]\[(\w+)\]', key)
+                    if match:
+                        index, field = match.groups()
+                        if index not in section_data:
+                            section_data[index] = {}
+                        section_data[index][field] = value
+            
+            # Crear PostSection para cada sección
+            for index, data in section_data.items():
+                PostSection.objects.create(
+                    post=blog_post,
+                    subtitle=data.get('subtitle', ''),
+                    content=data.get('content', ''),
+                    order=int(data.get('order', 0))
+                )
+            
+            return redirect('blog_detail', slug=blog_post.slug)
+    else:
+        form = BlogPostForm()
     
     # GET request
     available_tags = Tag.objects.all()
     return render(request, 'a_blog/create_blog.html', {
-        'available_tags': available_tags
+        'available_tags': available_tags,
+        'form': form
     })
+
+
+def update_blog(request, slug):
+    blog_post = get_object_or_404(BlogPost.objects.prefetch_related('sections', 'tags'), slug=slug)
+    
+    if request.user != blog_post.author:
+        return redirect('blog_list')
+    
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=blog_post)
+        
+        if form.is_valid():
+            # Crear el blog post pero no guardar aún
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+            blog_post.is_published = (request.POST.get('action') == 'publish')
+            blog_post.save()
+            
+            # Guardar relaciones ManyToMany
+            form.save_m2m()
+            
+            # Crear secciones
+            section_data = {}
+            for key, value in request.POST.items():
+                if key.startswith('sections['):
+                    import re
+                    match = re.match(r'sections\[(\d+)\]\[(\w+)\]', key)
+                    if match:
+                        index, field = match.groups()
+                        if index not in section_data:
+                            section_data[index] = {}
+                        section_data[index][field] = value
+            
+            # Crear PostSection para cada sección
+            for index, data in section_data.items():
+                PostSection.objects.create(
+                    post=blog_post,
+                    subtitle=data.get('subtitle', ''),
+                    content=data.get('content', ''),
+                    order=int(data.get('order', 0))
+                )
+            
+            return redirect('blog_detail', slug=blog_post.slug)
+    else:
+        form = BlogPostForm(instance=blog_post)
+    
+    # GET request
+    available_tags = Tag.objects.all()
+    return render(request, 'a_blog/create_blog.html', {
+        'available_tags': available_tags,
+        'form': form
+    })
+
 
 @require_POST
 def add_section_form(request):
@@ -125,6 +176,16 @@ def blog_detail(request, slug):
     # Todos los tags para el sidebar
     all_tags = Tag.objects.all()
     
+    # Obtener estadísticas
+    stats = {
+        'total_views': blog_post.get_total_views(),
+        'unique_views': blog_post.get_unique_views(),
+        'views_today': blog_post.get_views_today(),
+        'views_this_week': blog_post.get_views_this_week(),
+        'views_this_month': blog_post.get_views_this_month(),
+    }
+    
+    
     context = {
         'post': blog_post,
         'related_blogs': related_blogs,
@@ -135,3 +196,103 @@ def blog_detail(request, slug):
     return render(request, 'a_blog/blog_detail.html', context)
 
 
+def _register_blog_view(request, blog_post):
+    """
+    Registra una vista del blog si no se ha registrado recientemente
+    (evita múltiples registros en la misma sesión)
+    """
+    # Clave de sesión para este post
+    session_key = f'viewed_post_{blog_post.id}'
+    
+    # Si ya vió este post en esta sesión (últimas 24 horas), no contar
+    if request.session.get(session_key):
+        return
+    
+    # Obtener información del visitante
+    ip_address = get_client_ip(request)
+    user_agent = request.META.get('HTTP_USER_AGENT', '')[:255]
+    referrer = request.META.get('HTTP_REFERER', '')
+    
+    # Crear el registro de vista
+    BlogPostView.objects.create(
+        post=blog_post,
+        user=request.user if request.user.is_authenticated else None,
+        ip_address=ip_address,
+        user_agent=user_agent,
+        referrer=referrer,
+        session_key=request.session.session_key
+    )
+    
+    # Marcar en la sesión que ya vió este post
+    request.session[session_key] = True
+    request.session.set_expiry(86400)  # 24 horas
+    
+    # Actualizar estadísticas del día
+    _update_daily_stats(blog_post)
+
+
+def _update_daily_stats(blog_post):
+    from django.db.models import Count
+    today = timezone.now().date()
+    
+    stats, created = BlogPostStatistics.objects.get_or_create(
+        post=blog_post,
+        date=today
+    )
+    
+    # Contar vistas del día
+    today_views = blog_post.views.filter(viewed_at__date=today)
+    stats.views_count = today_views.count()
+    stats.unique_visitors = today_views.values('ip_address').distinct().count()
+    stats.save()
+    
+    
+@login_required
+def blog_statistics(request, slug):
+    blog_post = get_object_or_404(BlogPost, slug=slug, author=request.user)
+    
+    # Estadísticas generales
+    total_views = blog_post.get_total_views()
+    unique_views = blog_post.get_unique_views()
+    
+    # Vistas por día (últimos 30 días)
+    views_by_day = blog_post.get_views_by_day(days=30)
+    
+    # Top referrers
+    top_referrers = blog_post.views.exclude(
+        Q(referrer='') | Q(referrer__isnull=True)
+    ).values('referrer').annotate(
+        count=Count('id')
+    ).order_by('-count')[:10]
+    
+    # Dispositivos más comunes (simplificado)
+    mobile_count = blog_post.views.filter(
+        user_agent__icontains='Mobile'
+    ).count()
+    desktop_count = total_views - mobile_count
+    
+    # Lectores más frecuentes (usuarios autenticados)
+    top_readers = blog_post.views.filter(
+        user__isnull=False
+    ).values(
+        'user__username',
+        'user__profile__slug'
+    ).annotate(
+        count=Count('id')
+    ).order_by('-count')[:10]
+    
+    context = {
+        'post': blog_post,
+        'total_views': total_views,
+        'unique_views': unique_views,
+        'views_today': blog_post.get_views_today(),
+        'views_this_week': blog_post.get_views_this_week(),
+        'views_this_month': blog_post.get_views_this_month(),
+        'views_by_day': list(views_by_day),
+        'top_referrers': top_referrers,
+        'mobile_count': mobile_count,
+        'desktop_count': desktop_count,
+        'top_readers': top_readers,
+    }
+    
+    return render(request, 'a_blog/blog_statistics.html', context)

@@ -28,7 +28,8 @@ urlpatterns = [
     path("comments/", include("commentslikes.urls")),
     path("notifications/", include("notifications.urls")),
     path("blogs/", include("a_blog.urls")),
-
+    
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path("schema-viewer/", include("schema_viewer.urls")),
 
     path("robots.txt", views_robot.robots_txt, name="robots_txt"),

@@ -2,113 +2,349 @@
 {% load static %}
 
 {% block content %}
-<div class="flex h-screen bg-background">
-    <!-- Sidebar de Navegación -->
-    <div class="hidden md:flex md:w-64 bg-background border-r border-gray-200 flex-col">
-        <div class="p-4 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-text">Configuración</h2>
-        </div>
-        <nav class="flex-1 overflow-y-auto">
-            <ul class="space-y-1 p-2">
-                {% comment %} <li>
-                    <a href="#perfil" class="flex items-center p-3 rounded-lg text-indigo-700 bg-indigo-50">
-                        <i class="fas fa-user-circle mr-3"></i>
-                        Perfil
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
-                        <i class="fas fa-shield-alt mr-3"></i>
-                        Seguridad
-                    </a>
-                </li>
-                <li>
-                    <a href="#notificaciones" class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
-                        <i class="fas fa-bell mr-3"></i>
-                        Notificaciones
-                    </a>
-                </li>
-                <li>
-                    <a href="#privacidad" class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
-                        <i class="fas fa-lock mr-3"></i>
-                        Privacidad
-                    </a>
-                </li> {% endcomment %}
-            </ul>
-        </nav>
-    </div>
 
-    <!-- Contenido Principal -->
-    <div class="flex-1 overflow-y-auto p-6">
-        <div class="max-w-4xl mx-auto">
-            <!-- Encabezado -->
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-800">Configuración de tu cuenta</h1>
-                <p class="text-gray-600">Personaliza cómo se ve y funciona tu experiencia.</p>
+
+<section class="flex h-screen bg-background">
+    <div class="flex w-full" x-data="{ currentTab: 'estilos' }">
+        
+        <!-- Sidebar Desktop -->
+        <div class="hidden md:flex md:w-64 bg-surface border-r border-gray-200 flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-text">Configuración</h2>
             </div>
+            <nav class="flex-1 overflow-y-auto">
+                <ul class="space-y-1 p-2">
+                    <li>
+                        <a href="#"
+                           @click.prevent="currentTab = 'estilos'"
+                           :class="currentTab === 'estilos' ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:bg-gray-100'"
+                           class="flex items-center p-3 rounded-lg transition-colors">
+                            <i class="fas fa-paint-brush mr-3"></i>
+                            Estilos
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
-            <!-- Sección de Perfil (Ejemplo) -->
-            {% comment %} <div id="perfil" class="bg-white round    ed-xl shadow-sm p-6 mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Perfil Público</h2>
-                    <button class="text-sm text-indigo-600 hover:text-indigo-800">Guardar cambios</button>
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-4xl mx-auto">
+
+                <!-- Header -->
+                <div class="mb-8 p-6 bg-surface rounded-xl">
+                    <h1 class="text-2xl font-bold text-text">Configuración de Estilos</h1>
+                    <p class="text-text-600">
+                        Personaliza la apariencia de tu perfil.
+                    </p>
                 </div>
 
-                <div class="space-y-6">
-                    <!-- Foto de Perfil -->
-                    <div class="flex items-center space-x-6">
-                        <div class="relative group">
-                            <img src="{% static 'default_avatar.webp' %}" 
-                                 class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md">
-                            <div class="absolute inset-0 bg-black bg-opacity-30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span class="text-white text-xs font-medium">Cambiar</span>
+                <!-- TAB Estilos -->
+                <div x-show="currentTab === 'estilos'" x-transition>
+
+                    <div class="bg-surface rounded-xl shadow-sm p-6">
+
+                        <!-- Background Form -->
+                        <form method="post"
+                              action="{% url 'update_background' %}"
+                              class="space-y-6">
+                            {% csrf_token %}
+
+                            <div class="flex flex-col md:flex-row gap-6 items-start">
+
+                                <!-- Input -->
+                                <div class="w-full md:w-1/2">
+                                    <label class="block text-sm font-medium text-text mb-1">
+                                        URL del fondo
+                                    </label>
+
+                                    <input
+                                        id="background_url"
+                                        type="url"
+                                        name="background_url"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                        placeholder="https://images.unsplash.com/wallpaper1.jpg"
+                                        value="{{ request.user.profile.background_url|default:'' }}"
+                                    >
+                                    <p class="text-muted text-xs">Ten en mente que esto podría afectar los tiempos de carga</p>
+                                </div>
+
+                                <!-- Preview -->
+                                <div class="w-full md:w-1/2">
+                                    <div id="background_container"
+                                         class="hidden relative h-48 rounded-lg overflow-hidden shadow-md transition-all duration-300">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <button class="text-sm text-indigo-600 hover:text-indigo-800">Subir nueva foto</button>
-                            <p class="text-xs text-gray-500 mt-1">JPG, PNG o WEBP. Máx. 2MB</p>
-                        </div>
-                    </div>
 
-                    <!-- Formulario -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" value="Juan Pérez">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de usuario</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" value="@juanperez">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Biografía</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" rows="3">Desarrollador web apasionado por Django y Tailwind CSS</textarea>
-                        </div>
+                            <hr>
+                            
+                            <!-- Cursor personalizado -->
+                            <div class="space-y-6">
+
+                                <h3 class="text-lg font-semibold text-text">
+                                    Cursor personalizado
+                                </h3>
+
+                                <div class="flex flex-col md:flex-row gap-6 items-start">
+
+                                    <!-- Input -->
+                                    <div class="w-full md:w-1/2">
+                                        <label class="block text-sm font-medium text-text mb-1">
+                                            URL del cursor
+                                        </label>
+
+                                        <div class="flex gap-2">
+                                            <input
+                                                id="cursor_url"
+                                                type="url"
+                                                name="cursor_url"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                                placeholder="https://example.com/cursor.png"
+                                                value="{{ request.user.profile.cursor_url|default:'' }}"
+                                            >
+                                            <button type="button" 
+                                                    onclick="document.getElementById('cursor_url').value=''; 
+                                                             document.getElementById('cursor_url').dispatchEvent(new Event('input'));"
+                                                    class="px-3 py-2 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                                                    title="Resetear cursor">
+                                                <i class="fas fa-undo-alt"></i>
+                                            </button>
+                                        </div>
+
+                                        <p class="text-muted text-xs mt-1">
+                                            <i class="fas fa-info-circle"></i>
+                                            https://www.cursors-4u.com/
+                                        </p>
+                                    </div>
+
+                                    <!-- Preview -->
+                                    <div class="w-full md:w-1/2">
+                                        <div class="border rounded-lg p-4 bg-gray-50">
+
+                                            <p class="text-sm font-medium mb-2">
+                                                Área de prueba de cursores
+                                            </p>
+
+                                            <!-- Grid de cursores mejorada -->
+                                            <div id="cursor_test_area" 
+                                                 class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="default">
+                                                    <span class="block text-xs text-gray-500 mb-1">⬤</span>
+                                                    Default
+                                                </div>
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="pointer">
+                                                    <span class="block text-xs text-gray-500 mb-1">👆</span>
+                                                    Pointer
+                                                </div>
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="copy">
+                                                    <span class="block text-xs text-gray-500 mb-1">📋</span>
+                                                    Copy
+                                                </div>
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="not-allowed">
+                                                    <span class="block text-xs text-gray-500 mb-1">🚫</span>
+                                                    Not allowed
+                                                </div>
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="wait">
+                                                    <span class="block text-xs text-gray-500 mb-1">⏳</span>
+                                                    Wait
+                                                </div>
+                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
+                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
+                                                     data-cursor="text">
+                                                    <span class="block text-xs text-gray-500 mb-1">📝</span>
+                                                    Text
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Save -->
+                            <div class="flex gap-3">
+                                <button
+                                    type="submit"
+                                    class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                                    Guardar cambios
+                                </button>
+                                <button type="button"
+                                        onclick="window.location.reload()"
+                                        class="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition">
+                                    Cancelar
+                                </button>
+                            </div>
+
+                        </form>
+
                     </div>
                 </div>
-            </div> {% endcomment %}
 
-            <!-- Otras secciones (ejemplo Seguridad) -->
-            <div id="seguridad" class="bg-dark rounded-xl shadow-sm p-6 mb-6">
-                <h2 class="text-lg font-semibold text-muted mb-4">Seguridad</h2>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                        <div>
-                            <h3 class="font-medium text-muted">Contraseña</h3>
-                            {% comment %} <p class="text-sm text-gray-500">Último cambio hace 3 meses</p> {% endcomment %}
-                        </div>
-                        <a  href="{% url 'account_change_password' %}" class="text-sm text-text hover:text-indigo-800">Cambiar</a>
-                    </div>
-                    {% comment %} <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                        <div>
-                            <h3 class="font-medium text-gray-800">Autenticación de dos factores</h3>
-                            <p class="text-sm text-gray-500">No activado</p>
-                        </div>
-                        <button class="text-sm text-indigo-600 hover:text-indigo-800">Activar</button>
-                    </div> {% endcomment %}
-                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- JS -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ---------- BACKGROUND PREVIEW ---------- */
+    const bgInput = document.getElementById("background_url");
+    const bgContainer = document.getElementById("background_container");
+
+    if (bgInput && bgContainer) {
+        function hideBg() {
+            bgContainer.classList.add("hidden");
+            bgContainer.style.backgroundImage = "";
+        }
+
+        function showBg(url) {
+            bgContainer.style.backgroundImage = `url("${url}")`;
+            bgContainer.style.backgroundSize = "cover";
+            bgContainer.style.backgroundPosition = "center";
+            bgContainer.classList.remove("hidden");
+        }
+
+        function updateBg() {
+            const url = bgInput.value.trim();
+            if (!url) return hideBg();
+
+            const img = new Image();
+            img.src = url;
+            img.onload = () => showBg(url);
+            img.onerror = () => {
+                hideBg();
+                console.log("Error cargando imagen de fondo");
+            };
+        }
+
+        bgInput.addEventListener("input", updateBg);
+        
+        // Inicializar con valor guardado si existe
+        setTimeout(updateBg, 100);
+    }
+
+    /* ---------- CURSOR PREVIEW MEJORADO ---------- */
+    const cursorInput = document.getElementById("cursor_url");
+    const cursorBoxes = document.querySelectorAll(".cursor-box");
+    const cursorStatus = document.getElementById("cursor_status");
+    const cursorStatusText = document.getElementById("cursor_status_text");
+    const cursorPreviewBox = document.getElementById("cursor_preview_box");
+    const cursorPreviewName = document.getElementById("cursor_preview_name");
+
+    function applyCursor(url) {
+        const hasCustomCursor = url && url.trim() !== "";
+        
+        // Actualizar status
+        if (cursorStatus && cursorStatusText) {
+            if (hasCustomCursor) {
+                cursorStatus.classList.remove("hidden");
+                cursorStatusText.innerHTML = `Cursor personalizado: <span class="font-mono text-indigo-600 break-all">${url.substring(0, 30)}${url.length > 30 ? '...' : ''}</span>`;
+            } else {
+                cursorStatus.classList.add("hidden");
+            }
+        }
+        
+        // Mostrar/ocultar preview box
+        if (cursorPreviewBox) {
+            if (hasCustomCursor) {
+                cursorPreviewBox.classList.remove("hidden");
+                if (cursorPreviewName) {
+                    const filename = url.split('/').pop() || 'custom.png';
+                    cursorPreviewName.textContent = filename.substring(0, 20) + (filename.length > 20 ? '...' : '');
+                }
+            } else {
+                cursorPreviewBox.classList.add("hidden");
+            }
+        }
+        
+        // Aplicar a los boxes
+        cursorBoxes.forEach(box => {
+            const type = box.dataset.cursor;
+            
+            // Reset estilos
+            box.classList.remove("border-indigo-500", "bg-indigo-50");
+            
+            if (!hasCustomCursor) {
+                box.style.cursor = type;
+                box.title = `Cursor: ${type}`;
+                return;
+            }
+            
+            // Probar la imagen del cursor
+            const testImage = new Image();
+            testImage.src = url;
+            
+            testImage.onload = () => {
+                box.style.cursor = `url("${url}") 16 16, ${type}`;
+                box.title = `Cursor personalizado con fallback: ${type}`;
+                // Feedback visual de que el cursor se cargó
+                if (url === cursorInput.value.trim()) {
+                    box.classList.add("border-indigo-500", "bg-indigo-50/30");
+                }
+            };
+            
+            testImage.onerror = () => {
+                box.style.cursor = type;
+                box.title = `Error cargando cursor personalizado - usando: ${type}`;
+                // Mostrar error en el status
+                if (cursorStatusText && url === cursorInput.value.trim()) {
+                    cursorStatusText.innerHTML = `<span class="text-red-600">⚠️ Error: No se pudo cargar el cursor</span>`;
+                    cursorStatus.classList.remove("hidden");
+                }
+            };
+        });
+    }
+
+    // Mejorar el input con debounce
+    let cursorTimeout;
+    if (cursorInput) {
+        cursorInput.addEventListener("input", function() {
+            clearTimeout(cursorTimeout);
+            cursorTimeout = setTimeout(() => {
+                applyCursor(this.value.trim());
+            }, 300); // Debounce de 300ms
+        });
+        
+        // Init con valor guardado
+        setTimeout(() => {
+            applyCursor(cursorInput.value.trim());
+        }, 100);
+    }
+
+    // Tooltips mejorados para los boxes
+    cursorBoxes.forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            const type = this.dataset.cursor;
+            const hasCustom = cursorInput && cursorInput.value.trim() !== '';
+            
+            if (hasCustom) {
+                const cursorUrl = cursorInput.value.trim();
+                this.title = `Cursor: ${cursorUrl.substring(0, 30)}... | Fallback: ${type}`;
+            }
+        });
+    });
+
+    // Preview de cursor en tiempo real (demo)
+    const previewDemo = document.createElement('div');
+    previewDemo.className = 'fixed bottom-4 right-4 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 hidden';
+    previewDemo.id = 'cursor_demo_preview';
+    document.body.appendChild(previewDemo);
+
+});
+</script>
+
 {% endblock %}

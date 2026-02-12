@@ -9,7 +9,7 @@
                 <div class="w-full h-full overflow-hidden">
                     <img src="{{ post.main_image.url }}" 
                          alt="{{ post.title }}"
-                         class="w-full h-full object-cover">
+                         class="w-full h-auto object-cover">
                 </div>
                 {% endif %}
 
@@ -74,14 +74,20 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Párrafo Principal -->
-            <div class="rounded-xl p-8 mb-8 border"
-                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
-                <p class="text-lg leading-relaxed" style="color: var(--color-text);">
-                    {{ post.main_paragraph }}
-                </p>
+            
+            <div class="rounded-xl p-8 mb-8 border" 
+                style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                {{ post.main_paragraph|safe }}
             </div>
+            <!-- Párrafo Principal -->
+            {% comment %} <div class="rounded-xl p-8 mb-8 border"
+                style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+
+                <div class="prose prose-invert max-w-none">
+                    {{ post.main_paragraph|safe }}
+                </div>
+
+            </div> {% endcomment %}
 
             <!-- Secciones del Blog -->
             {% for section in post.sections.all %}
@@ -152,17 +158,19 @@
                     Artículos Relacionados
                 </h3>
 
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-4 gap-6">
                     {% for related in related_blogs %}
-                    <a href="{{ related.get_absolute_url|force_https }}" 
+                    <a hx-boost="true" href="{{ related.get_absolute_url}}" 
                        class="group block rounded-lg overflow-hidden border hover:opacity-80 transition-opacity"
                        style="background-color: var(--color-background); border-color: var(--color-border);">
                         
                         {% if related.main_image %}
-                        <div class="h-48 overflow-hidden">
+                        <div class="">
                             <img src="{{ related.main_image.url|force_https }}" 
                                  alt="{{ related.title }}"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                 loading="lazy"
+                                 class="w-55 h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                                 >
                         </div>
                         {% endif %}
 

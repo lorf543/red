@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
     
-from .forms import  UserEditForm, ProfileEditForm
+from .forms import  UserEditForm, ProfileEditForm, StylePreferencesForm, BackgroundUrlForm
 from .models import UserProfile
 from commentslikes.models import  Comment, Vote
 from django.views.decorators.cache import cache_page
@@ -256,5 +256,38 @@ def robots_txt(request):
 @cache_page(60 * 15)
 def donations(request):
     return render(request,'politicas/donaciones.html')
+
+
+
+@login_required
+def update_background(request):
+    if request.method != "POST":
+        return redirect('configurations')
+
+    profile = request.user.profile
+    background_url = request.POST.get("background_url")
+
+    if background_url:
+        profile.background_url = background_url
+        profile.save()
+
+    return redirect('configurations')
+
+
+@login_required
+def style_settings(request):
+    profile = request.user.profile
+    
+    if request.method == 'POST':
+        form = StylePreferencesForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Estilos guardados correctamente!')
+            return redirect('style_settings')
+    else:
+        form = StylePreferencesForm(instance=profile)
+    
+    return render(request, 'style_settings.html', {'form': form})
+
 
 

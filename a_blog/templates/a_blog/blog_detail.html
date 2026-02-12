@@ -16,30 +16,37 @@
 {% block og_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block og_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
+
 <!-- Twitter Cards -->
 {% block twitter_title %}{{ post.title }}{% endblock %}
-{% block og_logo %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
 {% block twitter_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
 {% block twitter_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
 
-<!-- Structured Data (JSON-LD) para BlogPosting -->
-
-
-
-    <!-- Article specific meta tags -->
+{% block extra_head %}
+<!-- Article specific meta tags -->
 <meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
 <meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
 <meta property="article:author" content="{{ post.author.username }}">
+{% if post.main_image %}
+<meta property="og:logo" content="{{ post.main_image.url }}">
+{% else %}
+<meta property="og:logo" content="https://itlasocial.org{% static 'img/preview.png' %}">
+{% endif %}
+
 {% for tag in post.tags.all %}
-    <meta property="article:tag" content="{{ tag.name }}">
+<meta property="article:tag" content="{{ tag.name }}">
 {% endfor %}
 <meta property="article:section" content="{% if post.tags.first %}{{ post.tags.first.name }}{% else %}General{% endif %}">
     
-    <!-- Reading time -->
+<!-- Reading time -->
 <meta name="twitter:label1" content="Tiempo de lectura">
-<meta name="twitter:data1" content="{{ post.sections.count|add:2 }} min">
+<meta name="twitter:data1" content="{{ post.sections.count|add:7 }} min">
 <meta name="twitter:label2" content="Autor">
+<meta name="twitter:data2" content="{{ post.author.username }}">
+{% endblock %}
 
+{% block schema_extra %}
+<!-- BlogPosting Schema -->
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -102,9 +109,7 @@
     ]
 }
 </script>
-
-
-
+{% endblock %}
 
 
 
@@ -119,6 +124,14 @@
             </svg>
             Volver a blogs
         </a>
+        
+        {% if request.user == post.author %}
+            <a class="btn bg-surface" hx-boost="true" href="{% url 'update_blog' post.slug %}">
+                <i class="fa-solid fa-pencil"></i>
+                editar
+            </a>
+        {% endif %}
+
     </div>
 
     <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-8">
@@ -183,6 +196,73 @@
                     </div>
                     {% endfor %}
                 </div>
+            </div>
+
+            <!-- Estadísticas del Post -->
+            <div class="rounded-xl p-6 mb-8 border"
+                style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                
+                <h3 class="text-xl font-bold mb-4 pb-3 border-b"
+                    style="color: var(--color-text); border-color: var(--color-border);">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Estadísticas
+                </h3>
+
+                <div class="space-y-3">
+                    <!-- Total de vistas -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-eye" style="color: var(--color-primary);"></i>
+                            <span class="text-sm" style="color: var(--color-muted);">Total de vistas</span>
+                        </div>
+                        <span class="font-bold" style="color: var(--color-text);">
+                            {{ stats.total_views }}
+                        </span>
+                    </div>
+
+                    <!-- Vistas únicas -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-users" style="color: var(--color-info);"></i>
+                            <span class="text-sm" style="color: var(--color-muted);">Visitantes únicos</span>
+                        </div>
+                        <span class="font-bold" style="color: var(--color-text);">
+                            {{ stats.unique_views }}
+                        </span>
+                    </div>
+
+                    <!-- Vistas hoy -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-calendar-day" style="color: var(--color-success);"></i>
+                            <span class="text-sm" style="color: var(--color-muted);">Hoy</span>
+                        </div>
+                        <span class="font-bold" style="color: var(--color-text);">
+                            {{ stats.views_today }}
+                        </span>
+                    </div>
+
+                    <!-- Vistas esta semana -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-calendar-week" style="color: var(--color-warning);"></i>
+                            <span class="text-sm" style="color: var(--color-muted);">Esta semana</span>
+                        </div>
+                        <span class="font-bold" style="color: var(--color-text);">
+                            {{ stats.views_this_week }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if request.user == post.author %}
+                <!-- Botón para ver estadísticas completas (solo autor) -->
+                <a href="{% url 'blog_statistics' post.slug %}" 
+                class="btn btn-sm w-full mt-4"
+                style="background-color: var(--color-primary); color: white;">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Ver estadísticas completas
+                </a>
+                {% endif %}
             </div>
 
             <!-- Tags -->

@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG=False
+DEBUG=True
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",") 
 
@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'psycopg2',
     'django.contrib.humanize',
     'schema_viewer',
+    'ckeditor',
+    'ckeditor_uploader',
 
     # Tus apps
     'core',
@@ -71,10 +73,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 ]
 
+
+TEXT_EDITOR = "djangocms_text_ckeditor5.ckeditor5"
+
 SITE_ID = 1
 
 # MIDDLEWARE
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -296,12 +300,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ----------------------------
 # CACHE (opcional)
 # ----------------------------
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+#         'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
+#     }
+# }
 
 
 CACHES = {
@@ -323,3 +327,33 @@ CACHES = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'height': 300,
+        
+        # 1. ESTO ASEGURA QUE EL EDITOR TOME EL 100% DEL ANCHO DE SU CONTENEDOR
+        'width': '100%', 
+        
+        # 2. AGREGAMOS 'maximize' A LOS PLUGINS EXTRA
+        'extraPlugins': 'autogrow,justify,maximize',
+        
+        'toolbarGroups': [
+            {'name': 'basicstyles', 'groups': ['basicstyles', 'cleanup']},
+            {'name': 'paragraph', 'groups': ['list', 'align']},
+            
+            # 3. AGREGAMOS EL GRUPO 'tools' QUE CONTIENE EL BOTÓN DE PANTALLA COMPLETA
+            {'name': 'tools'}, 
+        ],
+        
+        'removeButtons': 'Strike,Subscript,Superscript,CreateDiv,Blockquote,BidiLtr,BidiRtl,Language,Indent,Outdent',
+        'autoGrow_minHeight': 200,
+        'justifyClasses': [], 
+        'allowedContent': True,
+    }
+}
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"

@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="min-h-screen" style="background-color: var(--color-background);">
+<div class="min-h-screen" >
     <!-- Hero Section -->
-    <div class="relative overflow-hidden" style="background-color: var(--color-primary);">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute inset-0" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); background-size: cover;"></div>
-        </div>
+    <div class="relative overflow-hidden">
         
         <div class="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
             <div class="text-center">
@@ -19,13 +16,13 @@
                 <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{% url 'blog_list' %}" 
                        class="btn btn-lg text-white border-white hover:bg-white/20"
-                       style="background-color: transparent;">
+                       style="btn">
                         Explorar Blogs
                     </a>
-                    <a href="#contacto" 
+                    <a href="{% url 'teachers_list' %}" 
                        class="btn btn-lg text-white"
                        style="background-color: var(--color-secondary);">
-                        Contáctame
+                        Ver Maestros
                     </a>
                 </div>
             </div>
@@ -33,11 +30,11 @@
     </div>
 
     <!-- Propósito Section -->
-    <div class="max-w-7xl mx-auto px-4 py-16">
+    <div class="max-w-7xl mx-auto px-4 py-16 bg-surface rounded-2xl">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
                 <h2 class="text-3xl font-bold mb-6" style="color: var(--color-text);">
-                    Nuestro Propósito
+                    El Proposito
                 </h2>
                 <div class="space-y-4" style="color: var(--color-text);">
                     <p class="text-lg">
@@ -186,7 +183,7 @@
     </div>
 
     <!-- CTA de Contacto -->
-    <div id="contacto" class="max-w-4xl mx-auto px-4 py-16">
+    {% comment %} <div id="contacto" class="max-w-4xl mx-auto px-4 py-16">
         <div class="card" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);">
             <div class="card-body text-center text-white">
                 <h2 class="text-3xl font-bold mb-6">¿Tienes preguntas o sugerencias?</h2>
@@ -222,7 +219,7 @@
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="mailto:tuemail@itla.edu.do" 
-                       class="btn btn-lg bg-white text-primary hover:bg-white/90">
+                       class="btn btn-lg text-primary hover:bg-white/90">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
@@ -248,7 +245,7 @@
                 </span>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 </div>
 
 {% endblock content %}

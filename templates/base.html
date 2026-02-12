@@ -15,8 +15,7 @@
     <meta name="language" content="es-DO">
     <meta name="geo.placename" content="República Dominicana">
     <meta name="geo.region" content="DO">
-    <meta name="author" content="ITLAsocial">
-    <meta name="robots" content="index, follow">
+    <meta name="author" content="Eduardo Sanchez">
 
     <!-- Canonical URL (dinámico) -->
     <link rel="canonical" href="{% block canonical %}https://itlasocial.org{{ request.path }}{% endblock %}">
@@ -54,8 +53,10 @@
     <link rel="stylesheet" href="{% static 'css/mentions-system.css' %}">
     <link rel="stylesheet" href="{% static 'css/table_css.css' %}">
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
 
@@ -101,16 +102,43 @@
     </script>
 
     {% block schema_extra %}{% endblock %}
+    {% block extra_head %}{% endblock %}  
 </head>
 
-
+{% if user.is_authenticated and user.profile %}
+<style>
+    /* Fondo personalizado */
+    {% if user.profile.background_url %}
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('{{ user.profile.background_url }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    {% endif %}
+    
+    /* Cursor personalizado */
+    {% if user.profile.cursor_url %}
+    body, body * {
+        cursor: url('{{ user.profile.cursor_url }}'), auto !important;
+    }
+    {% endif %}
+</style>
+{% endif %}
 
 
 <body class="font-sans static " >
 
     <!-- Navbar -->
         {% include "includes/navbar.html" %}
-
+    
 
     <!-- Main Content -->
     <main id="main-content" class="min-h-screen relative pt-5">
@@ -144,6 +172,8 @@
                 <span class="absolute -top-1 -right-1 w-6 h-6 bg-error text-white text-xs rounded-full flex items-center justify-center animate-ping opacity-75">3</span>
             </button>
         </div> -->
+
+        {% include 'includes/footer.html' %}
     </main>
 
 

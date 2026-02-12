@@ -2,12 +2,14 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from cloudinary.models import CloudinaryField
 
 from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 
 from cloudinary import api as cloudinary_api
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -62,8 +64,83 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+    def get_total_views(self):
+        """Total de vistas de este post"""
+        return self.views.count()
+    
+    def get_unique_views(self):
+        """Vistas únicas (por IP)"""
+        return self.views.values('ip_address').distinct().count()
+    
+    def get_views_today(self):
+        """Vistas de hoy"""
+        today = timezone.now().date()
+        return self.views.filter(viewed_at__date=today).count()
+    
+    def get_views_this_week(self):
+        """Vistas de esta semana"""
+        week_ago = timezone.now() - timedelta(days=7)
+        return self.views.filter(viewed_at__gte=week_ago).count()
+    
+    def get_views_this_month(self):
+        """Vistas de este mes"""
+        month_ago = timezone.now() - timedelta(days=30)
+        return self.views.filter(viewed_at__gte=month_ago).count()
+    
+    def get_views_by_day(self, days=7):
+        """Obtener vistas agrupadas por día (últimos N días)"""
+        from django.db.models import Count
+        from django.db.models.functions import TruncDate
+        
+        start_date = timezone.now() - timedelta(days=days)
+        return self.views.filter(
+            viewed_at__gte=start_date
+        ).annotate(
+            date=TruncDate('viewed_at')
+        ).values('date').annotate(
+            count=Count('id')
+        ).order_by('date')
 
 
+
+class BlogPostView(models.Model):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='views')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    referrer = models.URLField(max_length=500, blank=True, null=True)
+    session_key = models.CharField(max_length=40, blank=True, null=True)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Vista de Blog"
+        verbose_name_plural = "Vistas de Blog"
+        ordering = ['-viewed_at']
+        indexes = [
+            models.Index(fields=['post', '-viewed_at']),
+            models.Index(fields=['ip_address', 'post']),
+        ]
+    
+    def __str__(self):
+        return f"{self.post.title} - {self.viewed_at.strftime('%Y-%m-%d %H:%M')}"
+
+
+class BlogPostStatistics(models.Model):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='daily_stats')
+    date = models.DateField()
+    views_count = models.PositiveIntegerField(default=0)
+    unique_visitors = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        verbose_name = "Estadística Diaria"
+        verbose_name_plural = "Estadísticas Diarias"
+        unique_together = [['post', 'date']]
+        ordering = ['-date']
+    
+    def __str__(self):
+        return f"{self.post.title} - {self.date}"
 
 
 class PostSection(models.Model):

@@ -323,3 +323,32 @@ class ProfileEditForm(forms.ModelForm):
                 raise ValidationError(_('Por favor ingresa una fecha de nacimiento válida.'))
         
         return birth_date
+ 
+ 
+ 
+class BackgroundUrlForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['background_url']
+        widgets = {
+            'background_url': forms.URLInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'https://example.com/background.jpg'
+            })
+        }    
+    
+    
+class StylePreferencesForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['background_url', 'cursor_url']
+        widgets = {
+            'background_url': forms.URLInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md',
+                'placeholder': 'https://ejemplo.com/fondo.jpg'
+            }),
+            'cursor_url': forms.URLInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md',
+                'placeholder': 'https://ejemplo.com/cursor.png'
+            }),
+        }

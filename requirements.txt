@@ -7,6 +7,7 @@ asgiref==3.9.1
 attrs==25.4.0
 autobahn==25.12.2
 Automat==25.4.16
+bleach==6.3.0
 boto3==1.40.11
 botocore==1.40.11
 cbor2==5.8.0
@@ -22,16 +23,19 @@ dj-database-url==3.0.1
 Django==5.2.4
 django-allauth==65.10.0
 django-appconf==1.1.0
+django-ckeditor==6.7.3
 django-cleanup==9.0.0
 django-cloudinary-storage==0.3.0
 django-compressor==4.5.1
 django-debug-toolbar==6.0.0
+django-js-asset==3.1.2
 django-minio-storage==0.5.8
 django-redis==6.0.0
 django-schema-viewer==0.5.3
 django-storages==1.14.6
 django-tailwind==4.2.0
 django-widget-tweaks==1.5.0
+djangocms-text==0.9.3
 et_xmlfile==2.0.0
 frozenlist==1.8.0
 gunicorn==23.0.0
@@ -40,9 +44,11 @@ idna==3.10
 Incremental==24.11.0
 jigsawstack==0.4.0
 jmespath==1.0.1
+lxml==6.0.2
 minio==7.2.16
 msgpack==1.1.2
 multidict==6.7.1
+nh3==0.3.2
 numpy==2.2.6
 openpyxl==3.1.5
 packaging==25.0
@@ -76,6 +82,7 @@ typing_extensions==4.14.1
 tzdata==2025.2
 ujson==5.11.0
 urllib3==2.5.0
+webencodings==0.5.1
 whitenoise==6.9.0
 yarl==1.22.0
 zope.interface==8.2

@@ -21,4 +21,7 @@ urlpatterns = [
     path('tutorail/',views.tutoriales,name='tutoriales'),
     path('donaciones',views.donations,name='donations'),
     path('about/',views.about,name='about'),
+    
+    path('settings/style/', views.style_settings, name='style_settings'),
+    path('profile/background/', views.update_background, name='update_background'),
 ]
