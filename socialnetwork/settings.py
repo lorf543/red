@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG=True
+DEBUG=False
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",") 
 
@@ -89,7 +89,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'core.middleware.ProfileCompletionMiddleware',
+    # 'core.middleware.ProfileCompletionMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
@@ -131,7 +131,7 @@ ASGI_APPLICATION = 'socialnetwork.asgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',    
 #     }
 # }
 

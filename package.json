@@ -1,10 +1,11 @@
 {
   "scripts": {
-    "css": "tailwindcss -i ./static/css/styles.css -o ./static/css/output.css --watch",
+    "css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
     "minify": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --minify"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/typography": "^0.5.19",
     "alpinejs": "^3.15.8",
     "autoprefixer": "^10.4.24",
     "cssnano": "^7.1.2",

@@ -19,6 +19,7 @@ class ProfileCompletionMiddleware:
             reverse('account_login'),
             reverse('account_signup'),
             reverse('profile_edit'),
+            reverse('blog_list'),
         ] + getattr(settings, 'PROFILE_COMPLETION_EXEMPT_URLS', [])
         
         # 2. Verificar si es un archivo estático (CSS, JS, imágenes)

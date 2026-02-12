@@ -75,19 +75,15 @@
                 </div>
             </div>
             
-            <div class="rounded-xl p-8 mb-8 border" 
-                style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
-                {{ post.main_paragraph|safe }}
-            </div>
             <!-- Párrafo Principal -->
-            {% comment %} <div class="rounded-xl p-8 mb-8 border"
+            <div class="rounded-xl p-8 mb-8 border"
                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
 
                 <div class="prose prose-invert max-w-none">
                     {{ post.main_paragraph|safe }}
                 </div>
 
-            </div> {% endcomment %}
+            </div>
 
             <!-- Secciones del Blog -->
             {% for section in post.sections.all %}

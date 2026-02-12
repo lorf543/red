@@ -329,13 +329,30 @@ class ProfileEditForm(forms.ModelForm):
 class BackgroundUrlForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['background_url']
+        fields = ['background_url', 'cursor_url', 'cursor_hotspot_x', 'cursor_hotspot_y']
         widgets = {
             'background_url': forms.URLInput(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500',
-                'placeholder': 'https://example.com/background.jpg'
-            })
-        }    
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md',
+                'placeholder': 'https://ejemplo.com/fondo.jpg'
+            }),
+            'cursor_url': forms.URLInput(attrs={
+                'class': 'flex-1 px-3 py-2 border border-gray-300 rounded-md',
+                'placeholder': 'https://ejemplo.com/cursor.png',
+                'id': 'cursor_url'
+            }),
+            'cursor_hotspot_x': forms.NumberInput(attrs={
+                'class': 'w-20 px-3 py-2 border border-gray-300 rounded-md text-center',
+                'min': '0',
+                'max': '64',
+                'id': 'hotspot_x'
+            }),
+            'cursor_hotspot_y': forms.NumberInput(attrs={
+                'class': 'w-20 px-3 py-2 border border-gray-300 rounded-md text-center',
+                'min': '0',
+                'max': '64',
+                'id': 'hotspot_y'
+            }),
+        }
     
     
 class StylePreferencesForm(forms.ModelForm):

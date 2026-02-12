@@ -199,13 +199,13 @@
       {% endif %}
 
       <!-- Comment Content -->
-      <div class="mt-2">
+      <div class="">
         {% if not comment.is_active %}
           <span class="inline-block bg-accent/20 text-accent text-xs px-2 py-1 rounded">
             <i class="fas fa-ban"></i> Comentario moderado
           </span>
         {% else %}
-          <div class="mb-2">
+          <div class="">
             <p class="text-xs text-accent">
               <a href="{% url 'politicas' %}" class="hover:underline hover:text-accent-dark transition-colors">
                 Políticas sobre comentarios
@@ -278,7 +278,7 @@
       </div>
 
       <!-- Reaction Buttons -->
-      <div class="comment-actions flex items-center gap-3 mt-3 text-sm">
+      <div class="comment-actions flex items-center gap-3 text-sm">
         {% include "partials/reaction_buttons.html" with comment=comment likes_count=comment.likes_count dislikes_count=comment.dislikes_count user_reaction=comment.user_reaction %} 
         
         <!-- Reply Button -->

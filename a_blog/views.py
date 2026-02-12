@@ -96,7 +96,10 @@ def create_blog(request):
 
 
 def update_blog(request, slug):
-    blog_post = get_object_or_404(BlogPost.objects.prefetch_related('sections', 'tags'), slug=slug)
+    blog_post = get_object_or_404(
+        BlogPost.objects.prefetch_related('sections', 'tags'), 
+        slug=slug
+    )
     
     if request.user != blog_post.author:
         return redirect('blog_list')
@@ -105,17 +108,17 @@ def update_blog(request, slug):
         form = BlogPostForm(request.POST, request.FILES, instance=blog_post)
         
         if form.is_valid():
-            # Crear el blog post pero no guardar aún
+            # Guardar post principal
             blog_post = form.save(commit=False)
-            blog_post.author = request.user
             blog_post.is_published = (request.POST.get('action') == 'publish')
             blog_post.save()
+            form.save_m2m()  # Guardar tags
             
-            # Guardar relaciones ManyToMany
-            form.save_m2m()
-            
-            # Crear secciones
+            # ===== MANEJO DE SECCIONES =====
             section_data = {}
+            section_ids = {}  # Para tracking de IDs existentes
+            
+            # 1. Recolectar datos del POST
             for key, value in request.POST.items():
                 if key.startswith('sections['):
                     import re
@@ -125,25 +128,55 @@ def update_blog(request, slug):
                         if index not in section_data:
                             section_data[index] = {}
                         section_data[index][field] = value
+                        
+                        # Capturar IDs existentes si vienen del formulario
+                        if field == 'id' and value:
+                            section_ids[index] = int(value)
             
-            # Crear PostSection para cada sección
+            # 2. IDs de secciones que vienen del formulario (existentes)
+            ids_from_form = [int(id) for id in section_ids.values() if id]
+            
+            # 3. Eliminar secciones que fueron removidas del formulario
+            sections_to_delete = blog_post.sections.exclude(id__in=ids_from_form)
+            sections_to_delete.delete()
+            
+            # 4. Crear o actualizar secciones
             for index, data in section_data.items():
-                PostSection.objects.create(
-                    post=blog_post,
-                    subtitle=data.get('subtitle', ''),
-                    content=data.get('content', ''),
-                    order=int(data.get('order', 0))
-                )
+                section_id = section_ids.get(index)
+                
+                if section_id:  # Actualizar existente
+                    try:
+                        section = PostSection.objects.get(id=section_id, post=blog_post)
+                        section.subtitle = data.get('subtitle', '')
+                        section.content = data.get('content', '')
+                        section.order = int(data.get('order', 0))
+                        section.save()
+                    except PostSection.DoesNotExist:
+                        # Si no existe, crear nueva
+                        PostSection.objects.create(
+                            post=blog_post,
+                            subtitle=data.get('subtitle', ''),
+                            content=data.get('content', ''),
+                            order=int(data.get('order', 0))
+                        )
+                else:  # Crear nueva
+                    PostSection.objects.create(
+                        post=blog_post,
+                        subtitle=data.get('subtitle', ''),
+                        content=data.get('content', ''),
+                        order=int(data.get('order', 0))
+                    )
             
             return redirect('blog_detail', slug=blog_post.slug)
     else:
         form = BlogPostForm(instance=blog_post)
     
-    # GET request
     available_tags = Tag.objects.all()
+    
     return render(request, 'a_blog/create_blog.html', {
         'available_tags': available_tags,
-        'form': form
+        'form': form,
+        'blog_post': blog_post,  # Importante: pasar el blog post con sus secciones
     })
 
 
