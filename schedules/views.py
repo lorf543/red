@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.urls import reverse
+from django.template.loader import render_to_string
 from .models import Subject, Teacher
 
 from django.views.decorators.cache import cache_page
@@ -11,13 +12,83 @@ from django.core.cache import cache
 
 
 from django.contrib.sitemaps import Sitemap
-from django.urls import reverse
+
 from .models import Teacher
 
 
-@cache_page(60 * 5)
+
 def subjects_list(request):
-    return render(request, 'subjects_list.html')
+    """
+    Vista principal para el listado de materias con búsqueda, filtros y paginación
+    """
+    # Obtener parámetros de búsqueda y filtros
+    search_query = request.GET.get('search', '').strip()
+    sort_by = request.GET.get('sort', 'name')
+    modalidad_filter = request.GET.get('modalidad', '')
+    page_number = request.GET.get('page', 1)
+    
+    # Query base con anotaciones de votos del profesor
+    subjects = Subject.objects.select_related('teacher').annotate(
+        guagua_votes=Count('teacher__votes', filter=Q(teacher__votes__vote_type=1)),
+        te_va_a_quemar_votes=Count('teacher__votes', filter=Q(teacher__votes__vote_type=2)),
+        se_aprende_votes=Count('teacher__votes', filter=Q(teacher__votes__vote_type=3)),
+        vago_votes=Count('teacher__votes', filter=Q(teacher__votes__vote_type=4)),
+        total_votes=Count('teacher__votes')
+    )
+    
+    # Aplicar búsqueda
+    if search_query:
+        subjects = subjects.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(teacher__full_name__icontains=search_query) |
+            Q(teacher__area__icontains=search_query)
+        ).distinct()
+    
+    # Aplicar filtro de modalidad
+    if modalidad_filter:
+        subjects = subjects.filter(modalidad=modalidad_filter)
+    
+    # Aplicar ordenamiento
+    sort_mapping = {
+        'name': 'name',
+        '-name': '-name',
+        'aprende': '-se_aprende_votes',
+        'quemar': '-te_va_a_quemar_votes',
+        'guagua': '-guagua_votes',
+        'vago': '-vago_votes',
+        'total': '-total_votes'
+    }
+    
+    order_by = sort_mapping.get(sort_by, 'name')
+    subjects = subjects.order_by(order_by)
+    
+    # Paginación
+    paginator = Paginator(subjects, 20)  # 20 materias por página
+    page_obj = paginator.get_page(page_number)
+    
+    # Contexto común
+    context = {
+        'subjects': page_obj,
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'search_query': search_query,
+        'sort_by': sort_by,
+        'modalidad_filter': modalidad_filter,
+        'total_subjects': Subject.objects.count(),
+    }
+    
+    # Si es una petición AJAX, devolver solo la tabla en JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        html = render_to_string(
+            'subjects/partials/_subjects_table.html',
+            context,
+            request=request
+        )
+        return JsonResponse({'html': html})
+    
+    # Si es petición normal, devolver el template completo
+    return render(request, 'subjects_list.html', context)
 
 
 def subjects_data(request):
@@ -82,14 +153,3 @@ def subjects_data(request):
     return JsonResponse(response_data)
 
 
-
-class TeacherSitemap(Sitemap):
-    changefreq = "weekly"
-    priority = 0.7
-
-    def items(self):
-        return Teacher.objects.all()
-
-    def location(self, obj):
-        # Solo el dominio correcto + URL relativa
-        return f"{reverse('subjects_list', args=[obj.slug])}"

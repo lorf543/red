@@ -1,7 +1,181 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Donaciones - Apoya El Proyecto{% endblock %}
+<!-- SEO: Title -->
+{% block title %}Donaciones - Apoya ITLAsocial{% endblock %}
+
+<!-- SEO: Description -->
+{% block description %}Apoya ITLAsocial con una donación. Tu generosidad mantiene esta plataforma gratuita para todos los estudiantes del ITLA. Acepta donaciones seguras vía PayPal desde $5.{% endblock %}
+
+<!-- SEO: Canonical URL -->
+{% block canonical %}https://itlasocial.org/donaciones/{% endblock %}
+
+<!-- Open Graph -->
+{% block og_title %}Donaciones - Apoya ITLAsocial{% endblock %}
+
+{% block og_description %}Tu donación mantiene ITLAsocial gratuita y accesible para toda la comunidad estudiantil del ITLA. Cada contribución cuenta.{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block og_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
+
+<!-- Twitter Cards -->
+{% block twitter_title %}Donaciones - Apoya ITLAsocial{% endblock %}
+
+{% block twitter_description %}Tu donación mantiene ITLAsocial gratuita y accesible para toda la comunidad estudiantil del ITLA.{% endblock %}
+
+{% block twitter_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
+
+{% block extra_head %}
+<!-- Additional meta tags for donations page -->
+<meta name="keywords" content="donaciones ITLA, apoyar ITLAsocial, PayPal, contribuir, donación estudiantes, soporte plataforma educativa">
+<meta name="author" content="ITLAsocial">
+<meta property="og:locale" content="es_DO">
+
+<!-- Donation specific -->
+<meta property="product:price:currency" content="USD">
+<meta property="product:availability" content="in stock">
+{% endblock %}
+
+{% block schema_extra %}
+<!-- DonateAction Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Donaciones - Apoya ITLAsocial",
+    "description": "Página de donaciones para apoyar el mantenimiento y desarrollo de ITLAsocial",
+    "url": "https://itlasocial.org/donaciones/",
+    "potentialAction": {
+        "@type": "DonateAction",
+        "recipient": {
+            "@type": "Organization",
+            "name": "ITLAsocial",
+            "url": "https://itlasocial.org"
+        },
+        "priceSpecification": [
+            {
+                "@type": "PriceSpecification",
+                "price": "5.00",
+                "priceCurrency": "USD",
+                "name": "Café"
+            },
+            {
+                "@type": "PriceSpecification",
+                "price": "10.00",
+                "priceCurrency": "USD",
+                "name": "Almuerzo"
+            },
+            {
+                "@type": "PriceSpecification",
+                "price": "25.00",
+                "priceCurrency": "USD",
+                "name": "Generoso"
+            },
+            {
+                "@type": "PriceSpecification",
+                "price": "50.00",
+                "priceCurrency": "USD",
+                "name": "Héroe"
+            },
+            {
+                "@type": "PriceSpecification",
+                "price": "100.00",
+                "priceCurrency": "USD",
+                "name": "Súper Héroe"
+            }
+        ]
+    },
+    "inLanguage": "es-DO"
+}
+</script>
+
+<!-- Organization Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ITLAsocial",
+    "url": "https://itlasocial.org",
+    "logo": "https://itlasocial.org{% static 'img/preview.png' %}",
+    "description": "Plataforma educativa para estudiantes del ITLA",
+    "sameAs": [
+        "https://www.facebook.com/itlasocial",
+        "https://twitter.com/itlasocial"
+    ],
+    "foundingDate": "2026",
+    "areaServed": "República Dominicana",
+    "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "student"
+    }
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://itlasocial.org/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Donaciones",
+            "item": "https://itlasocial.org/donaciones/"
+        }
+    ]
+}
+</script>
+
+<!-- FAQPage Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "¿Cómo funcionan los enlaces de PayPal?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Al hacer clic en cualquier monto, serás redirigido a PayPal donde podrás completar la donación de forma segura. No necesitas tener cuenta PayPal para donar con tarjeta."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Recibo algún comprobante?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, PayPal te enviará automáticamente un recibo por email con todos los detalles de tu donación."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Puedo donar más de una vez?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "¡Claro! Puedes hacer tantas donaciones como desees. Cada contribución es muy apreciada."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "¿Para qué se utilizan las donaciones?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Las donaciones se utilizan para mantener los servidores activos y rápidos, desarrollar nuevas funcionalidades útiles, mejorar constantemente la plataforma, mantenerla 100% gratuita para estudiantes, y cubrir costos de hosting y dominio."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <!-- VERSIÓN MEJORADA - Responsive y visualmente atractiva -->
@@ -143,14 +317,6 @@
                         Beneficios
                     </h3>
                     <ul class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-text-secondary">
-                        <!-- <li class="flex gap-2 items-start">
-                            <i class="fas fa-badge-check text-primary mt-1"></i>
-                            <span><strong class="text-text-primary">Insignia de "Benefactor"</strong> en tu perfil</span>
-                        </li>
-                        <li class="flex gap-2 items-start">
-                            <i class="fas fa-star text-warning mt-1"></i>
-                            <span><strong class="text-text-primary">Acceso anticipado</strong> a nuevas funciones</span>
-                        </li> -->
                         <li class="flex gap-2 items-start">
                             <i class="fas fa-heart text-danger mt-1"></i>
                             <span><strong class="text-text-primary">Nuestro agradecimiento</strong> eterno ❤️</span>

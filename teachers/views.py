@@ -237,7 +237,6 @@ def assign_subject(request, teacher_slug):
             subject = form.save(commit=False)
             subject.teacher = teacher
             subject.added_by = request.user
-            print(request.user)
 
             existing = Subject.objects.filter(
                 teacher=teacher,
@@ -250,7 +249,7 @@ def assign_subject(request, teacher_slug):
             else:
                 subject.save()
                 messages.success(request, "Materia agregada exitosamente.")
-                return redirect('subjects_list', teacher_slug=teacher.slug)   # O redirige a otra vista si prefieres
+                return redirect('teacher_detail', teacher_slug=teacher.slug)
         else:
             messages.error(request, "Formulario inválido. Verifica los campos.")
 

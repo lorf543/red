@@ -28,7 +28,6 @@
     <meta property="og:url" content="https://itlasocial.org{{ request.path }}">
     <meta property="og:image" content="{% block og_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:logo" ontent="{% block og_logo %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}"/>
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="es_DO">
@@ -104,6 +103,7 @@
     {% block schema_extra %}{% endblock %}
     {% block extra_head %}{% endblock %}  
 </head>
+
 
 {% if user.is_authenticated and user.profile %}
 <style>

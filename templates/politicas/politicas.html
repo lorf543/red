@@ -1,5 +1,167 @@
 {% extends "base.html" %}
 
+<!-- SEO: Title -->
+{% block title %}Políticas de Comentarios - ITLAsocial{% endblock %}
+
+<!-- SEO: Description -->
+{% block description %}Lee nuestras políticas de comentarios en ITLAsocial. Aprende cómo mantener un diálogo respetuoso, hacer críticas constructivas y crear un espacio seguro para la comunidad estudiantil del ITLA.{% endblock %}
+
+<!-- SEO: Canonical URL -->
+{% block canonical %}https://itlasocial.org/politicas-comentarios/{% endblock %}
+
+<!-- Open Graph -->
+{% block og_title %}Políticas de Comentarios - ITLAsocial{% endblock %}
+
+{% block og_description %}Mantengamos ITLAsocial como un espacio de diálogo respetuoso. Conoce nuestras políticas de comentarios y cómo contribuir de manera constructiva.{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block og_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
+
+<!-- Twitter Cards -->
+{% block twitter_title %}Políticas de Comentarios - ITLAsocial{% endblock %}
+
+{% block twitter_description %}Mantengamos ITLAsocial como un espacio de diálogo respetuoso. Conoce nuestras políticas de comentarios.{% endblock %}
+
+{% block twitter_image %}https://itlasocial.org{% static 'img/preview.png' %}{% endblock %}
+
+{% block extra_head %}
+<!-- Additional meta tags for policies page -->
+<meta name="keywords" content="políticas comentarios, normas comunidad, respeto académico, crítica constructiva, ITLA, moderación, código conducta">
+<meta name="author" content="ITLAsocial">
+<meta property="og:locale" content="es_DO">
+
+<!-- Policy specific -->
+<meta property="article:section" content="Políticas">
+<meta name="robots" content="index, follow">
+{% endblock %}
+
+{% block schema_extra %}
+<!-- WebPage with Policy Schema -->
+<script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Políticas de Comentarios",
+      "description": "Guía sobre cómo mantener un diálogo respetuoso y constructivo en ITLAsocial",
+      "url": "https://itlasocial.org/politicas-comentarios/",
+      "isPartOf": {
+          "@type": "WebSite",
+          "name": "ITLAsocial",
+          "url": "https://itlasocial.org"
+      },
+      "about": {
+          "@type": "CreativeWork",
+          "name": "Código de Conducta",
+          "description": "Normas para mantener una comunidad respetuosa"
+      },
+      "inLanguage": "es-DO"
+  }
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+          {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Inicio",
+              "item": "https://itlasocial.org/"
+          },
+          {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Políticas de Comentarios",
+              "item": "https://itlasocial.org/politicas-comentarios/"
+          }
+      ]
+  }
+</script>
+
+<!-- FAQPage Schema -->
+<script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+          {
+              "@type": "Question",
+              "name": "¿Qué tipo de comentarios están permitidos?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Se permiten comentarios constructivos que ayuden a mejorar la experiencia educativa. La crítica sobre métodos de enseñanza es válida cuando es específica y respetuosa. No se permiten ataques personales, lenguaje ofensivo ni groserías."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "¿Qué se considera un comentario constructivo?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Un comentario constructivo es específico, basado en experiencias concretas, enfocado en comportamientos o métodos (no en la persona), y ofrece contexto útil para otros estudiantes. Ejemplo: 'El profesor explica rápido. Sería útil más tiempo en ejemplos prácticos.'"
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "¿Qué pasa si publico un comentario inapropiado?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Los comentarios que violen las políticas pueden ser removidos. Los casos graves pueden resultar en suspensión temporal o permanente de la cuenta. Buscamos mantener un ambiente respetuoso para todos."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "¿Puedo criticar a un profesor?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sí, puedes compartir críticas sobre métodos de enseñanza de manera constructiva. Sin embargo, no puedes atacar personalmente a los profesores, usar lenguaje ofensivo, o compartir información personal. Los profesores son personas como tú y merecen respeto."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "¿Qué información no debo compartir?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No compartas información personal de nadie (incluyendo la tuya), números de teléfono, direcciones de correo personal, información financiera, o cualquier dato privado de estudiantes o profesores."
+              }
+          }
+      ]
+  }
+</script>
+
+<!-- Article Schema -->
+<script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Políticas de Comentarios - ITLAsocial",
+      "description": "Guía completa sobre cómo mantener un diálogo respetuoso y constructivo en la plataforma",
+      "image": "https://itlasocial.org{% static 'img/preview.png' %}",
+      "author": {
+          "@type": "Organization",
+          "name": "ITLAsocial"
+      },
+      "publisher": {
+          "@type": "Organization",
+          "name": "ITLAsocial",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "https://itlasocial.org{% static 'img/preview.png' %}"
+          }
+      },
+      "datePublished": "2024-01-01",
+      "dateModified": "2024-01-01",
+      "articleSection": "Políticas",
+      "inLanguage": "es-DO",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://itlasocial.org/politicas-comentarios/"
+      }
+  }
+</script>
+{% endblock %}
 
 {% block content  %}
 

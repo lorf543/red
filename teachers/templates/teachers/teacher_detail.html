@@ -1,38 +1,125 @@
 {% extends "base.html" %}
 {% load static %}
 
+<!-- SEO: Title -->
+{% block title %}
+{{ teacher.full_name }} - Materias, Opiniones y Valoraciones | ITLAsocial
+{% endblock %}
+
+<!-- SEO: Description -->
+{% block description %}
+Perfil de {{ teacher.full_name }}, profesor del Instituto Tecnológico de Las Américas (ITLA). 
+Consulta {{ subjects|length }} materia{{ subjects|length|pluralize }} asignada{{ subjects|length|pluralize }}, 
+lee {{ comments|length }} comentario{{ comments|length|pluralize }} 
+{% if teacher.average_rating %}y su calificación promedio de {{ teacher.average_rating|floatformat:1 }}/5{% endif %}.
+{% endblock %}
+
+<!-- SEO: Canonical -->
+{% block canonical %}
+https://itlasocial.org{{ request.path }}
+{% endblock %}
+
+<!-- Open Graph -->
+{% block og_title %}
+{{ teacher.full_name }} - Opiniones y Materias | ITLAsocial
+{% endblock %}
+
+{% block og_description %}
+Descubre las materias impartidas por {{ teacher.full_name }} en el ITLA y conoce las experiencias de estudiantes.
+{% if teacher.average_rating %}Calificación promedio: {{ teacher.average_rating|floatformat:1 }}/5.{% endif %}
+{% endblock %}
+
+{% block og_type %}profile{% endblock %}
+
+{% block og_image %}
+https://itlasocial.org{% static 'img/preview.png' %}
+{% endblock %}
+
+<!-- Twitter -->
+{% block twitter_title %}
+{{ teacher.full_name }} - Profesor ITLA | ITLAsocial
+{% endblock %}
+
+{% block twitter_description %}
+Consulta materias, valoraciones y comentarios sobre {{ teacher.full_name }} en ITLAsocial.
+{% endblock %}
+
+{% block twitter_image %}
+https://itlasocial.org{% static 'img/preview.png' %}
+{% endblock %}
+
+{% block extra_head %}
+<meta name="keywords" content="ITLA, {{ teacher.full_name }}, profesor ITLA, materias ITLA, opiniones profesor, valoraciones docentes, Instituto Tecnológico de Las Américas">
+<meta property="og:locale" content="es_DO">
+<meta property="profile:first_name" content="{{ teacher.full_name }}">
+<meta property="profile:username" content="{{ teacher.slug }}">
+{% endblock %}
 {% block schema_extra %}
-    <script type="application/ld+json">
+<!-- Person Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ teacher.full_name|escapejs }}",
+    "jobTitle": "Profesor",
+    "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Instituto Tecnológico de Las Américas",
+        "url": "https://www.itla.edu.do/"
+    },
+    "url": "https://itlasocial.org{{ request.path }}",
+    "description": "Perfil académico de {{ teacher.full_name|escapejs }} en ITLAsocial.",
+    {% if teacher.average_rating and comments|length > 0 %}
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ teacher.average_rating|floatformat:1 }}",
+        "reviewCount": "{{ comments|length }}",
+        "bestRating": "5",
+        "worstRating": "1"
+    },
+    {% endif %}
+    {% if subjects %}
+    "knowsAbout": [
+        {% for subject in subjects %}
+        "{{ subject.name|escapejs }}"{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    {% endif %}
+    "memberOf": {
+        "@type": "EducationalOrganization",
+        "name": "Instituto Tecnológico de Las Américas",
+        "sameAs": "https://www.itla.edu.do/"
+    }
+}
+</script>
+
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
         {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            "name": "{{ teacher.full_name }}",
-            "jobTitle": "Profesor",
-            "worksFor": {
-                "@type": "EducationalOrganization",
-                "name": "Instituto Tecnológico de Las Américas",
-                "url": "https://www.itla.edu.do/"
-            },
-            "description": "Profesor del ITLA con {{ subjects|length }} materia{% if subjects|length != 1 %}s{% endif %} asignada{% if subjects|length != 1 %}s{% endif %} y {{ teacher.comments.count }} comentario{% if teacher.comments.count != 1 %}s{% endif %} de estudiantes."{% if teacher.average_rating and teacher.comments.count > 0 %},
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "{{ teacher.average_rating|floatformat:1 }}",
-                "reviewCount": "{{ teacher.comments.count }}",
-                "bestRating": "5",
-                "worstRating": "1"
-            }{% endif %}{% if subjects %},
-            "teaches": [
-                {% for subject in subjects %}
-                {
-                    "@type": "Course",
-                    "name": "{{ subject.name }}",
-                    "courseMode": "{{ subject.modalidad }}"{% if subject.subject_schedule %},
-                    "timeRequired": "{{ subject.subject_schedule }}"{% endif %}
-                }{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ]{% endif %}
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://itlasocial.org/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Maestros",
+            "item": "https://itlasocial.org/teachers/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ teacher.full_name|escapejs }}",
+            "item": "https://itlasocial.org{{ request.path }}"
         }
-    </script>
+    ]
+}
+</script>
 {% endblock %}
 
 {% block content %}

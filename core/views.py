@@ -129,8 +129,10 @@ def confifraciones(request):
     return render(request,'conf/configuraciones.html')
 
 
+
 @cache_page(60 * 60 * 24) 
 def politicas(request):
+    
     context = {
         'omitir_includes': True,  # Variable de control.
     }

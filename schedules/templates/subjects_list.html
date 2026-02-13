@@ -3,63 +3,239 @@
 
 {% block content %}
 
-<style>
-  ul.pagination {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: flex-end;
-      padding: 0;
-      list-style: none;
-  }
-  ul.pagination li {
-      display: inline;
-  }
-
-  /* Hover con resplandor blanco */
-  #subjectsTable tbody tr {
-      transition: all 0.2s ease;
-  }
-  #subjectsTable tbody tr:hover {
-      box-shadow: 0 0 10px rgba(255,255,255,0.3);
-      background-color: rgba(255,255,255,0.05);
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/listado_maestros.css' %}">
 
 <div class="max-w-7xl mx-auto px-4 py-8 bg-background text-text transition-colors duration-300">
-    <div class="flex justify-between items-center mb-8">
+
+    <!-- Encabezado -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold">Lista de Materias</h1>
-            <p class="text-sm text-gray-500">Todas las materias disponibles</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-text mb-2">Lista de Materias</h1>
+            <div class="flex gap-3">
+                {% comment %} <small class="underline text-blue-400">
+                    <a hx-boost="true" href="#">¿Hace falta una materia?</a>
+                </small>
+                
+                {% if request.user.is_staff %}                    
+                    <small class="underline text-blue-400">
+                        <a hx-boost="true" href="#">Administrar materias</a>
+                    </small>
+                {% endif %} {% endcomment %}
+            </div>
+            <p class="text-sm text-muted">
+                {% if total_subjects %}
+                    <span class="stats-badge">
+                        <i class="fas fa-book"></i>
+                        {{ total_subjects }} materia{{ total_subjects|pluralize:"s" }} registrada{{ total_subjects|pluralize:"s" }}
+                    </span>
+                {% else %}
+                    Gestión completa del catálogo de materias
+                {% endif %}
+            </p>
         </div>
-        <a href="{% url 'teachers_list' %}" class="text-text bg-primary text-center rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-            Ver lista de profesores
-        </a>
+
+        <div class="flex gap-3">
+            <a href="{% url 'teachers_list' %}" 
+               class="subject-btn flex items-center gap-2">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Listado de maestros</span>
+            </a>
+        </div>
     </div>
-    
-    <div class="bg-background text-text shadow-sm rounded-xl overflow-hidden border border-gray-200 transition-colors duration-300">
-        <div class="overflow-x-auto">
-            <table id="subjectsTable" class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-background text-text">
-                    <tr>
-                        <th class="px-6 py-3 text-left">Materia</th>
-                        <th class="px-6 py-3 text-left">Profesor</th>
-                        <th class="px-6 py-3 text-left">Modalidad</th>
-                        <th class="px-6 py-3 text-left">Horario</th>
-                        <th>🚍</th>
-                        <th>🔥</th>
-                        <th>📚</th>
-                        <th>😴</th>
-                        <th class="px-6 py-3 text-left">Total</th>
-                        {% comment %} <th class="px-6 py-3 text-right">Acciones</th> {% endcomment %}
-                    </tr>
-                </thead>
-                <tbody class="bg-background divide-y divide-gray-200 transition-colors duration-300">
-                    <!-- Aquí se llenará con HTMX o Django -->
-                </tbody>
-            </table>
+
+    <!-- Búsqueda y Filtros -->
+    <div class="search-container">
+        <form id="searchForm" class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <!-- Buscador -->
+            <div class="md:col-span-6 relative">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    name="search" 
+                    id="searchInput"
+                    class="search-input" 
+                    placeholder="Buscar por nombre, profesor o descripción..."
+                    value="{{ search_query }}"
+                    autocomplete="off"
+                >
+            </div>
+            
+            <!-- Filtro por modalidad -->
+            <div class="md:col-span-3">
+                <select name="modalidad" id="modalidadSelect" class="sort-select w-full">
+                    <option value="">Todas las modalidades</option>
+                    <option value="Presencial" {% if modalidad_filter == 'Presencial' %}selected{% endif %}>
+                        🏫 Presencial
+                    </option>
+                    <option value="Virtual" {% if modalidad_filter == 'Virtual' %}selected{% endif %}>
+                        💻 Virtual
+                    </option>
+                </select>
+            </div>
+            
+            <!-- Ordenar por -->
+            <div class="md:col-span-3">
+                <select name="sort" id="sortSelect" class="sort-select w-full">
+                    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>
+                        🔤 Nombre (A-Z)
+                    </option>
+                    <option value="-name" {% if sort_by == '-name' %}selected{% endif %}>
+                        🔤 Nombre (Z-A)
+                    </option>
+                    <option value="aprende" {% if sort_by == 'aprende' %}selected{% endif %}>
+                        📚 Más "Se aprende"
+                    </option>
+                    <option value="quemar" {% if sort_by == 'quemar' %}selected{% endif %}>
+                        🔥 Más "Te va a quemar"
+                    </option>
+                    <option value="guagua" {% if sort_by == 'guagua' %}selected{% endif %}>
+                        🚍 Más "Guagua"
+                    </option>
+                    <option value="vago" {% if sort_by == 'vago' %}selected{% endif %}>
+                        😴 Más "Vago"
+                    </option>
+                    <option value="total" {% if sort_by == 'total' %}selected{% endif %}>
+                        ⭐ Más votados
+                    </option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tarjeta contenedora mejorada -->
+    <div class="table-container relative">
+        <!-- Loading overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+        </div>
+        <!-- Tabla responsive -->
+        <div id="tableWrapper">
+            {% include 'partials/_subjects_table.html' %}
         </div>
     </div>
 </div>
+
+<!-- JavaScript optimizado -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const modalidadSelect = document.getElementById('modalidadSelect');
+        const tableWrapper = document.getElementById('tableWrapper');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        let searchTimeout;
+        
+        // Función para cargar datos
+        async function loadSubjects(showLoading = true) {
+            if (showLoading) {
+                loadingOverlay.classList.add('active');
+            }
+            
+            const formData = new FormData(document.getElementById('searchForm'));
+            const params = new URLSearchParams(formData);
+            
+            // Agregar parámetro de página si existe
+            const currentPage = new URLSearchParams(window.location.search).get('page');
+            if (currentPage) {
+                params.set('page', currentPage);
+            }
+            
+            try {
+                const response = await fetch(`${window.location.pathname}?${params}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                tableWrapper.innerHTML = data.html;
+                
+                // Actualizar URL sin recargar
+                const newUrl = `${window.location.pathname}?${params}`;
+                history.pushState({}, '', newUrl);
+                
+                // Reiniciar animaciones
+                initTableAnimations();
+                
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+            } finally {
+                if (showLoading) {
+                    loadingOverlay.classList.remove('active');
+                }
+            }
+        }
+        
+        // Búsqueda con debounce (espera 300ms después de escribir)
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadSubjects();
+            }, 300);
+        });
+        
+        // Cambio de ordenamiento (inmediato)
+        sortSelect.addEventListener('change', function() {
+            loadSubjects();
+        });
+        
+        // Cambio de modalidad (inmediato)
+        modalidadSelect.addEventListener('change', function() {
+            loadSubjects();
+        });
+        
+        // Manejar clics en paginación
+        document.addEventListener('click', function(e) {
+            const paginationLink = e.target.closest('.pagination a');
+            if (paginationLink) {
+                e.preventDefault();
+                const url = new URL(paginationLink.href);
+                const page = url.searchParams.get('page');
+                
+                // Actualizar el formulario con la página
+                const formData = new FormData(document.getElementById('searchForm'));
+                const params = new URLSearchParams(formData);
+                params.set('page', page);
+                
+                // Cargar nueva página
+                window.location.search = params.toString();
+            }
+        });
+        
+        // Animaciones de tabla
+        function initTableAnimations() {
+            const rows = document.querySelectorAll('#subjectsTable tbody tr');
+            rows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 30);
+            });
+            
+            // Tooltips para badges
+            const voteBadges = document.querySelectorAll('.vote-badge');
+            voteBadges.forEach(badge => {
+                const count = badge.textContent.trim();
+                badge.title = `${count} votos`;
+            });
+        }
+        
+        // Inicializar animaciones en carga inicial
+        initTableAnimations();
+        
+        // Teclado: limpiar búsqueda con Escape
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                loadSubjects();
+            }
+        });
+    });
+</script>
 
 {% endblock %}

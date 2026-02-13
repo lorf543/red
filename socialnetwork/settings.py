@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG=True
+DEBUG=False
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",") 
 
@@ -308,25 +308,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # }
 
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': os.environ.get('REDIS_URL'), 
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#             'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-#             'SOCKET_CONNECT_TIMEOUT': 5,
-#             'SOCKET_TIMEOUT': 5,
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.environ.get('REDIS_URL'), 
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
 
-#             'IGNORE_EXCEPTIONS': True,  #
-#         },
-#         'KEY_PREFIX': 'https://itlasocial.org/', 
-#         'TIMEOUT': 300, 
-#     }
-# }
+            'IGNORE_EXCEPTIONS': True,  #
+        },
+        'KEY_PREFIX': 'https://itlasocial.org/', 
+        'TIMEOUT': 300, 
+    }
+}
 
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-# SESSION_CACHE_ALIAS = 'default'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 CKEDITOR_CONFIGS = {
     'default': {

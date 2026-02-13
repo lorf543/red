@@ -13,13 +13,18 @@
 
 <!-- Open Graph -->
 {% block og_title %}{{ post.title }}{% endblock %}
+
 {% block og_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
+
 {% block og_type %}article{% endblock %}
+
 {% block og_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
 
 <!-- Twitter Cards -->
 {% block twitter_title %}{{ post.title }}{% endblock %}
+
 {% block twitter_description %}{{ post.subtitle|default:post.main_paragraph|truncatewords:30 }}{% endblock %}
+
 {% block twitter_image %}{% if post.main_image %}https://itlasocial.org{{ post.main_image.url }}{% else %}https://itlasocial.org{% static 'img/preview.png' %}{% endif %}{% endblock %}
 
 {% block extra_head %}
@@ -27,15 +32,11 @@
 <meta property="article:published_time" content="{{ post.created_at|date:'c' }}">
 <meta property="article:modified_time" content="{{ post.updated_at|date:'c' }}">
 <meta property="article:author" content="{{ post.author.username }}">
-{% if post.main_image %}
-<meta property="og:logo" content="{{ post.main_image.url }}">
-{% else %}
-<meta property="og:logo" content="https://itlasocial.org{% static 'img/preview.png' %}">
-{% endif %}
 
 {% for tag in post.tags.all %}
 <meta property="article:tag" content="{{ tag.name }}">
 {% endfor %}
+
 <meta property="article:section" content="{% if post.tags.first %}{{ post.tags.first.name }}{% else %}General{% endif %}">
     
 <!-- Reading time -->
@@ -48,72 +49,68 @@
 {% block schema_extra %}
 <!-- BlogPosting Schema -->
 <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": "{{ post.title|escapejs }}",
-        "alternativeHeadline": "{{ post.subtitle|escapejs }}",
-        "image": {% if post.main_image %}"https://itlasocial.org{{ post.main_image.url }}"{% else %}"https://itlasocial.org{% static 'img/preview.png' %}"{% endif %},
-        "author": {
-            "@type": "Person",
-            "name": "{{ post.author.username|escapejs }}",
-            "url": "https://itlasocial.org{% url 'profile' post.author.profile.slug %}"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "ITLAsocial",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://itlasocial.org{% static 'img/preview.png' %}"
-            }
-        },
-        "datePublished": "{{ post.created_at|date:'c' }}",
-        "dateModified": "{{ post.updated_at|date:'c' }}",
-        "description": "{{ post.main_paragraph|truncatewords:50|escapejs }}",
-        "articleBody": "{{ post.main_paragraph|escapejs }}",
-        "keywords": "{% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}",
-        "wordCount": {{ post.main_paragraph|wordcount|add:post.sections.all|length }},
-        "inLanguage": "es-DO",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https://itlasocial.org{{ post.get_absolute_url }}"
-        }{% if post.tags.all %},
-        "articleSection": "{{ post.tags.first.name }}"{% endif %}
-    }
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.title|escapejs }}",
+    "alternativeHeadline": "{{ post.subtitle|escapejs }}",
+    "image": {% if post.main_image %}"https://itlasocial.org{{ post.main_image.url }}"{% else %}"https://itlasocial.org{% static 'img/preview.png' %}"{% endif %},
+    "author": {
+        "@type": "Person",
+        "name": "{{ post.author.username|escapejs }}",
+        "url": "https://itlasocial.org{% url 'profile' post.author.profile.slug %}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "ITLAsocial",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://itlasocial.org{% static 'img/preview.png' %}"
+        }
+    },
+    "datePublished": "{{ post.created_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|date:'c' }}",
+    "description": "{{ post.main_paragraph|truncatewords:50|escapejs }}",
+    "articleBody": "{{ post.main_paragraph|escapejs }}",
+    "keywords": "{% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}",
+    "wordCount": {{ post.main_paragraph|wordcount|add:post.sections.all|length }},
+    "inLanguage": "es-DO",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://itlasocial.org{{ post.get_absolute_url }}"
+    }{% if post.tags.all %},
+    "articleSection": "{{ post.tags.first.name }}"{% endif %}
+}
 </script>
 
 <!-- BreadcrumbList Schema -->
 <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Inicio",
-                "item": "https://itlasocial.org/"
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Blog",
-                "item": "https://itlasocial.org{% url 'blog_list' %}"
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": "{{ post.title|escapejs }}",
-                "item": "https://itlasocial.org{{ post.get_absolute_url }}"
-            }
-        ]
-    }
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://itlasocial.org/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://itlasocial.org{% url 'blog_list' %}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{ post.title|escapejs }}",
+            "item": "https://itlasocial.org{{ post.get_absolute_url }}"
+        }
+    ]
+}
 </script>
 {% endblock %}
-
-
-
-{% block content %}
 
 <div class="min-h-screen">
     <!-- Navegación -->
