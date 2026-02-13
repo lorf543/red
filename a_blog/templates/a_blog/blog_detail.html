@@ -112,182 +112,186 @@
 </script>
 {% endblock %}
 
-<div class="min-h-screen">
-    <!-- Navegación -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <a class="btn bg-surface" hx-boost="true" href="{% url 'blog_list' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver a blogs
-        </a>
-        
-        {% if request.user == post.author %}
-            <a class="btn bg-surface" hx-boost="true" href="{% url 'update_blog' post.slug %}">
-                <i class="fa-solid fa-pencil"></i>
-                editar
+
+{% block content %}
+
+    
+    <div class="min-h-screen">
+        <!-- Navegación -->
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <a class="btn bg-surface" hx-boost="true" href="{% url 'blog_list' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver a blogs
             </a>
-        {% endif %}
+            
+            {% if request.user == post.author %}
+                <a class="btn bg-surface" hx-boost="true" href="{% url 'update_blog' post.slug %}">
+                    <i class="fa-solid fa-pencil"></i>
+                    editar
+                </a>
+            {% endif %}
 
-    </div>
+        </div>
 
-    <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-8">
-        <!-- Contenido Principal -->
-        {% include 'a_blog/partials/article.html' %}
+        <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-8">
+            <!-- Contenido Principal -->
+            {% include 'a_blog/partials/article.html' %}
 
-        <!-- Sidebar -->
-        <aside class="lg:w-1/4">
-            <!-- Información del Autor -->
-            <div class="rounded-xl p-6 mb-8 border sticky top-4"
-                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
-                
-                <h3 class="text-xl font-bold mb-4 pb-3 border-b"
-                    style="color: var(--color-text); border-color: var(--color-border);">
-                    Sobre el Autor
-                </h3>
-
-                <div class="text-center mb-4">
-                    <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-3"
-                         style="background-color: var(--color-primary); color: white; font-size: 2rem;">
-                        {{ post.author.username|slice:":1"|upper }}
-                    </div>
-                    <h4 class="font-bold text-lg" style="color: var(--color-text);">
-                        {{ post.author.username }}
-                    </h4>
-                    <p class="text-sm mt-2" style="color: var(--color-muted);">
-                        {{ post.author.blog_authored.count }} artículos publicados
-                    </p>
-                </div>
-
-                <!-- <p class="text-sm text-center mb-4" style="color: var(--color-muted);">
-                    Apasionado por compartir conocimiento y experiencias.
-                </p> -->
-
-                <!-- <button class="btn btn-sm w-full"
-                        style="background-color: var(--color-primary); color: white;">
-                    Seguir
-                </button> -->
-            </div>
-
-            <!-- Posts Recientes -->
-            <div class="rounded-xl p-6 mb-8 border"
-                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
-                
-                <h3 class="text-xl font-bold mb-6 pb-3 border-b"
-                    style="color: var(--color-text); border-color: var(--color-border);">
-                    Posts Recientes
-                </h3>
-
-                <div class="space-y-5">
-                    {% for recent in recent_posts %}
-                    <div class="pb-4 border-b last:border-0"
-                         style="border-color: color-mix(in srgb, var(--color-border) 50%, transparent);">
-                        <a href="{{ recent.get_absolute_url }}" 
-                           class="font-medium hover:opacity-80 block" 
-                           style="color: var(--color-text);">
-                            {{ recent.title|truncatewords:10 }}
-                        </a>
-                        <p class="text-sm mt-1" style="color: var(--color-muted);">
-                            {{ recent.created_at|timesince }} atrás
-                        </p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Estadísticas del Post -->
-            {% if request.user.is_authenticated %}
-                                <div class="rounded-xl p-6 mb-8 border"
+            <!-- Sidebar -->
+            <aside class="lg:w-1/4">
+                <!-- Información del Autor -->
+                <div class="rounded-xl p-6 mb-8 border sticky top-4"
                     style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
                     
                     <h3 class="text-xl font-bold mb-4 pb-3 border-b"
                         style="color: var(--color-text); border-color: var(--color-border);">
-                        <i class="fas fa-chart-line mr-2"></i>
-                        Estadísticas
+                        Sobre el Autor
                     </h3>
 
-                    <div class="space-y-3">
-                        <!-- Total de vistas -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-eye" style="color: var(--color-primary);"></i>
-                                <span class="text-sm" style="color: var(--color-muted);">Total de vistas</span>
-                            </div>
-                            <span class="font-bold" style="color: var(--color-text);">
-                                {{ stats.total_views }}
-                            </span>
+                    <div class="text-center mb-4">
+                        <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-3"
+                            style="background-color: var(--color-primary); color: white; font-size: 2rem;">
+                            {{ post.author.username|slice:":1"|upper }}
                         </div>
-
-                        <!-- Vistas únicas -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-users" style="color: var(--color-info);"></i>
-                                <span class="text-sm" style="color: var(--color-muted);">Visitantes únicos</span>
-                            </div>
-                            <span class="font-bold" style="color: var(--color-text);">
-                                {{ stats.unique_views }}
-                            </span>
-                        </div>
-
-                        <!-- Vistas hoy -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar-day" style="color: var(--color-success);"></i>
-                                <span class="text-sm" style="color: var(--color-muted);">Hoy</span>
-                            </div>
-                            <span class="font-bold" style="color: var(--color-text);">
-                                {{ stats.views_today }}
-                            </span>
-                        </div>
-
-                        <!-- Vistas esta semana -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar-week" style="color: var(--color-warning);"></i>
-                                <span class="text-sm" style="color: var(--color-muted);">Esta semana</span>
-                            </div>
-                            <span class="font-bold" style="color: var(--color-text);">
-                                {{ stats.views_this_week }}
-                            </span>
-                        </div>
+                        <h4 class="font-bold text-lg" style="color: var(--color-text);">
+                            {{ post.author.username }}
+                        </h4>
+                        <p class="text-sm mt-2" style="color: var(--color-muted);">
+                            {{ post.author.blog_authored.count }} artículos publicados
+                        </p>
                     </div>
 
-                    {% if request.user == post.author %}
-                    <!-- Botón para ver estadísticas completas (solo autor) -->
-                    <a href="{% url 'blog_statistics' post.slug %}" 
-                    class="btn btn-sm w-full mt-4"
-                    style="background-color: var(--color-primary); color: white;">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        Ver estadísticas completas
-                    </a>
-                    {% endif %}
+                    <!-- <p class="text-sm text-center mb-4" style="color: var(--color-muted);">
+                        Apasionado por compartir conocimiento y experiencias.
+                    </p> -->
+
+                    <!-- <button class="btn btn-sm w-full"
+                            style="background-color: var(--color-primary); color: white;">
+                        Seguir
+                    </button> -->
                 </div>
-            {% endif %}
 
+                <!-- Posts Recientes -->
+                <div class="rounded-xl p-6 mb-8 border"
+                    style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                    
+                    <h3 class="text-xl font-bold mb-6 pb-3 border-b"
+                        style="color: var(--color-text); border-color: var(--color-border);">
+                        Posts Recientes
+                    </h3>
 
-            <!-- Tags -->
-            {% comment %} <div class="rounded-xl p-6 border"
-                 style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
-                
-                <h3 class="text-xl font-bold mb-6 pb-3 border-b"
-                    style="color: var(--color-text); border-color: var(--color-border);">
-                    Tags Populares
-                </h3>
-
-                <div class="flex flex-wrap gap-2">
-                    {% for tag in all_tags %}
-                    <a href="{% url 'blog_list' %}?tag={{ tag.slug }}" 
-                       class="px-3 py-1.5 text-sm rounded-full cursor-pointer hover:opacity-80"
-                       style="background-color: color-mix(in srgb, {{ tag.color }} 10%, transparent); 
-                              color: {{ tag.color }}; 
-                              border: 1px solid color-mix(in srgb, {{ tag.color }} 20%, transparent);">
-                        {{ tag.name }}
-                    </a>
-                    {% endfor %}
+                    <div class="space-y-5">
+                        {% for recent in recent_posts %}
+                        <div class="pb-4 border-b last:border-0"
+                            style="border-color: color-mix(in srgb, var(--color-border) 50%, transparent);">
+                            <a href="{{ recent.get_absolute_url }}" 
+                            class="font-medium hover:opacity-80 block" 
+                            style="color: var(--color-text);">
+                                {{ recent.title|truncatewords:10 }}
+                            </a>
+                            <p class="text-sm mt-1" style="color: var(--color-muted);">
+                                {{ recent.created_at|timesince }} atrás
+                            </p>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div> {% endcomment %}
-        </aside>
+
+                <!-- Estadísticas del Post -->
+                {% if request.user.is_authenticated %}
+                                    <div class="rounded-xl p-6 mb-8 border"
+                        style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                        
+                        <h3 class="text-xl font-bold mb-4 pb-3 border-b"
+                            style="color: var(--color-text); border-color: var(--color-border);">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Estadísticas
+                        </h3>
+
+                        <div class="space-y-3">
+                            <!-- Total de vistas -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-eye" style="color: var(--color-primary);"></i>
+                                    <span class="text-sm" style="color: var(--color-muted);">Total de vistas</span>
+                                </div>
+                                <span class="font-bold" style="color: var(--color-text);">
+                                    {{ stats.total_views }}
+                                </span>
+                            </div>
+
+                            <!-- Vistas únicas -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-users" style="color: var(--color-info);"></i>
+                                    <span class="text-sm" style="color: var(--color-muted);">Visitantes únicos</span>
+                                </div>
+                                <span class="font-bold" style="color: var(--color-text);">
+                                    {{ stats.unique_views }}
+                                </span>
+                            </div>
+
+                            <!-- Vistas hoy -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-day" style="color: var(--color-success);"></i>
+                                    <span class="text-sm" style="color: var(--color-muted);">Hoy</span>
+                                </div>
+                                <span class="font-bold" style="color: var(--color-text);">
+                                    {{ stats.views_today }}
+                                </span>
+                            </div>
+
+                            <!-- Vistas esta semana -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-week" style="color: var(--color-warning);"></i>
+                                    <span class="text-sm" style="color: var(--color-muted);">Esta semana</span>
+                                </div>
+                                <span class="font-bold" style="color: var(--color-text);">
+                                    {{ stats.views_this_week }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {% if request.user == post.author %}
+                        <!-- Botón para ver estadísticas completas (solo autor) -->
+                        <a href="{% url 'blog_statistics' post.slug %}" 
+                        class="btn btn-sm w-full mt-4"
+                        style="background-color: var(--color-primary); color: white;">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Ver estadísticas completas
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+
+                <!-- Tags -->
+                {% comment %} <div class="rounded-xl p-6 border"
+                    style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);">
+                    
+                    <h3 class="text-xl font-bold mb-6 pb-3 border-b"
+                        style="color: var(--color-text); border-color: var(--color-border);">
+                        Tags Populares
+                    </h3>
+
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in all_tags %}
+                        <a href="{% url 'blog_list' %}?tag={{ tag.slug }}" 
+                        class="px-3 py-1.5 text-sm rounded-full cursor-pointer hover:opacity-80"
+                        style="background-color: color-mix(in srgb, {{ tag.color }} 10%, transparent); 
+                                color: {{ tag.color }}; 
+                                border: 1px solid color-mix(in srgb, {{ tag.color }} 20%, transparent);">
+                            {{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div> {% endcomment %}
+            </aside>
+        </div>
     </div>
-</div>
 
 {% endblock content %}
