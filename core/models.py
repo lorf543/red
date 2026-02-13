@@ -44,15 +44,25 @@ class UserProfile(models.Model):
         help_text="URL de la imagen de fondo"
     )
     
-    cursor_url = models.URLField(
-        max_length=500,
-        blank=True,
-        null=True,
-        help_text="URL del cursor personalizado (.cur o .png)"
-    )
+    # Cursor Default
+    cursor_url = models.URLField(max_length=500, blank=True, null=True)
+    cursor_hotspot_x = models.IntegerField(default=0)
+    cursor_hotspot_y = models.IntegerField(default=0)
     
-    cursor_hotspot_x = models.IntegerField(default=16, help_text="Posición X del punto de clic")
-    cursor_hotspot_y = models.IntegerField(default=16, help_text="Posición Y del punto de clic")
+    # Cursor Pointer
+    cursor_pointer_url = models.URLField(max_length=500, blank=True, null=True)
+    cursor_pointer_hotspot_x = models.IntegerField(default=0)
+    cursor_pointer_hotspot_y = models.IntegerField(default=0)
+    
+    # Cursor Text
+    cursor_text_url = models.URLField(max_length=500, blank=True, null=True)
+    cursor_text_hotspot_x = models.IntegerField(default=0)
+    cursor_text_hotspot_y = models.IntegerField(default=0)
+    
+    # Cursor Blocked
+    cursor_blocked_url = models.URLField(max_length=500, blank=True, null=True)
+    cursor_blocked_hotspot_x = models.IntegerField(default=0)
+    cursor_blocked_hotspot_y = models.IntegerField(default=0)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

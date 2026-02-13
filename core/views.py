@@ -262,34 +262,57 @@ def donations(request):
 
 
 @login_required
-def update_background(request):
+def style_settings(request):
     if request.method != "POST":
         return redirect('configurations')
 
     profile = request.user.profile
-    background_url = request.POST.get("background_url")
-
-    if background_url:
-        profile.background_url = background_url
-        profile.save()
-
+    
+    # Guardar fondo
+    profile.background_url = request.POST.get("background_url", "").strip()
+    
+    # Guardar todos los cursores con sus hotspots individuales
+    cursor_configs = [
+        ('cursor_url', 'cursor_hotspot_x', 'cursor_hotspot_y'),
+        ('cursor_pointer_url', 'cursor_pointer_hotspot_x', 'cursor_pointer_hotspot_y'),
+        ('cursor_text_url', 'cursor_text_hotspot_x', 'cursor_text_hotspot_y'),
+        ('cursor_blocked_url', 'cursor_blocked_hotspot_x', 'cursor_blocked_hotspot_y'),
+    ]
+    
+    for url_field, x_field, y_field in cursor_configs:
+        # Guardar URL
+        setattr(profile, url_field, request.POST.get(url_field, "").strip())
+        
+        # Guardar hotspot X
+        try:
+            setattr(profile, x_field, int(request.POST.get(x_field, 0)))
+        except (ValueError, TypeError):
+            setattr(profile, x_field, 0)
+        
+        # Guardar hotspot Y
+        try:
+            setattr(profile, y_field, int(request.POST.get(y_field, 0)))
+        except (ValueError, TypeError):
+            setattr(profile, y_field, 0)
+    
+    profile.save()
+    messages.success(request, "✨ Configuración de estilos guardada correctamente.")
     return redirect('configurations')
 
-
-@login_required
-def style_settings(request):
-    profile = request.user.profile
+# @login_required
+# def style_settings(request):
+#     profile = request.user.profile
     
-    if request.method == 'POST':
-        form = StylePreferencesForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '¡Estilos guardados correctamente!')
-            return redirect('style_settings')
-    else:
-        form = StylePreferencesForm(instance=profile)
+#     if request.method == 'POST':
+#         form = StylePreferencesForm(request.POST, instance=profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, '¡Estilos guardados correctamente!')
+#             return redirect('style_settings')
+#     else:
+#         form = StylePreferencesForm(instance=profile)
     
-    return render(request, 'style_settings.html', {'form': form})
+#     return render(request, 'style_settings.html', {'form': form})
 
 
 

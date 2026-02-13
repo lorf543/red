@@ -125,12 +125,77 @@
     {% endif %}
     
     /* Cursor personalizado CON HOTSPOT */
+ {% if user.profile.cursor_url or user.profile.cursor_pointer_url or user.profile.cursor_text_url or user.profile.cursor_blocked_url %}
+    
+    /* ========================================
+       CURSORES PERSONALIZADOS
+       ======================================== */
+    
     {% if user.profile.cursor_url %}
-    body, body * {
+    /* Cursor Default - Aplicado globalmente */
+    body, 
+    body *:not(a):not(button):not(input):not(textarea):not([role="button"]):not(.cursor-pointer):not(.cursor-text):not([disabled]) {
         cursor: url('{{ user.profile.cursor_url }}') {{ user.profile.cursor_hotspot_x }} {{ user.profile.cursor_hotspot_y }}, auto !important;
     }
     {% endif %}
+
+    {% if user.profile.cursor_pointer_url %}
+    /* Cursor Pointer - Elementos clickeables */
+    a,
+    button:not([disabled]),
+    [role="button"]:not([disabled]),
+    .cursor-pointer,
+    input[type="submit"]:not([disabled]),
+    input[type="button"]:not([disabled]),
+    input[type="reset"]:not([disabled]),
+    input[type="checkbox"]:not([disabled]),
+    input[type="radio"]:not([disabled]),
+    select:not([disabled]),
+    summary,
+    [onclick]:not([disabled]),
+    .clickable:not([disabled]),
+    label[for]:not([disabled]) {
+        cursor: url('{{ user.profile.cursor_pointer_url }}') {{ user.profile.cursor_pointer_hotspot_x }} {{ user.profile.cursor_pointer_hotspot_y }}, pointer !important;
+    }
+    {% endif %}
+
+    {% if user.profile.cursor_text_url %}
+    /* Cursor Text - Campos de texto */
+    input[type="text"]:not([disabled]),
+    input[type="email"]:not([disabled]),
+    input[type="password"]:not([disabled]),
+    input[type="search"]:not([disabled]),
+    input[type="tel"]:not([disabled]),
+    input[type="url"]:not([disabled]),
+    input[type="number"]:not([disabled]),
+    input[type="date"]:not([disabled]),
+    input[type="time"]:not([disabled]),
+    input[type="datetime-local"]:not([disabled]),
+    textarea:not([disabled]),
+    [contenteditable="true"]:not([disabled]),
+    .cursor-text:not([disabled]) {
+        cursor: url('{{ user.profile.cursor_text_url }}') {{ user.profile.cursor_text_hotspot_x }} {{ user.profile.cursor_text_hotspot_y }}, text !important;
+    }
+    {% endif %}
+
+    {% if user.profile.cursor_blocked_url %}
+    /* Cursor Blocked - Elementos deshabilitados */
+    [disabled],
+    .disabled,
+    .cursor-not-allowed,
+    button[disabled],
+    input[disabled],
+    textarea[disabled],
+    select[disabled],
+    a.disabled,
+    [aria-disabled="true"] {
+        cursor: url('{{ user.profile.cursor_blocked_url }}') {{ user.profile.cursor_blocked_hotspot_x }} {{ user.profile.cursor_blocked_hotspot_y }}, not-allowed !important;
+    }
+    {% endif %}
+
+    {% endif %}
 </style>
+
 {% endif %}
     
 

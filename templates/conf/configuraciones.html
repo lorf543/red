@@ -3,271 +3,58 @@
 
 {% block content %}
 
-
-<section class="flex h-screen bg-background">
+<section class="flex min-h-screen bg-background">
     <div class="flex w-full" x-data="{ currentTab: 'estilos' }">
         
         <!-- Sidebar Desktop -->
         <div class="hidden md:flex md:w-64 bg-surface border-r border-gray-200 flex-col">
-            <div class="p-4 border-b border-gray-200">
+            <div class="p-6 border-b border-gray-200">
                 <h2 class="text-xl font-semibold text-text">Configuración</h2>
             </div>
-            <nav class="flex-1 overflow-y-auto">
-                <ul class="space-y-1 p-2">
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul class="space-y-1 px-3">
                     <li>
                         <a href="#"
                            @click.prevent="currentTab = 'estilos'"
-                           :class="currentTab === 'estilos' ? 'text-indigo-700 bg-indigo-50' : 'text-gray-600 hover:bg-gray-100'"
-                           class="flex items-center p-3 rounded-lg transition-colors">
-                            <i class="fas fa-paint-brush mr-3"></i>
-                            Estilos
+                           :class="currentTab === 'estilos' ? 'text-indigo-700 bg-indigo-50 border-l-4 border-indigo-700' : 'text-gray-600 hover:bg-gray-50 border-l-4 border-transparent'"
+                           class="flex items-center px-4 py-3 rounded-r-lg transition-all duration-200">
+                            <i class="fas fa-paint-brush w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Estilos</span>
                         </a>
                     </li>
                 </ul>
             </nav>
         </div>
 
-        <!-- Content -->
-        <div class="flex-1 overflow-y-auto p-6">
-            <div class="max-w-4xl mx-auto">
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 <!-- Header -->
-                <div class="mb-8 p-6 bg-surface rounded-xl">
-                    <h1 class="text-2xl font-bold text-text">Configuración de Estilos</h1>
-                    <p class="text-text-600">
-                        Personaliza la apariencia de tu perfil.
-                    </p>
+                <div class="mb-8">
+                    <div class="bg-surface rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h1 class="text-3xl font-bold text-text mb-2">Configuración de Estilos</h1>
+                                <p class="text-text text-sm">
+                                    Personaliza la apariencia de tu perfil con fondos y cursores personalizados.
+                                </p>
+                            <p class="text-sm font-semibold text-muted">esta pagina aun esta en construcion pueden esperar cosas raras :V</p>
+
+                            </div>
+                            <div class="hidden sm:flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-lg">
+                                <i class="fas fa-paint-brush text-indigo-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- TAB Estilos -->
-                <div x-show="currentTab === 'estilos'" x-transition>
-
-                    <div class="bg-surface rounded-xl shadow-sm p-6">
-
-                        <!-- Background Form -->
-                        <form method="post"
-                              action="{% url 'update_background' %}"
-                              class="space-y-6">
-                            {% csrf_token %}
-
-                            <div class="flex flex-col md:flex-row gap-6 items-start">
-
-                                <!-- Input -->
-                                <div class="w-full md:w-1/2">
-                                    <label class="block text-sm font-medium text-text mb-1">
-                                        URL del fondo
-                                    </label>
-
-                                    <input
-                                        id="background_url"
-                                        type="url"
-                                        name="background_url"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="https://images.unsplash.com/wallpaper1.jpg"
-                                        value="{{ request.user.profile.background_url|default:'' }}"
-                                    >
-                                    <p class="text-muted text-xs">Ten en mente que esto podría afectar los tiempos de carga</p>
-                                </div>
-
-                                <!-- Preview -->
-                                <div class="w-full md:w-1/2">
-                                    <div id="background_container"
-                                         class="hidden relative h-48 rounded-lg overflow-hidden shadow-md transition-all duration-300">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr>
-                            
-                            <!-- Cursor personalizado -->
-                        <div class="space-y-6">
-                                <h3 class="text-lg font-semibold text-text">
-                                    <i class="fas fa-mouse-pointer mr-2"></i>
-                                    Cursor personalizado
-                                </h3>
-
-                                <div class="flex flex-col md:flex-row gap-6 items-start">
-
-                                    <!-- Input Section -->
-                                    <div class="w-full md:w-1/2 space-y-4">
-                                        
-                                        <!-- URL del Cursor -->
-                                        <div>
-                                            <label for="{{ form.cursor_url.id_for_label }}" 
-                                                   class="block text-sm font-medium text-text mb-1">
-                                                URL del cursor
-                                            </label>
-                                            <div class="flex gap-2">
-                                                {{ form.cursor_url }}
-                                                <button type="button" 
-                                                        id="reset_cursor_btn"
-                                                        class="px-3 py-2 text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-                                                        title="Resetear cursor">
-                                                    <i class="fas fa-undo-alt"></i>
-                                                </button>
-                                            </div>
-                                            
-                                            {% if form.cursor_url.errors %}
-                                                <p class="text-red-500 text-xs mt-1">{{ form.cursor_url.errors.0 }}</p>
-                                            {% endif %}
-                                            
-                                            <p class="text-muted text-xs mt-1">
-                                                <i class="fas fa-info-circle"></i>
-                                                <a href="https://www.cursors-4u.com/" target="_blank" class="text-indigo-600 hover:underline">
-                                                    Encuentra cursores aquí
-                                                </a>
-                                            </p>
-                                        </div>
-
-                                        <!-- Hotspot Controls -->
-                                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                            <p class="text-sm font-medium text-text mb-3 flex items-center">
-                                                <i class="fas fa-crosshairs mr-2 text-indigo-600"></i>
-                                                Punto de clic (Hotspot)
-                                            </p>
-                                            
-                                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                                <div>
-                                                    <label for="{{ form.cursor_hotspot_x.id_for_label }}" 
-                                                           class="block text-xs text-gray-600 mb-1">
-                                                        X (horizontal)
-                                                    </label>
-                                                    {{ form.cursor_hotspot_x }}
-                                                    {% if form.cursor_hotspot_x.errors %}
-                                                        <p class="text-red-500 text-xs">{{ form.cursor_hotspot_x.errors.0 }}</p>
-                                                    {% endif %}
-                                                </div>
-                                                <div>
-                                                    <label for="{{ form.cursor_hotspot_y.id_for_label }}" 
-                                                           class="block text-xs text-gray-600 mb-1">
-                                                        Y (vertical)
-                                                    </label>
-                                                    {{ form.cursor_hotspot_y }}
-                                                    {% if form.cursor_hotspot_y.errors %}
-                                                        <p class="text-red-500 text-xs">{{ form.cursor_hotspot_y.errors.0 }}</p>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-
-                                            <div class="flex gap-2 flex-wrap">
-                                                <button type="button" 
-                                                        onclick="detectCursorCenter()"
-                                                        class="text-xs px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
-                                                    <i class="fas fa-magic mr-1"></i>
-                                                    Auto-detectar centro
-                                                </button>
-                                                <button type="button" 
-                                                        onclick="setHotspot(0, 0)"
-                                                        class="text-xs px-3 py-1.5 bg-gray-200 rounded hover:bg-gray-300 transition">
-                                                    Esquina (0,0)
-                                                </button>
-                                                <button type="button" 
-                                                        onclick="setHotspot(16, 16)"
-                                                        class="text-xs px-3 py-1.5 bg-gray-200 rounded hover:bg-gray-300 transition">
-                                                    Centro 32x32
-                                                </button>
-                                            </div>
-
-                                            <p class="text-xs text-gray-500 mt-2">
-                                                💡 El hotspot define dónde está el "punto de clic" del cursor
-                                            </p>
-                                        </div>
-
-                                        <!-- Cursor Info -->
-                                        <div id="cursor_info" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                            <p class="text-xs text-blue-800">
-                                                <i class="fas fa-info-circle mr-1"></i>
-                                                <strong>Dimensiones:</strong> <span id="cursor_dimensions">-</span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Preview Section -->
-                                    <div class="w-full md:w-1/2">
-                                        <div class="border rounded-lg p-4 bg-gray-50">
-                                            <p class="text-sm font-medium mb-3 flex items-center justify-between">
-                                                Área de prueba
-                                                <span id="cursor_coords" class="text-xs font-mono text-gray-500"></span>
-                                            </p>
-
-                                            <!-- Grid de Cursores -->
-                                            <div id="cursor_test_area" 
-                                                 class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm mb-3">
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="default">
-                                                    <span class="block text-xs text-gray-500 mb-1">⬤</span>
-                                                    Default
-                                                </div>
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="pointer">
-                                                    <span class="block text-xs text-gray-500 mb-1">👆</span>
-                                                    Pointer
-                                                </div>
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="copy">
-                                                    <span class="block text-xs text-gray-500 mb-1">📋</span>
-                                                    Copy
-                                                </div>
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="not-allowed">
-                                                    <span class="block text-xs text-gray-500 mb-1">🚫</span>
-                                                    Not allowed
-                                                </div>
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="wait">
-                                                    <span class="block text-xs text-gray-500 mb-1">⏳</span>
-                                                    Wait
-                                                </div>
-                                                <div class="cursor-box bg-white p-3 rounded-lg border border-gray-200 
-                                                            hover:border-indigo-300 transition-all text-center shadow-sm" 
-                                                     data-cursor="text">
-                                                    <span class="block text-xs text-gray-500 mb-1">📝</span>
-                                                    Text
-                                                </div>
-                                            </div>
-
-                                            <!-- Visual Hotspot Preview -->
-                                            <div id="visual_preview" class="{% if not form.cursor_url.value %}hidden{% endif %} bg-white border-2 border-indigo-300 rounded-lg p-3">
-                                                <p class="text-xs font-medium text-gray-700 mb-2">Vista del cursor:</p>
-                                                <div class="relative inline-block">
-                                                    <img id="cursor_preview_img" 
-                                                         {% if form.cursor_url.value %}src="{{ form.cursor_url.value }}"{% endif %}
-                                                         class="max-w-[64px] max-h-[64px] border border-gray-300 rounded" />
-                                                    <div id="hotspot_marker" 
-                                                         class="absolute w-2 h-2 bg-red-500 rounded-full border-2 border-white"
-                                                         style="left: {{ form.cursor_hotspot_x.value|default:16 }}px; top: {{ form.cursor_hotspot_y.value|default:16 }}px; transform: translate(-50%, -50%);"></div>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-2">
-                                                    <span class="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
-                                                    = Punto de clic
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            <!-- Save -->
-                            <div class="flex gap-3">
-                                <button
-                                    type="submit"
-                                    class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-                                    Guardar cambios
-                                </button>
-                                <button type="button"
-                                        onclick="window.location.reload()"
-                                        class="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition">
-                                    Cancelar
-                                </button>
-                            </div>
-
-                        </form>
-
-                    </div>
+                <div x-show="currentTab === 'estilos'" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100">
+                    {% include 'conf/partials/backgroun_cursor.html' %}
                 </div>
 
             </div>
@@ -285,7 +72,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (bgInput && bgContainer) {
         function hideBg() {
-            bgContainer.classList.add("hidden");
+            bgContainer.innerHTML = `
+                <div class="text-center text-gray-400">
+                    <i class="fas fa-image text-4xl mb-2"></i>
+                    <p class="text-sm">Ingresa una URL para ver la vista previa</p>
+                </div>
+            `;
             bgContainer.style.backgroundImage = "";
         }
 
@@ -293,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
             bgContainer.style.backgroundImage = `url("${url}")`;
             bgContainer.style.backgroundSize = "cover";
             bgContainer.style.backgroundPosition = "center";
-            bgContainer.classList.remove("hidden");
+            bgContainer.innerHTML = "";
         }
 
         function updateBg() {
@@ -310,37 +102,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         bgInput.addEventListener("input", updateBg);
-        
-        // Inicializar con valor guardado si existe
         setTimeout(updateBg, 100);
     }
 
-    /* ---------- CURSOR PREVIEW MEJORADO ---------- */
+    /* ---------- CURSOR PREVIEW MEJORADO (MULTI-CURSOR) ---------- */
 
-    const cursorInput = document.getElementById("id_cursor_url");
     const hotspotXInput = document.getElementById("id_cursor_hotspot_x");
     const hotspotYInput = document.getElementById("id_cursor_hotspot_y");
     const cursorBoxes = document.querySelectorAll(".cursor-box");
-    const cursorInfo = document.getElementById("cursor_info");
-    const cursorDimensions = document.getElementById("cursor_dimensions");
-    const visualPreview = document.getElementById("visual_preview");
-    const cursorPreviewImg = document.getElementById("cursor_preview_img");
-    const hotspotMarker = document.getElementById("hotspot_marker");
-    const cursorCoords = document.getElementById("cursor_coords");
+    const globalCursorCoords = document.getElementById("global_cursor_coords");
 
-    let currentCursorImage = null;
+    // Mapeo de inputs de cursores
+    const cursorInputs = {
+        'default': document.getElementById("id_cursor_url"),
+        'pointer': document.getElementById("id_cursor_pointer_url"),
+        'text': document.getElementById("id_cursor_text_url"),
+        'not-allowed': document.getElementById("id_cursor_blocked_url")
+    };
 
-    function updateCursorPreview() {
-        const url = cursorInput.value.trim();
-        const x = parseInt(hotspotXInput.value) || 0;
-        const y = parseInt(hotspotYInput.value) || 0;
+    // Función para actualizar preview individual
+    function updateIndividualPreview(input) {
+        if (!input) return;
+        
+        const url = input.value.trim();
+        const previewBox = input.parentElement.querySelector('.cursor-preview-box');
+        const previewImg = previewBox?.querySelector('.cursor-preview-img');
+        const previewSize = previewBox?.querySelector('.cursor-preview-size');
 
         if (!url) {
-            cursorBoxes.forEach(box => {
-                box.style.cursor = box.dataset.cursor;
-            });
-            cursorInfo.classList.add("hidden");
-            visualPreview.classList.add("hidden");
+            previewBox?.classList.add('hidden');
             return;
         }
 
@@ -349,80 +139,94 @@ document.addEventListener("DOMContentLoaded", function () {
         img.src = url;
 
         img.onload = () => {
-            currentCursorImage = img;
-            
-            // Mostrar info de dimensiones
-            cursorDimensions.textContent = `${img.width}x${img.height}px`;
-            cursorInfo.classList.remove("hidden");
-
-            // Preview visual
-            cursorPreviewImg.src = url;
-            hotspotMarker.style.left = `${x}px`;
-            hotspotMarker.style.top = `${y}px`;
-            visualPreview.classList.remove("hidden");
-
-            // Aplicar cursor
-            cursorBoxes.forEach(box => {
-                const fallback = box.dataset.cursor;
-                box.style.cursor = `url("${url}") ${x} ${y}, ${fallback}`;
-            });
+            if (previewImg && previewSize && previewBox) {
+                previewImg.src = url;
+                previewSize.textContent = `${img.width}x${img.height}px`;
+                previewBox.classList.remove('hidden');
+            }
         };
 
         img.onerror = () => {
-            cursorInfo.classList.add("hidden");
-            visualPreview.classList.add("hidden");
-            cursorBoxes.forEach(box => {
-                box.style.cursor = box.dataset.cursor;
-            });
+            previewBox?.classList.add('hidden');
         };
     }
 
+    // Función para actualizar todos los cursores en el área de prueba
+    function updateAllCursors() {
+        const x = parseInt(hotspotXInput.value) || 0;
+        const y = parseInt(hotspotYInput.value) || 0;
+
+        cursorBoxes.forEach(box => {
+            const cursorType = box.dataset.cursor;
+            const input = cursorInputs[cursorType];
+            
+            if (input && input.value.trim()) {
+                const url = input.value.trim();
+                box.style.cursor = `url("${url}") ${x} ${y}, ${cursorType}`;
+            } else {
+                box.style.cursor = cursorType;
+            }
+        });
+    }
+
+    // Event listeners para cada cursor
+    Object.values(cursorInputs).forEach(input => {
+        if (input) {
+            input.addEventListener("input", () => {
+                updateIndividualPreview(input);
+                updateAllCursors();
+            });
+            // Inicializar preview
+            setTimeout(() => updateIndividualPreview(input), 100);
+        }
+    });
+
+    // Event listeners para hotspots
+    if (hotspotXInput) {
+        hotspotXInput.addEventListener("input", updateAllCursors);
+    }
+
+    if (hotspotYInput) {
+        hotspotYInput.addEventListener("input", updateAllCursors);
+    }
+
     // Mostrar coordenadas del mouse
-    if (cursorCoords) {
+    if (globalCursorCoords) {
         document.getElementById("cursor_test_area")?.addEventListener("mousemove", (e) => {
             const rect = e.target.getBoundingClientRect();
             const x = Math.round(e.clientX - rect.left);
             const y = Math.round(e.clientY - rect.top);
-            cursorCoords.textContent = `Mouse: ${x}, ${y}`;
+            globalCursorCoords.textContent = `X: ${x}, Y: ${y}`;
         });
     }
 
-    // Event listeners
-    if (cursorInput) {
-        cursorInput.addEventListener("input", updateCursorPreview);
-        setTimeout(updateCursorPreview, 100);
-    }
-
-    if (hotspotXInput) {
-        hotspotXInput.addEventListener("input", updateCursorPreview);
-    }
-
-    if (hotspotYInput) {
-        hotspotYInput.addEventListener("input", updateCursorPreview);
-    }
-
-    // Reset button
-    document.getElementById("reset_cursor_btn")?.addEventListener("click", () => {
-        cursorInput.value = "";
-        hotspotXInput.value = "0";
-        hotspotYInput.value = "0";
-        updateCursorPreview();
-    });
+    // Inicializar cursores
+    setTimeout(updateAllCursors, 100);
 
     /* ---------- HELPER FUNCTIONS ---------- */
+    
     window.setHotspot = function(x, y) {
         hotspotXInput.value = x;
         hotspotYInput.value = y;
-        updateCursorPreview();
+        updateAllCursors();
     };
 
     window.detectCursorCenter = function() {
-        const url = cursorInput.value.trim();
-        if (!url) {
-            alert("Primero ingresa una URL de cursor");
+        // Detectar desde el primer cursor que tenga URL
+        let targetInput = null;
+        for (const input of Object.values(cursorInputs)) {
+            if (input && input.value.trim()) {
+                targetInput = input;
+                break;
+            }
+        }
+
+        if (!targetInput) {
+            showNotification("Primero ingresa al menos una URL de cursor", "warning");
             return;
         }
 
+        const url = targetInput.value.trim();
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.src = url;
@@ -431,19 +235,62 @@ document.addEventListener("DOMContentLoaded", function () {
             const centerX = Math.floor(img.width / 2);
             const centerY = Math.floor(img.height / 2);
             setHotspot(centerX, centerY);
-            
-            // Mostrar mensaje
-            const msg = document.createElement("div");
-            msg.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50";
-            msg.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Centro detectado: ${centerX}, ${centerY}`;
-            document.body.appendChild(msg);
-            setTimeout(() => msg.remove(), 3000);
+            showNotification(`Centro detectado: ${centerX}, ${centerY}`, "success");
         };
         
         img.onerror = () => {
-            alert("No se pudo cargar la imagen del cursor");
+            showNotification("No se pudo cargar la imagen del cursor", "error");
         };
     };
+
+    window.resetAllCursors = function() {
+        if (confirm("¿Estás seguro de que deseas resetear todos los cursores?")) {
+            Object.values(cursorInputs).forEach(input => {
+                if (input) input.value = "";
+            });
+            hotspotXInput.value = "0";
+            hotspotYInput.value = "0";
+            
+            // Actualizar previews
+            Object.values(cursorInputs).forEach(input => {
+                if (input) updateIndividualPreview(input);
+            });
+            updateAllCursors();
+            
+            showNotification("Todos los cursores han sido reseteados", "success");
+        }
+    };
+
+    // Sistema de notificaciones
+    function showNotification(message, type = "info") {
+        const colors = {
+            success: "bg-green-500",
+            error: "bg-red-500",
+            warning: "bg-yellow-500",
+            info: "bg-blue-500"
+        };
+
+        const icons = {
+            success: "fa-check-circle",
+            error: "fa-exclamation-circle",
+            warning: "fa-exclamation-triangle",
+            info: "fa-info-circle"
+        };
+
+        const msg = document.createElement("div");
+        msg.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-2`;
+        msg.innerHTML = `
+            <i class="fas ${icons[type]}"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(msg);
+        
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            msg.style.transition = 'opacity 0.3s ease-out';
+            setTimeout(() => msg.remove(), 300);
+        }, 2700);
+    }
 
 });
 </script>
