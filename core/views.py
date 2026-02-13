@@ -125,6 +125,8 @@ def profile_edit_view(request):
 
     return render(request, 'profile/profile_edit.html', context)
 
+
+@login_required
 def confifraciones(request):
     return render(request,'conf/configuraciones.html')
 
@@ -139,6 +141,7 @@ def politicas(request):
     return render(request,'politicas/politicas.html', context)
 
 
+@login_required
 @require_POST
 def check_username(request):
     username = request.POST.get("username", "").strip()
@@ -154,6 +157,7 @@ def check_username(request):
 def about(request):
     return render(request,'politicas/about.html')
 
+@login_required
 def search_view(request):
     query = request.GET.get('q', '').strip()
 

@@ -48,6 +48,7 @@ def blog_list(request):
         "tags": tags,
     })
 
+@login_required
 def create_blog(request):
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES)
@@ -95,6 +96,7 @@ def create_blog(request):
     })
 
 
+@login_required
 def update_blog(request, slug):
     blog_post = get_object_or_404(
         BlogPost.objects.prefetch_related('sections', 'tags'), 
