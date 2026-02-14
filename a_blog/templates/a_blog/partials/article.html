@@ -96,7 +96,7 @@
                 </h2>
                 
                 <div class="prose max-w-none" style="color: var(--color-text);">
-                    {{ section.content|linebreaksbr }}
+                    {{ section.content|safe }}
                 </div>
             </div>
             {% endfor %}

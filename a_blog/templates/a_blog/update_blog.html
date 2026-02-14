@@ -83,11 +83,11 @@
     <div class="max-w-5xl mx-auto px-4">
         <!-- Header -->
         <div class="mb-8">
-            <a class="btn bg-surface" hx-boost="true" href="{% url 'blog_list' %}">
+            <a class="btn bg-surface" hx-boost="true" href="{% url 'blog_detail' slug=blog_post.slug %}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Volver
+                Volver al Blog
             </a>
         </div>
 
@@ -97,7 +97,7 @@
             
             <h1 class="text-3xl font-bold mb-6 pb-4 border-b" 
                 style="color: var(--color-text); border-color: var(--color-border);">
-                Crear Nuevo Blog
+                Editar Blog
             </h1>
 
             <form method="post" enctype="multipart/form-data" id="blog-form">
@@ -131,15 +131,28 @@
                     <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
                         Imagen Principal
                     </label>
+                    
+                    {% if blog_post.main_image %}
+                    <div class="mb-3">
+                        <p class="text-sm mb-2" style="color: var(--color-muted);">Imagen actual:</p>
+                        <img src="{{ blog_post.main_image.url }}" 
+                             alt="Imagen actual" 
+                             class="rounded-lg border max-w-xs"
+                             style="border-color: var(--color-border);">
+                    </div>
+                    {% endif %}
+                    
                     <div class="flex items-center gap-4">
                         <label class="btn btn-outline cursor-pointer" style="border-color: var(--color-border); color: var(--color-text);">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            Seleccionar imagen
+                            {% if blog_post.main_image %}Cambiar imagen{% else %}Seleccionar imagen{% endif %}
                             {{ form.main_image }}
                         </label>
-                        <span id="image-name" class="text-sm" style="color: var(--color-muted);">Ninguna imagen seleccionada</span>
+                        <span id="image-name" class="text-sm" style="color: var(--color-muted);">
+                            {% if blog_post.main_image %}Ningún cambio{% else %}Ninguna imagen seleccionada{% endif %}
+                        </span>
                     </div>
                     {% if form.main_image.errors %}
                         <p class="error-message">{{ form.main_image.errors.0 }}</p>
@@ -171,13 +184,14 @@
                                    name="tags" 
                                    value="{{ tag.id }}" 
                                    class="tag-checkbox hidden" 
-                                   id="tag-{{ tag.id }}">
+                                   id="tag-{{ tag.id }}"
+                                   {% if tag in blog_post.tags.all %}checked{% endif %}>
                             <span class="tag-label px-3 py-1.5 text-sm rounded-full border"
                                   style="--tag-color: {{ tag.color }}; 
                                          background-color: color-mix(in srgb, {{ tag.color }} 10%, transparent);
                                          color: {{ tag.color }};
                                          border-color: color-mix(in srgb, {{ tag.color }} 20%, transparent);">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 {% if tag not in blog_post.tags.all %}hidden{% endif %}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                                 {{ tag.name }}
@@ -211,7 +225,66 @@
 
                     <!-- Contenedor de Secciones -->
                     <div id="sections-container" class="space-y-4">
-                        <!-- Las secciones se agregarán aquí dinámicamente -->
+                        <!-- Renderizar secciones existentes -->
+                        {% for section in blog_post.sections.all %}
+                        <div class="section-item rounded-lg p-6 border" 
+                             style="background-color: var(--color-background); border-color: var(--color-border);">
+                            
+                            <!-- Campo hidden con el ID de la sección existente -->
+                            <input type="hidden" 
+                                   name="sections[{{ forloop.counter0 }}][id]" 
+                                   value="{{ section.id }}">
+                            
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold" style="color: var(--color-text);">
+                                    Sección #<span class="section-number">{{ forloop.counter }}</span>
+                                </h3>
+                                <button type="button" 
+                                        class="remove-section btn btn-sm btn-circle"
+                                        style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Subtítulo de la sección -->
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
+                                        Subtítulo de la Sección
+                                    </label>
+                                    <input type="text" 
+                                           name="sections[{{ forloop.counter0 }}][subtitle]" 
+                                           value="{{ section.subtitle }}"
+                                           required
+                                           class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
+                                           style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                                           placeholder="Subtítulo de esta sección...">
+                                </div>
+
+                                <!-- Contenido de la sección -->
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
+                                        Contenido
+                                    </label>
+                                    <textarea name="sections[{{ forloop.counter0 }}][content]" 
+                                            required
+                                            rows="4"
+                                            class="section-content-editor w-full px-4 py-2 rounded-lg border"
+                                            id="section_content_existing_{{ forloop.counter0 }}"
+                                            style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text);"
+                                            placeholder="Escribe el contenido de esta sección...">{{ section.content }}</textarea>
+                                </div>
+
+                                <!-- Orden -->
+                                <input type="hidden" 
+                                       name="sections[{{ forloop.counter0 }}][order]" 
+                                       value="{{ section.order }}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Las nuevas secciones se agregarán aquí dinámicamente -->
                     </div>
                 </div>
 
@@ -229,7 +302,7 @@
                             value="publish"
                             class="btn flex-1"
                             style="background-color: var(--color-primary); color: white;">
-                        Publicar Blog
+                        {% if blog_post.is_published %}Actualizar Blog{% else %}Publicar Blog{% endif %}
                     </button>
                 </div>
             </form>
@@ -240,7 +313,7 @@
 <script>
     // Preview de imagen
     document.getElementById('id_main_image').addEventListener('change', function(e) {
-        const fileName = e.target.files[0]?.name || 'Ninguna imagen seleccionada';
+        const fileName = e.target.files[0]?.name || 'Ningún cambio';
         document.getElementById('image-name').textContent = fileName;
     });
 
@@ -254,7 +327,15 @@
     // Manejar eliminación de secciones
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-section')) {
-            e.target.closest('.section-item').remove();
+            const section = e.target.closest('.section-item');
+            
+            // Destruir instancia de CKEditor si existe
+            const textarea = section.querySelector('.section-content-editor');
+            if (textarea && textarea.id && CKEDITOR.instances[textarea.id]) {
+                CKEDITOR.instances[textarea.id].destroy();
+            }
+            
+            section.remove();
             updateSectionNumbers();
         }
     });
@@ -266,8 +347,31 @@
         }
     });
 
-    // Inicializar estilos de tags al cargar la página
+    // Inicializar al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
+        // Actualizar numeración inicial
+        updateSectionNumbers();
+        
+        // Inicializar CKEditor en secciones existentes
+        document.querySelectorAll('.section-content-editor').forEach(function(textarea) {
+            if (textarea.id && typeof CKEDITOR !== 'undefined') {
+                CKEDITOR.replace(textarea.id, {
+                    height: 200,
+                    toolbar: [
+                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                        { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote'] },
+                        { name: 'links', items: ['Link', 'Unlink'] },
+                        { name: 'insert', items: ['Image', 'Table'] },
+                        { name: 'styles', items: ['Format'] },
+                        { name: 'tools', items: ['Maximize'] }
+                    ],
+                    removePlugins: 'elementspath',
+                    resize_enabled: false
+                });
+            }
+        });
+        
+        // Manejar checkboxes de tags
         const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
         tagCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
@@ -280,6 +384,13 @@
                 }
             });
         });
+    });
+
+    // Antes de enviar el formulario, sincronizar todos los CKEditor
+    document.getElementById('blog-form').addEventListener('submit', function(e) {
+        for (let instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
     });
 </script>
 

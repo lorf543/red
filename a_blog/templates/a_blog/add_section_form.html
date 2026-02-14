@@ -29,7 +29,7 @@
                    placeholder="Subtítulo de esta sección...">
         </div>
 
-        <!-- Contenido de la sección -->
+        <!-- Contenido de la sección con CKEditor -->
         <div>
             <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">
                 Contenido
@@ -37,8 +37,9 @@
             <textarea name="sections[{{ section_index }}][content]" 
                       required
                       rows="4"
-                      class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                      style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text); --tw-ring-color: var(--color-primary);"
+                      class="section-content-editor w-full px-4 py-2 rounded-lg border"
+                      id="section_content_{{ section_index }}"
+                      style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text);"
                       placeholder="Escribe el contenido de esta sección..."></textarea>
         </div>
 
@@ -52,4 +53,26 @@
     document.querySelectorAll('.section-number').forEach((el, index) => {
         el.textContent = index + 1;
     });
+    
+    // Inicializar CKEditor en el nuevo textarea
+    (function() {
+        const textareaId = 'section_content_{{ section_index }}';
+        const textarea = document.getElementById(textareaId);
+        
+        if (textarea && typeof CKEDITOR !== 'undefined') {
+            CKEDITOR.replace(textareaId, {
+                height: 200,
+                toolbar: [
+                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote'] },
+                    { name: 'links', items: ['Link', 'Unlink'] },
+                    { name: 'insert', items: ['Image', 'Table'] },
+                    { name: 'styles', items: ['Format'] },
+                    { name: 'tools', items: ['Maximize'] }
+                ],
+                removePlugins: 'elementspath',
+                resize_enabled: false
+            });
+        }
+    })();
 </script>

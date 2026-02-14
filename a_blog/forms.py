@@ -51,11 +51,19 @@ class PostSectionForm(forms.ModelForm):
             "content": CKEditorWidget(attrs={"rows": 10}),
         }
 
-    def clean_content(self):
-        content = self.cleaned_data["content"]
-        return bleach.clean(
-            content,
-            tags=ALLOWED_TAGS,
-            attributes=ALLOWED_ATTRS,
-            strip=True
-        )
+        def clean_main_paragraph(self):
+                return bleach.clean(
+                    self.cleaned_data["content"],
+                    tags=[
+                        'p', 'strong', 'em', 'u', 'ul', 'ol', 'li', 'br'
+                    ],
+                    attributes={
+                        # Permitimos el atributo 'style' en todas las etiquetas
+                        '*': ['style'], 
+                    },
+                    styles=[ 
+                        # Solo permitimos text-align. Bleach borrará cualquier otro estilo.
+                        'text-align' 
+                    ],
+                    strip=True
+                )

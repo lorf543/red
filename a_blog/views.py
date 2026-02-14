@@ -175,10 +175,10 @@ def update_blog(request, slug):
     
     available_tags = Tag.objects.all()
     
-    return render(request, 'a_blog/create_blog.html', {
+    return render(request, 'a_blog/update_blog.html', {  # ← Cambio aquí
         'available_tags': available_tags,
         'form': form,
-        'blog_post': blog_post,  # Importante: pasar el blog post con sus secciones
+        'blog_post': blog_post,
     })
 
 
