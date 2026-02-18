@@ -1,0 +1,67 @@
+<div class="section-card">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold flex items-center gap-2" style="color: var(--color-text);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" style="color: var(--color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            Certificación
+        </h3>
+        <button type="button" class="remove-item btn btn-sm btn-circle"
+                style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Nombre de la Certificación *</label>
+            <input type="text" name="certifications[{{ index }}][name]" required
+                   placeholder="Ej: AWS Certified Solutions Architect">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Organización Emisora *</label>
+            <input type="text" name="certifications[{{ index }}][issuing_organization]" required
+                   placeholder="Ej: Amazon Web Services">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Fecha de Emisión *</label>
+            <input type="date" name="certifications[{{ index }}][issue_date]" required>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Fecha de Expiración</label>
+            <input type="date" name="certifications[{{ index }}][expiration_date]"
+                   placeholder="Dejar en blanco si no expira">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">ID de Credencial</label>
+            <input type="text" name="certifications[{{ index }}][credential_id]"
+                   placeholder="Ej: ABC123XYZ">
+        </div>
+        
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">URL de Credencial</label>
+            <input type="url" name="certifications[{{ index }}][credential_url]"
+                   placeholder="https://credenciales.ejemplo.com/verificar/ABC123">
+        </div>
+    </div>
+
+    <!-- Info adicional -->
+    <div class="mt-3 p-3 rounded-lg flex items-start gap-2" 
+         style="background-color: color-mix(in srgb, var(--color-info) 10%, transparent); border: 1px solid color-mix(in srgb, var(--color-info) 20%, transparent);">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 mt-0.5" style="color: var(--color-info);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="text-xs" style="color: var(--color-text);">
+            <p class="font-medium mb-1">Agrega el ID y URL para verificación</p>
+            <p style="color: var(--color-muted);">
+                Esto permite a los reclutadores verificar la autenticidad de tu certificación.
+            </p>
+        </div>
+    </div>
+</div>

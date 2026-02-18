@@ -1,0 +1,37 @@
+<!-- templates/a_cv/partials/skill_form.html -->
+<div class="flex items-center gap-2 mb-2 skill-item">
+    <!-- Campo para el nombre de la habilidad -->
+    <input type="text" 
+           name="{{ form.name.html_name }}"
+           id="{{ form.name.id_for_label }}"
+           value="{{ form.name.value|default:'' }}"
+           class="flex-1 px-3 py-2 rounded-lg border"
+           style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text);"
+           placeholder="Ej: Python, Django, React..."
+           {% if form.name.field.required %}required{% endif %}>
+    
+    <!-- Select para el nivel de proficiencia -->
+    <select name="{{ form.proficiency.html_name }}"
+            id="{{ form.proficiency.id_for_label }}"
+            class="px-3 py-2 rounded-lg border"
+            style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text);">
+        <option value="">Nivel</option>
+        <option value="1" {% if form.proficiency.value == '1' %}selected{% endif %}>Básico</option>
+        <option value="2" {% if form.proficiency.value == '2' %}selected{% endif %}>Intermedio</option>
+        <option value="3" {% if form.proficiency.value == '3' %}selected{% endif %}>Avanzado</option>
+        <option value="4" {% if form.proficiency.value == '4' %}selected{% endif %}>Experto</option>
+    </select>
+    
+    <button type="button" 
+            class="btn btn-sm btn-circle remove-skill"
+            style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+
+<!-- Mostrar errores del campo si existen -->
+{% if form.name.errors %}
+    <div class="error-message mt-1">{{ form.name.errors }}</div>
+{% endif %}

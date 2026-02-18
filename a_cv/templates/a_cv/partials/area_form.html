@@ -1,0 +1,37 @@
+<div class="section-card" data-area-index="{{ index }}">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold" style="color: var(--color-text);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Área de Habilidades
+        </h3>
+        <button type="button" class="remove-item btn btn-sm btn-circle"
+                style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Nombre del Área</label>
+        <input type="text" name="areas[{{ index }}][name]" required
+               class="w-full px-4 py-2 rounded-lg border"
+               placeholder="Ej: Desarrollo Web, Idiomas, Diseño...">
+    </div>
+
+    <div class="mb-2">
+        <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium" style="color: var(--color-text);">Habilidades</label>
+            <button type="button" class="add-skill-btn btn btn-xs"
+                    style="background-color: var(--color-info); color: white;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Agregar Habilidad
+            </button>
+        </div>
+        <div class="skills-container"></div>
+    </div>
+</div>

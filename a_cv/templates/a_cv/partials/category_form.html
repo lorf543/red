@@ -1,0 +1,55 @@
+<!-- templates/a_cv/partials/category_form.html -->
+<div class="section-card" data-category-index="{{ index }}">
+    
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold flex items-center gap-2" style="color: var(--color-text);">
+            Categoría de Habilidades
+        </h3>
+        <button type="button" class="btn btn-sm btn-circle remove-item"
+                style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+            ✕
+        </button>
+    </div>
+
+    <!-- Formulario de Categoría -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" style="color: var(--color-text);" for="{{ form.name.id_for_label }}">
+            {{ form.name.label }}
+        </label>
+        <input type="text" 
+               name="{{ form.name.html_name }}"
+               id="{{ form.name.id_for_label }}"
+               value="{{ form.name.value|default:'' }}"
+               class="w-full px-4 py-2 rounded-lg border"
+               style="background-color: var(--color-background); border-color: var(--color-border); color: var(--color-text);"
+               placeholder="Ej: Lenguajes de Programación, Frameworks, Herramientas..."
+               {% if form.name.field.required %}required{% endif %}>
+        {% if form.name.errors %}
+            <div class="error-message">{{ form.name.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Sección de Habilidades -->
+    <div>
+        <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-medium" style="color: var(--color-text);">
+                Habilidades
+            </label>
+            <button type="button"
+                    class="btn btn-xs add-skill-btn"
+                    style="background-color: color-mix(in srgb, var(--color-primary) 20%, transparent); color: var(--color-primary);"
+                    hx-post="{% url 'add_skill_form' %}"
+                    hx-target="#skills-container-{{ index }}"
+                    hx-swap="beforeend"
+                    hx-vals='{"category_index": "{{ index }}"}'>
+                + Agregar Habilidad
+            </button>
+        </div>
+
+        <div id="skills-container-{{ index }}" 
+             class="border rounded-lg p-3 min-h-[100px]"
+             style="background-color: color-mix(in srgb, var(--color-surface) 50%, var(--color-background)); border-color: var(--color-border);">
+            <!-- Las skills se insertarán aquí via HTMX -->
+        </div>
+    </div>
+</div>

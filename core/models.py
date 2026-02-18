@@ -24,7 +24,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     
-
+    is_premium = models.BooleanField(default=True)
 
     profile_picture = CloudinaryField(
         folder="red/profile_picture",

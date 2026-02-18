@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: var(--color-text);">
+                Elige tu Template de CV
+            </h1>
+            <p class="text-xl" style="color: var(--color-muted);">
+                Selecciona el diseño que mejor represente tu perfil profesional
+            </p>
+        </div>
+
+        <!-- Filtros -->
+        <div x-data="{ activeFilter: 'all' }" class="mb-8">
+            <div class="flex gap-3 justify-center flex-wrap">
+                <button @click="activeFilter = 'all'" 
+                        :class="activeFilter === 'all' ? 'bg-primary text-white' : 'bg-surface text-muted'"
+                        class="btn btn-sm transition-all"
+                        style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);"
+                        :style="activeFilter === 'all' ? 'background-color: var(--color-primary); color: white;' : ''">
+                    Todos
+                </button>
+                <button @click="activeFilter = 'professional'" 
+                        :class="activeFilter === 'professional' ? 'bg-primary text-white' : 'bg-surface text-muted'"
+                        class="btn btn-sm transition-all"
+                        style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);"
+                        :style="activeFilter === 'professional' ? 'background-color: var(--color-primary); color: white;' : ''">
+                    Profesional
+                </button>
+                <button @click="activeFilter = 'creative'" 
+                        :class="activeFilter === 'creative' ? 'bg-primary text-white' : 'bg-surface text-muted'"
+                        class="btn btn-sm transition-all"
+                        style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);"
+                        :style="activeFilter === 'creative' ? 'background-color: var(--color-primary); color: white;' : ''">
+                    Creativo
+                </button>
+                <button @click="activeFilter = 'minimal'" 
+                        :class="activeFilter === 'minimal' ? 'bg-primary text-white' : 'bg-surface text-muted'"
+                        class="btn btn-sm transition-all"
+                        style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);"
+                        :style="activeFilter === 'minimal' ? 'background-color: var(--color-primary); color: white;' : ''">
+                    Minimalista
+                </button>
+                <button @click="activeFilter = 'modern'" 
+                        :class="activeFilter === 'modern' ? 'bg-primary text-white' : 'bg-surface text-muted'"
+                        class="btn btn-sm transition-all"
+                        style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border);"
+                        :style="activeFilter === 'modern' ? 'background-color: var(--color-primary); color: white;' : ''">
+                    Moderno
+                </button>
+            </div>
+
+            <!-- Grid de Templates -->
+            <div class="flex  gap-2 pt-2 w-50">
+                {% for template in templates %}
+                <div x-show="activeFilter === 'all' || activeFilter === '{{ template.category }}'"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     class="rounded-xl overflow-hidden border transition-all hover:scale-105 cursor-pointer"
+                     style="background-color: var(--color-surface); border-color: var(--color-border); box-shadow: var(--comment-shadow);"
+                     data-category="{{ template.category }}">
+                    
+                    <!-- Preview Image -->
+                    <div class="relative overflow-hidden" style="background-color: var(--color-background);">
+                        {% if template.preview_image %}
+                            <img src="{{ template.preview_image.url }}" 
+                                 alt="{{ template.name }}"
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" style="color: var(--color-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                        {% endif %}
+                        
+                        {% if template.is_premium %}
+                        <span class="absolute top-3 right-3 badge inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                              style="background-color: var(--color-warning); color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                            Premium
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Info -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--color-text);">
+                            {{ template.name }}
+                        </h3>
+                        <p class="text-sm mb-4 line-clamp-2" style="color: var(--color-muted);">
+                            {{ template.description }}
+                        </p>
+                        
+                        <div class="flex gap-2">
+                            <a href="{% url 'create_cv' template_id=template.id %}" 
+                               class="btn flex-1 text-center"
+                               style="background-color: var(--color-primary); color: white;">
+                                Usar Template
+                            </a>
+                            <a href="{% url 'preview_template' template_id=template.id %}" 
+                               class="btn btn-sm px-3"
+                               style="background-color: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text);"
+                               target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-16">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto mb-4" style="color: var(--color-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--color-text);">
+                        No hay templates disponibles
+                    </h3>
+                    <p style="color: var(--color-muted);">
+                        Pronto agregaremos nuevos templates para ti.
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

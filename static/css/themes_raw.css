@@ -72,29 +72,37 @@
         background-image: var(--background-image-blue);
     }
 
-    [data-theme="sunset"] {
-        --color-primary: #FF6B35;
-        --color-secondary: #F7931E;
-        --color-accent: #FFD23F;
-        --color-background: #c59f61;
-        --color-surface: #c59f61;
-        --comment-shadow: 0 4px 16px rgba(255, 107, 53, 0.15),
-            0 2px 8px rgba(247, 147, 30, 0.1);
-        --color-text: #5D4037;
-        --color-muted: #8D6E63;
-        --color-success: #4CAF50;
-        --color-warning: #FFC107;
-        --color-danger: #E53935;
-        --color-info: #FF9800;
-        --color-border: #FFAB91;
-
-        /* Variables adicionales - Opcionales */
-        --color-primary-light: #FFB74D;
-        --color-primary-dark: #E65100;
-        --color-surface-hover: #FFCC80;
-        --color-border-light: #FFE0B2;
-        background-image: var(--background-image-sunset);
-    }
+[data-theme="sunset"] {
+    /* Paleta principal mejorada */
+    --color-primary: #FF5722;        /* Naranja más vibrante y accesible */
+    --color-secondary: #FB8B2C;      /* Naranja-dorado más suave */
+    --color-accent: #FFB74D;         /* Ámbar más claro y versátil */
+    
+    /* Fondo y superficies mejorados */
+    --color-background: #7b3e26;     /* Marrón oscuro cálido para mejor contraste */
+    --color-surface: #8e432a;        /* Superficie ligeramente más clara */
+    --color-surface-hover: #4F3026;  /* Para estados hover */
+    
+    /* Textos con mejor legibilidad */
+    --color-text: #FFF3E0;           /* Texto principal claro */
+    --color-muted: #D7A98C;          /* Texto secundario cálido */
+    
+    /* Colores de estado más armónicos */
+    --color-success: #66BB6A;        /* Verde más suave */
+    --color-warning: #FFA726;        /* Naranja para advertencias */
+    --color-danger: #EF5350;         /* Rojo coral más suave */
+    --color-info: #FFB74D;           /* Mismo que accent para consistencia */
+    
+    /* Bordes y sombras refinados */
+    --color-border: #BF8F7A;         /* Borde cálido y sutil */
+    --color-border-light: #8B5E4C;   /* Borde más oscuro para contraste */
+    
+    /* Sombras mejoradas */
+    --comment-shadow: 0 8px 24px rgba(255, 87, 34, 0.2),
+                      0 4px 12px rgba(251, 139, 44, 0.15);
+    
+    background-image: var(--background-image-sunset);
+}
 
     [data-theme="forest"] {
         --color-primary: #06d6a0;

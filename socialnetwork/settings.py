@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'schema_viewer',
     'ckeditor',
     'ckeditor_uploader',
+    'django_extensions',
 
     # Tus apps
     'core',
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'commentslikes',
     'notifications.apps.NotificationsConfig',
     'a_blog.apps.ABlogConfig',
+    'a_cv.apps.ACvConfig',
 
     # Allauth
     'allauth',

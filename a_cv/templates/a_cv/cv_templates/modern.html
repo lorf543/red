@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .cv-modern-container {
+        max-width: 210mm;
+        margin: 0 auto;
+        background-color: white;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: 297mm; 
+    }
+
+    .cv-sidebar {
+        background: linear-gradient(180deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 85%, black) 100%);
+        color: white;
+        padding: 1.5rem 1.5rem;
+    }
+
+    .cv-main {
+        padding: 1.5rem; 
+    }
+
+    .sidebar-photo {
+        width: 120px; 
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid white;
+        object-fit: cover;
+        margin: 0 auto 1rem; 
+        display: block;
+    }
+
+    .sidebar-section {
+        margin-bottom: 1.25rem; 
+    }
+
+    .sidebar-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem; 
+        padding-bottom: 0.35rem; 
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar-item {
+        margin-bottom: 0.75rem; 
+        font-size: 0.85rem; 
+    }
+
+    .sidebar-contact {
+        display: flex;
+        align-items: start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem; 
+        word-break: break-word;
+        font-size: 0.8rem; 
+    }
+
+    .sidebar-contact svg {
+        width: 0.9rem; 
+        height: 0.9rem;
+        flex-shrink: 0;
+        margin-top: 0.15rem;
+    }
+
+    .main-name {
+        font-size: 2.2rem; 
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: 0.35rem; 
+    }
+
+    .main-summary {
+        font-size: 0.9rem;
+        color: #4b5563;
+        line-height: 1.5;
+        margin-bottom: 1.25rem; 
+        padding-bottom: 1.25rem; 
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .main-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .main-section-title {
+        font-size: 1.25rem; 
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem; 
+    }
+
+    .main-section-title svg {
+        width: 1.1rem; 
+        height: 1.1rem;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 1.5rem; 
+        padding-bottom: 1rem; 
+        border-left: 2px solid #e5e7eb;
+    }
+
+    .timeline-item:last-child {
+        border-left: none;
+        padding-bottom: 0; 
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -6px;
+        top: 0.2rem; 
+        width: 8px; 
+        height: 8px;
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px var(--color-primary);
+    }
+
+    .timeline-title {
+        font-size: 1rem; 
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .timeline-subtitle {
+        color: var(--color-primary);
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-top: 0.1rem;
+    }
+
+    .timeline-meta {
+        color: #6b7280;
+        font-size: 0.8rem;
+        margin-top: 0.1rem;
+    }
+
+    .timeline-description {
+        color: #4b5563;
+        font-size: 0.85rem; 
+        line-height: 1.5; 
+        margin-top: 0.35rem; 
+    }
+
+    .skill-category {
+        margin-bottom: 1rem;
+    }
+
+    .skill-category-title {
+        font-weight: 600;
+        font-size: 0.85rem; 
+        margin-bottom: 0.35rem; /
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .skill-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem 0.5rem; 
+    }
+
+    .skill-tag {
+        font-size: 0.8rem; 
+        color: white;
+        opacity: 0.9;
+    }
+
+    .skill-tag:not(:last-child)::after {
+        content: "•";
+        margin-left: 0.5rem;
+        opacity: 0.5;
+    }
+
+
+    .sidebar-skill-group {
+        margin-bottom: 0.75rem; 
+    }
+
+    .sidebar-skill-category {
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem; 
+        opacity: 0.95;
+    }
+
+    .sidebar-skill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.35rem; 
+    }
+
+    .sidebar-skill-item {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+
+    .language-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem; 
+        margin-bottom: 0.25rem; 
+    }
+
+    .language-name {
+        font-weight: 500;
+    }
+
+    .language-level {
+        opacity: 0.8;
+        font-size: 0.75rem; 
+    }
+
+
+    .certification-item {
+        padding: 0.5rem; 
+        border-radius: 0.375rem;
+        background-color: #f9fafb;
+        border-left: 3px solid var(--color-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .certification-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1f2937;
+    }
+
+    .certification-org {
+        font-size: 0.8rem;
+        color: var(--color-primary);
+        margin-top: 0.1rem;
+    }
+
+    .certification-meta {
+        font-size: 0.7rem;
+        color: #6b7280;
+        margin-top: 0.2rem;
+    }
+
+    @media print {
+        body {
+            background: white;
+        }
+        .cv-modern-container {
+            box-shadow: none;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cv-modern-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="min-h-screen py-8" style="background-color: var(--color-background);">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Botones de acción -->
+        <div class="flex gap-3 mb-6 no-print">
+            {% if user.is_authenticated and user == cv.user %}
+            <a href="#" 
+               class="btn btn-sm"
+               style="background-color: var(--color-primary); color: white;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Editar
+            </a>
+            {% endif %}
+            <button onclick="window.print()" 
+                    class="btn btn-sm"
+                    style="background-color: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir / Descargar PDF
+            </button>
+        </div>
+        <!-- CV Container -->
+        <div class="cv-modern-container">
+            <!-- Sidebar -->
+            <div class="cv-sidebar">
+                <!-- Foto -->
+                {% if cv.profile_photo %}
+                <img src="{{ cv.profile_photo.url }}" 
+                     alt="{{ cv.full_name }}"
+                     class="sidebar-photo">
+                {% endif %}
+
+                <!-- Contacto -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Contacto</h3>
+                    {% if cv.email %}
+                    <div class="sidebar-contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span style="font-size: 0.85rem;">{{ cv.email }}</span>
+                    </div>
+                    {% endif %}
+                    {% if cv.phone %}
+                    <div class="sidebar-contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        <span>{{ cv.phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if cv.location %}
+                    <div class="sidebar-contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        <span>{{ cv.location }}</span>
+                    </div>
+                    {% endif %}
+                    {% if cv.website %}
+                    <div class="sidebar-contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                        <a href="{{ cv.website }}" target="_blank" class="hover:underline" style="font-size: 0.85rem;">{{ cv.website|slice:"8:30" }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Habilidades -->
+                {% if cv.skill_categories.all %}
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title text-sm">Habilidades</h3>
+                    {% for category in cv.skill_categories.all %}
+                    <div class="mb-3 flex items-center">
+                        <div class="font-semibold text-sm opacity-90">{{ category.name }}:</div>
+                        {% for skill in category.skills.all %}
+                        <div class="skill-item ml-1 text-sm">
+                            <span class="skill-name text-sm ">{{ skill.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Idiomas -->
+                {% if cv.languages.all %}
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Idiomas</h3>
+                    {% for lang in cv.languages.all %}
+                    <div class="skill-item flex justify-between">
+                        <div class="skill-name ">{{ lang.language }}</div>
+                        <div class="skill-name">{{ lang.get_proficiency_display }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Main Content -->
+            <div class="cv-main">
+                <!-- Nombre -->
+                <h1 class="main-name">{{ cv.full_name }}</h1>
+
+                <!-- Resumen -->
+                {% if cv.professional_summary %}
+                <div class="main-summary">{{ cv.professional_summary }}</div>
+                {% endif %}
+
+                <!-- Experiencia -->
+                {% if cv.experiences.all %}
+                <div class="main-section">
+                    <h2 class="main-section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Experiencia
+                    </h2>
+                    {% for exp in cv.experiences.all %}
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-title">{{ exp.position }}</div>
+                        <div class="timeline-subtitle">{{ exp.company }}</div>
+                        <div class="timeline-meta">
+                            {{ exp.start_date|date:"M Y" }} - 
+                            {% if exp.current %}Actualidad{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}
+                            {% if exp.location %} • {{ exp.location }}{% endif %}
+                        </div>
+                        <div class="timeline-description">{{ exp.responsibilities|linebreaks }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Educación -->
+                {% if cv.education.all %}
+                <div class="main-section">
+                    <h2 class="main-section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        </svg>
+                        Educación
+                    </h2>
+                    {% for edu in cv.education.all %}
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-title">{{ edu.degree }}</div>
+                        <div class="timeline-subtitle">{{ edu.institution }}</div>
+                        <div class="timeline-meta">
+                            {{ edu.start_date|date:"Y" }} - 
+                            {% if edu.current %}Cursando{% else %}{{ edu.end_date|date:"Y" }}{% endif %}
+                            {% if edu.field_of_study %} • {{ edu.field_of_study }}{% endif %}
+                        </div>
+                        {% if edu.description %}
+                        <div class="timeline-description">{{ edu.description }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Certificaciones -->
+                {% if cv.certifications.all %}
+                    <div class="main-section">
+                        <h2 class="main-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                            Certificaciones
+                        </h2>
+                        <div class="grid grid-cols-1 gap-3">
+                            {% for cert in cv.certifications.all %}
+                            <div class="p-3 rounded-lg" style="background-color: #f9fafb; border-left: 3px solid var(--color-primary);">
+                                <div class="font-semibold" style="color: #1f2937;">{{ cert.name }}</div>
+                                <div class="text-sm" style="color: var(--color-primary);">{{ cert.issuing_organization }}</div>
+                                <div class="text-sm mt-1" style="color: #6b7280;">
+                                    {{ cert.issue_date|date:"M Y" }}
+                                    {% if cert.credential_id %} • ID: {{ cert.credential_id }}{% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+<div class="section-card">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold flex items-center gap-2" style="color: var(--color-text);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" style="color: var(--color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Experiencia Laboral
+        </h3>
+        <button type="button" class="remove-item btn btn-sm btn-circle"
+                style="background-color: color-mix(in srgb, var(--color-danger) 10%, transparent); color: var(--color-danger);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Cargo *</label>
+            <input type="text" name="experiences[{{ index }}][position]" required
+                   placeholder="Ej: Desarrollador Full Stack">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Empresa *</label>
+            <input type="text" name="experiences[{{ index }}][company]" required
+                   placeholder="Ej: Google Inc.">
+        </div>
+        
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Ubicación</label>
+            <input type="text" name="experiences[{{ index }}][location]"
+                   placeholder="Ej: Santo Domingo, República Dominicana">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Fecha de Inicio *</label>
+            <input type="date" name="experiences[{{ index }}][start_date]" required>
+        </div>
+        
+        <div x-data="{ current: false }">
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Fecha de Fin</label>
+            <input type="date" 
+                   name="experiences[{{ index }}][end_date]" 
+                   :disabled="current"
+                   :class="current ? 'opacity-50 cursor-not-allowed' : ''">
+            <div class="mt-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" 
+                           name="experiences[{{ index }}][current]"
+                           class="checkbox checkbox-sm checkbox-primary"
+                           x-model="current">
+                    <span class="text-sm" style="color: var(--color-text);">Trabajo actual</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-2" style="color: var(--color-text);">Responsabilidades *</label>
+            <textarea name="experiences[{{ index }}][responsibilities]" rows="3" required
+                      placeholder="Describe tus responsabilidades principales y logros..."></textarea>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load poll_extras %}
 <!-- SEO: Title -->
 {% block title %}Donaciones - Apoya ITLAsocial{% endblock %}
 
@@ -40,140 +40,140 @@
 {% block schema_extra %}
 <!-- DonateAction Schema -->
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Donaciones - Apoya ITLAsocial",
-    "description": "Página de donaciones para apoyar el mantenimiento y desarrollo de ITLAsocial",
-    "url": "https://itlasocial.org/donaciones/",
-    "potentialAction": {
-        "@type": "DonateAction",
-        "recipient": {
-            "@type": "Organization",
-            "name": "ITLAsocial",
-            "url": "https://itlasocial.org"
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Donaciones - Apoya ITLAsocial",
+        "description": "Página de donaciones para apoyar el mantenimiento y desarrollo de ITLAsocial",
+        "url": "https://itlasocial.org/donaciones/",
+        "potentialAction": {
+            "@type": "DonateAction",
+            "recipient": {
+                "@type": "Organization",
+                "name": "ITLAsocial",
+                "url": "https://itlasocial.org"
+            },
+            "priceSpecification": [
+                {
+                    "@type": "PriceSpecification",
+                    "price": "5.00",
+                    "priceCurrency": "USD",
+                    "name": "Café"
+                },
+                {
+                    "@type": "PriceSpecification",
+                    "price": "10.00",
+                    "priceCurrency": "USD",
+                    "name": "Almuerzo"
+                },
+                {
+                    "@type": "PriceSpecification",
+                    "price": "25.00",
+                    "priceCurrency": "USD",
+                    "name": "Generoso"
+                },
+                {
+                    "@type": "PriceSpecification",
+                    "price": "50.00",
+                    "priceCurrency": "USD",
+                    "name": "Héroe"
+                },
+                {
+                    "@type": "PriceSpecification",
+                    "price": "100.00",
+                    "priceCurrency": "USD",
+                    "name": "Súper Héroe"
+                }
+            ]
         },
-        "priceSpecification": [
-            {
-                "@type": "PriceSpecification",
-                "price": "5.00",
-                "priceCurrency": "USD",
-                "name": "Café"
-            },
-            {
-                "@type": "PriceSpecification",
-                "price": "10.00",
-                "priceCurrency": "USD",
-                "name": "Almuerzo"
-            },
-            {
-                "@type": "PriceSpecification",
-                "price": "25.00",
-                "priceCurrency": "USD",
-                "name": "Generoso"
-            },
-            {
-                "@type": "PriceSpecification",
-                "price": "50.00",
-                "priceCurrency": "USD",
-                "name": "Héroe"
-            },
-            {
-                "@type": "PriceSpecification",
-                "price": "100.00",
-                "priceCurrency": "USD",
-                "name": "Súper Héroe"
-            }
-        ]
-    },
-    "inLanguage": "es-DO"
-}
+        "inLanguage": "es-DO"
+    }
 </script>
 
-<!-- Organization Schema -->
+    <!-- Organization Schema -->
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "ITLAsocial",
-    "url": "https://itlasocial.org",
-    "logo": "https://itlasocial.org{% static 'img/preview.png' %}",
-    "description": "Plataforma educativa para estudiantes del ITLA",
-    "sameAs": [
-        "https://www.facebook.com/itlasocial",
-        "https://twitter.com/itlasocial"
-    ],
-    "foundingDate": "2026",
-    "areaServed": "República Dominicana",
-    "audience": {
-        "@type": "EducationalAudience",
-        "educationalRole": "student"
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ITLAsocial",
+        "url": "https://itlasocial.org",
+        "logo": "https://itlasocial.org{% static 'img/preview.png' %}",
+        "description": "Plataforma educativa para estudiantes del ITLA",
+        "sameAs": [
+            "https://www.facebook.com/itlasocial",
+            "https://twitter.com/itlasocial"
+        ],
+        "foundingDate": "2026",
+        "areaServed": "República Dominicana",
+        "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student"
+        }
     }
-}
 </script>
 
 <!-- BreadcrumbList Schema -->
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Inicio",
-            "item": "https://itlasocial.org/"
-        },
-        {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Donaciones",
-            "item": "https://itlasocial.org/donaciones/"
-        }
-    ]
-}
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Inicio",
+                "item": "https://itlasocial.org/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Donaciones",
+                "item": "https://itlasocial.org/donaciones/"
+            }
+        ]
+    }
 </script>
 
 <!-- FAQPage Schema -->
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-        {
-            "@type": "Question",
-            "name": "¿Cómo funcionan los enlaces de PayPal?",
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Al hacer clic en cualquier monto, serás redirigido a PayPal donde podrás completar la donación de forma segura. No necesitas tener cuenta PayPal para donar con tarjeta."
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "¿Cómo funcionan los enlaces de PayPal?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Al hacer clic en cualquier monto, serás redirigido a PayPal donde podrás completar la donación de forma segura. No necesitas tener cuenta PayPal para donar con tarjeta."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Recibo algún comprobante?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sí, PayPal te enviará automáticamente un recibo por email con todos los detalles de tu donación."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Puedo donar más de una vez?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "¡Claro! Puedes hacer tantas donaciones como desees. Cada contribución es muy apreciada."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Para qué se utilizan las donaciones?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Las donaciones se utilizan para mantener los servidores activos y rápidos, desarrollar nuevas funcionalidades útiles, mejorar constantemente la plataforma, mantenerla 100% gratuita para estudiantes, y cubrir costos de hosting y dominio."
+                }
             }
-        },
-        {
-            "@type": "Question",
-            "name": "¿Recibo algún comprobante?",
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Sí, PayPal te enviará automáticamente un recibo por email con todos los detalles de tu donación."
-            }
-        },
-        {
-            "@type": "Question",
-            "name": "¿Puedo donar más de una vez?",
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "¡Claro! Puedes hacer tantas donaciones como desees. Cada contribución es muy apreciada."
-            }
-        },
-        {
-            "@type": "Question",
-            "name": "¿Para qué se utilizan las donaciones?",
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Las donaciones se utilizan para mantener los servidores activos y rápidos, desarrollar nuevas funcionalidades útiles, mejorar constantemente la plataforma, mantenerla 100% gratuita para estudiantes, y cubrir costos de hosting y dominio."
-            }
-        }
-    ]
-}
+        ]
+    }
 </script>
 {% endblock %}
 

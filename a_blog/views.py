@@ -195,6 +195,9 @@ def add_section_form(request):
 def blog_detail(request, slug):
     blog_post = get_object_or_404(BlogPost.objects.prefetch_related('sections', 'tags'), slug=slug)
     
+    if blog_post.is_published:
+        _register_blog_view(request, blog_post)
+    
     # Blogs relacionados por tags similares
     related_blogs = BlogPost.objects.filter(
         tags__in=blog_post.tags.all(),
